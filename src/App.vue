@@ -2,21 +2,22 @@
   <v-app>
     <Navbar/>
     <v-content>
-      <Home/>
+      <router-view></router-view>
     </v-content>
+    <Footer/>
   </v-app>
 </template>
 
 <script>
 import Navbar from './components/elements/Navbar';
-import Home from './components/pages/Home';
+import Footer from "./components/elements/Footer";
 
 export default {
   name: 'App',
 
   components: {
+    Footer,
     Navbar,
-    Home
   },
 
   data: () => ({
