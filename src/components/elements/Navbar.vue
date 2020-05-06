@@ -15,13 +15,14 @@
                     class="hidden-sm-and-down"
             >
                 <v-btn class="d-flex align-center text-none" text>
-                    <h2>BlockchainProjekt</h2>
+                    <h2>Spenderschlender</h2>
                 </v-btn>
             </router-link>
 
             <router-link
                     to="/"
                     tag="span"
+                    class="hidden-sm-and-down"
             >
                 <v-btn
                         target="_blank"
@@ -37,6 +38,7 @@
             <router-link
                     to="/ueberuns"
                     tag="span"
+                    class="hidden-sm-and-down"
             >
                 <v-btn
                         target="_blank"
@@ -53,6 +55,7 @@
             <router-link
                     to="/portfolio"
                     tag="span"
+                    class="hidden-sm-and-down"
             >
                 <v-btn
                         target="_blank"
@@ -67,7 +70,7 @@
 
 
             <v-btn
-                    class="ma-2"
+                    class="ma-2 hidden-sm-and-down"
                     target="_blank"
                     rounded
                     color="accent"
