@@ -1,4 +1,12 @@
-# sp-frontend
+# Frontend Team
+
+Name | Nickname | Rolle
+------------ | ------------ | ------------
+Levent Koch | dermodmaster | Teamleitung
+Daniel Marten | xGurke | Frontend-Entwickler
+Joshua Martin | CodingJosh42 | Frontend-Entwickler
+Sascha Rührup | Sascha-Ruehrup | Frontend-Entwickler
+Florian Löwen | Corebull | Frontend-Entwickler
 
 ## Project setup
 ```
