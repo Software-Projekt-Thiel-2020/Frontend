@@ -17,18 +17,36 @@
       >
         <v-col class="text-center pageBox" cols="5">
           <v-icon class="display-4" style="color: white">mdi-gift-outline</v-icon>
-          <h1 class="display-3  font-weight-thin mb-4">Spende über die Blockchain</h1>
+          <h1 class="display-1  font-weight-thin mb-6">Spenden</h1>
+          <h1 class="display-2  font-weight-thin ">Spende über die Blockchain</h1>
+          <p align="justify" style="margin-left: 15%; margin-right: 15%">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
+          </p>
+          <router-link
+                  to="/gutscheine"
+                  tag="span"
+          >
           <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-            Gute Tat erledigen!
+            Jetzt spenden!
           </v-btn>
+          </router-link>
         </v-col>
         <v-divider style="border-color:rgba(255,255,255,0.4);" vertical></v-divider>
         <v-col class="text-center pageBox" cols="5">
           <v-icon class="display-4" style="color: white">mdi-wallet-outline</v-icon>
-          <h1 class="display-3  font-weight-thin mb-4">Unterstütze deine Umgebung!</h1>
-          <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-            Gutscheine kaufen
-          </v-btn>
+          <h1 class="display-1  font-weight-thin mb-6">Gutscheine</h1>
+          <h1 class="display-2  font-weight-thin">Unterstütze deine Umgebung!</h1>
+          <p align="justify" style="margin-left: 15%; margin-right: 15%">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea.
+          </p>
+          <router-link
+                  to="/gutscheine"
+                  tag="span"
+          >
+            <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
+              Gutscheine kaufen!
+            </v-btn>
+          </router-link>
         </v-col>
       </v-row>
     </div>
