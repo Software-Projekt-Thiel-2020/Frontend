@@ -19,7 +19,7 @@
                     <v-col class="text-center pageBox" cols="5">
                         <v-icon class="display-4" style="color: white">mdi-gift-outline</v-icon>
                         <h1 class="display-1  font-weight-thin mb-6">Spenden</h1>
-                        <h1 class="display-2  font-weight-thin ">Spende über die Blockchain</h1>
+                        <h1 class="display-2  font-weight-thin mb-2">Spende über die Blockchain</h1>
                         <p align="justify" style="margin-left: 15%; margin-right: 15%">
                             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                             ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
@@ -38,7 +38,7 @@
                     <v-col class="text-center pageBox" cols="5">
                         <v-icon class="display-4" style="color: white">mdi-wallet-outline</v-icon>
                         <h1 class="display-1  font-weight-thin mb-6">Gutscheine</h1>
-                        <h1 class="display-2  font-weight-thin">Unterstütze deine Umgebung!</h1>
+                        <h1 class="display-2  font-weight-thin mb-2">Unterstütze deine Umgebung!</h1>
                         <p align="justify" style="margin-left: 15%; margin-right: 15%">
                             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                             ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo

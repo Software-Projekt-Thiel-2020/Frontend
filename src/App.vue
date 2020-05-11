@@ -26,9 +26,13 @@ export default {
 };
 </script>
 <style>
-  Navbar, Footer{
+  Navbar {
     position: relative;
     z-index: 10;
+  }
+  Footer{
+    position: relative;
+    z-index: 0;
   }
   v-content {
 
