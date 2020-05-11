@@ -90,6 +90,7 @@
                             dark
                             icon
                             v-on="on"
+                            class="hidden-sm-and-down"
                     >
                         <v-avatar color="red">
                             <span class="white--text headline">CJ</span>
@@ -133,18 +134,66 @@
                         v-model="group"
                         active-class="deep-purple--text text--accent-4"
                 >
-                    <v-list-item>
-                        <v-list-item-icon>
-                            <v-icon>mdi-home</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>Home</v-list-item-title>
-                    </v-list-item>
+                    <router-link
+                            to="/"
+                            tag="span"
+                    >
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-home</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Home</v-list-item-title>
+                        </v-list-item>
+                    </router-link>
 
-                    <v-list-item>
+
+                    <router-link
+                            to="/ueberuns"
+                            tag="span"
+                    >
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-information-outline</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Über uns</v-list-item-title>
+                        </v-list-item>
+                    </router-link>
+
+                    <v-spacer></v-spacer>
+
+                    <router-link
+                            to="/portfolio"
+                            tag="span"
+                            v-if="loggedIn"
+                    >
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-wallet</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Mein Portfolio</v-list-item-title>
+                        </v-list-item>
+                    </router-link>
+
+                    <router-link
+                            to="/profil"
+                            tag="span"
+                            v-if="loggedIn"
+                    >
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-wrench</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Mein Profil</v-list-item-title>
+                        </v-list-item>
+                    </router-link>
+
+                    <v-list-item
+                            color="accent"
+                            @click="loggedIn = !loggedIn">
                         <v-list-item-icon>
-                            <v-icon>mdi-account</v-icon>
+                            <v-icon>mdi-run</v-icon>
                         </v-list-item-icon>
-                        <v-list-item-title>Account</v-list-item-title>
+                        <v-list-item-title>{{loggedIn ? 'Abmelden' : 'Anmelden'}}</v-list-item-title>
                     </v-list-item>
 
                 </v-list-item-group>
