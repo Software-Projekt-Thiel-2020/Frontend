@@ -25,3 +25,13 @@ export default {
   }),
 };
 </script>
+<style>
+  Navbar, Footer{
+    position: relative;
+    z-index: 10;
+  }
+  v-content {
+
+    overflow: scroll;
+  }
+</style>
