@@ -62,7 +62,7 @@
         </v-row>
 
         <div class="linkToDonate">
-            <a href="/spenden" > <h1 style="text-align:center">Meine Spenden und Gutscheine </h1></a>
+            <a href="/Spenden" > <h1 style="text-align:center">Meine Spenden und Gutscheine </h1></a>
         </div>
     </v-container>
 </template>
