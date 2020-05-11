@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container > <!-- class="mainbody" -->
         <div>
             <h1>Mein Profil</h1>
         </div>
@@ -102,6 +102,15 @@
 
   .linkToDonate {
       width: 100%;
+  }
+
+   .mainbody{
+        position: absolute;
+        top: 0px; /* Header Height */
+        bottom: 0px; /* Footer Height */
+        width: 200%;
+        background: url(../../assets/casedonation.jpg) no-repeat center center fixed;
+        background-size: cover;
   }
 
 </style>
