@@ -26,7 +26,7 @@
                             dolores et ea rebum. Stet clita kasd gubergren, no sea.
                         </p>
                         <router-link
-                                to="/gutscheine"
+                                to="/spenden"
                                 tag="span"
                         >
                             <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
