@@ -61,12 +61,15 @@
              
         </v-row>
 
-        <div class="linkToDonate">
+        <div class="linkToDonate text-center">
             <router-link
                     to="/portfolio"
                     tag="span"
+                    class="link"
             >
-                <h1 style="text-align:center">Meine Spenden und Gutscheine </h1>
+                <v-btn>
+                    <h1 style="text-align:center">Meine Spenden und Gutscheine </h1>
+                </v-btn>
             </router-link>
         </div>
     </v-container>
