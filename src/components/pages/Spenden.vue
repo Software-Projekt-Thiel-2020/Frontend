@@ -3,6 +3,9 @@
     <v-container>
       <h1>Spenden</h1>
     </v-container>
+    <v-container>
+    <h3> Suche nach Betrieben in deiner Nähe! </h3>
+    </v-container>
     <form class="container">
       <div>
         <label for="name">
@@ -24,12 +27,15 @@
     <v-container class="results">
         <div v-for="item in items" :key="item.name" class="project">
             <img src="../../assets/placeholder.png">
-            <div style="border:0; margin-left: 0.5cm">
+            <div style="border:0; margin-left: 0.5cm; flex-basis:55%">
             <h2>Firmenname: {{item.name}}</h2>
-            <h2>Straße: {{item.straße}} {{item.nummer}}</h2>
-            <h2>PLZ und Ort: {{item.plz}} {{item.ort}}</h2>
+            <h3>Straße: {{item.straße}} {{item.nummer}}</h3>
+            <h3>PLZ und Ort: {{item.plz}} {{item.ort}}</h3>
+            <h4>Zur Website:<a :href=item.website>  {{item.website}} </a></h4>
             </div>
-        
+            <v-btn style="align-self: flex-end; margin-bottom:0.5cm;">
+                    <h2 style="text-align:center">Spenden  </h2>
+            </v-btn>
         </div>
     </v-container>
   </div>
@@ -40,11 +46,11 @@ export default {
   name: "Spenden",
   data: () => ({
         items: [
-            { name: "Edeka", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde"},
-            { name: "ALDI", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde"},
-            { name: "LIDL", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde"},
-            { name: "REWE", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde"},
-            { name: "Penny", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde"},
+            { name: "Edeka", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.edeka.de/"},
+            { name: "ALDI", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
+            { name: "LIDL", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
+            { name: "REWE", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
+            { name: "Penny", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
         ],
         }),
 
@@ -81,4 +87,5 @@ export default {
     flex-direction: row;
     margin-bottom: 1cm;
 }
+
 </style>
