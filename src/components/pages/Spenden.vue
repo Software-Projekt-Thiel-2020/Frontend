@@ -4,7 +4,7 @@
       <h1>Spenden</h1>
     </v-container>
     <v-container>
-    <h3> Suche nach Betrieben in deiner Nähe! </h3>
+      <h3>Suche nach Betrieben in deiner Nähe!</h3>
     </v-container>
     <form class="container">
       <div>
@@ -22,21 +22,24 @@
       <input class="submit" type="submit" value="Suchen" />
     </form>
     <v-container>
-        <h2>Ergebnisse:</h2>
+      <h2>Ergebnisse:</h2>
     </v-container>
     <v-container class="results">
-        <div v-for="item in items" :key="item.name" class="project">
-            <img src="../../assets/placeholder.png">
-            <div style="border:0; margin-left: 0.5cm; flex-basis:55%">
-            <h2>Firmenname: {{item.name}}</h2>
-            <h3>Straße: {{item.straße}} {{item.nummer}}</h3>
-            <h3>PLZ und Ort: {{item.plz}} {{item.ort}}</h3>
-            <h4>Zur Website:<a :href=item.website>  {{item.website}} </a></h4>
-            </div>
-            <v-btn style="align-self: flex-end; margin-bottom:0.5cm;">
-                    <h2 style="text-align:center">Spenden  </h2>
-            </v-btn>
+      <div v-for="item in items" :key="item.name" class="project">
+        <img src="../../assets/placeholder.png" />
+        <div style="border:0; margin-left: 0.5cm; flex-basis:55%">
+          <h2>Firmenname: {{item.name}}</h2>
+          <h3>Straße: {{item.straße}} {{item.nummer}}</h3>
+          <h3>PLZ und Ort: {{item.plz}} {{item.ort}}</h3>
+          <h4>
+            Zur Website:
+            <a :href="item.website">{{item.website}}</a>
+          </h4>
         </div>
+        <v-btn style="align-self: flex-end; margin-bottom:0.5cm;">
+          <h2 style="text-align:center">Spenden</h2>
+        </v-btn>
+      </div>
     </v-container>
   </div>
 </template>
@@ -45,15 +48,49 @@
 export default {
   name: "Spenden",
   data: () => ({
-        items: [
-            { name: "Edeka", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.edeka.de/"},
-            { name: "ALDI", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
-            { name: "LIDL", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
-            { name: "REWE", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
-            { name: "Penny", straße: "Müllerstraße", nummer: 1, plz:32257, ort: "Bünde", website: "https://www.google.com/"},
-        ],
-        }),
-
+    items: [
+      {
+        name: "Edeka",
+        straße: "Müllerstraße",
+        nummer: 1,
+        plz: 32257,
+        ort: "Bünde",
+        website: "https://www.edeka.de/"
+      },
+      {
+        name: "ALDI",
+        straße: "Müllerstraße",
+        nummer: 1,
+        plz: 32257,
+        ort: "Bünde",
+        website: "https://www.google.com/"
+      },
+      {
+        name: "LIDL",
+        straße: "Müllerstraße",
+        nummer: 1,
+        plz: 32257,
+        ort: "Bünde",
+        website: "https://www.google.com/"
+      },
+      {
+        name: "REWE",
+        straße: "Müllerstraße",
+        nummer: 1,
+        plz: 32257,
+        ort: "Bünde",
+        website: "https://www.google.com/"
+      },
+      {
+        name: "Penny",
+        straße: "Müllerstraße",
+        nummer: 1,
+        plz: 32257,
+        ort: "Bünde",
+        website: "https://www.google.com/"
+      }
+    ]
+  })
 };
 </script>
 
@@ -78,14 +115,13 @@ export default {
 }
 
 .results {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .project {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 1cm;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1cm;
 }
-
 </style>
