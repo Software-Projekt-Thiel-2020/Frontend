@@ -14,10 +14,10 @@
         <input id="name" type="text" placeholder="Name des Betriebs" />
       </div>
       <div>
-        <label for="name">
+        <label for="ort">
           <i class="fas fa-search"></i>
         </label>
-        <input type="text" placeholder="Stadt/PLZ" />
+        <input id="ort" type="text" placeholder="Stadt/PLZ" />
       </div>
       <input class="submit" type="submit" value="Suchen" />
     </form>
