@@ -14,10 +14,10 @@
         <input id="name" type="text" placeholder="Name des Betriebs" />
       </div>
       <div>
-        <label for="name">
+        <label for="ort">
           <i class="fas fa-search"></i>
         </label>
-        <input type="text" placeholder="Stadt/PLZ" />
+        <input id="ort" type="text" placeholder="Stadt/PLZ" />
       </div>
       <input class="submit" type="submit" value="Suchen" />
     </form>
@@ -27,7 +27,7 @@
     <v-container class="results">
       <div v-for="item in items" :key="item.name" class="project">
         <img src="../../assets/placeholder.png" />
-        <div style="border:0; margin-left: 0.5cm; flex-basis:55%">
+        <div class="companyData" style="border:0;">
           <h2>Firmenname: {{item.name}}</h2>
           <h3>Straße: {{item.straße}} {{item.nummer}}</h3>
           <h3>PLZ und Ort: {{item.plz}} {{item.ort}}</h3>
@@ -36,7 +36,7 @@
             <a :href="item.website">{{item.website}}</a>
           </h4>
         </div>
-        <v-btn style="align-self: flex-end; margin-bottom:0.5cm; margin-right:0.5cm">
+        <v-btn class="gutscheinButton">
           <h2 style="text-align:center">Gutschein kaufen</h2>
         </v-btn>
       </div>
@@ -101,7 +101,7 @@ export default {
 }
 .container div {
   border: 1px solid black;
-  margin-right: 1cm;
+  margin-right: 50px;
   border-radius: 3px;
 }
 
@@ -121,6 +121,17 @@ export default {
 .project {
   display: flex;
   flex-direction: row;
-  margin-bottom: 1cm;
+  margin-bottom: 25px;
+}
+
+.gutscheinButton {
+  align-self: flex-end;
+  margin-bottom:15px;
+  margin-right: 15px;
+}
+
+.companyData {
+  margin-left: 15px; 
+  flex-basis:55%
 }
 </style>
