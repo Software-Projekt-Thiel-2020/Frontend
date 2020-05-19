@@ -25,13 +25,13 @@
                             <v-card elevation="7" class="py-6 text-center">
                                 <v-row>
                                     <v-col>
-                                        <h4 class="headline">Ziel</h4>
-                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.total.toFixed(2)}}€</h1>
+                                        <h4 class="headline">Gesammelt</h4>
+                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.reached.toFixed(2)}}€</h1>
 
                                     </v-col>
                                     <v-col>
-                                        <h4 class="headline">Gesammelt</h4>
-                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.reached.toFixed(2)}}€</h1>
+                                        <h4 class="headline">Ziel</h4>
+                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.total.toFixed(2)}}€</h1>
 
                                     </v-col>
                                 </v-row>
@@ -81,7 +81,7 @@
                 homepage: "https://google.de/",
                 donationGoal: {
                     total: 5000.00,
-                    reached: 2531.23,
+                    reached: 631.23,
                 }
             },
             donationValue: 0,
@@ -110,6 +110,10 @@
 
     a {
         text-decoration: none !important;
+    }
+
+    input:focus{
+
     }
 
     input{
