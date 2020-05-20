@@ -56,7 +56,7 @@
                 </v-col>
                 <v-col>
                     <v-card>
-                        <v-img src="https://i.imgur.com/EJOjIMC.jpg" />
+                        <v-img :src="project.image" />
                     </v-card>
                 </v-col>
             </v-row>
@@ -75,6 +75,7 @@
                 city:"Lübbecke",
                 type: "donate",
                 homepage: "https://google.de/",
+                image: "https://i.imgur.com/EJOjIMC.jpg",
                 donationGoal: {
                     total: 5000.00,
                     reached: 631.23,
