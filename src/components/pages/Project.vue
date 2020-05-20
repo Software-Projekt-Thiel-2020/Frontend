@@ -15,7 +15,7 @@
                         <v-card-text>
                             <div class="mb-4">
                                 <h3>Adresse</h3>
-                                {{project.street}}<br>
+                                {{project.street}}<br/>
                                 {{project.zip}} {{project.city}}
                             </div>
                             <v-card elevation="7" class="py-6 text-center">
@@ -40,10 +40,10 @@
                                         :value="getDonationGoalPercentage"
                                         striped
                                 ></v-progress-linear>
-                                <br>
-                                <hr>
+                                <br/>
+                                <hr/>
                                 <currency-input class="mt-3 headline" v-model="donationValue"/>
-                                <br>
+                                <br/>
                                 <v-btn class="mt-2 btn-hover color-9" dark>Betrag Spenden</v-btn>
                             </v-card>
 
