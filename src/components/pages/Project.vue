@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="gradientBackground">
         <div class="titleHeader text-center">
             <h1 class="display-3 hidden-sm-and-down font-weight-thin white--text ">
                 {{project.type === 'donate' ? 'Spendenseite' : 'Betriebsseite'}}
@@ -12,7 +12,7 @@
         <v-container>
             <v-row>
                 <v-col>
-                    <v-card class="projectBox">
+                    <v-card class="projectBox" elevation="4">
                         <v-card-title class="font-weight-light display-1">
                             {{project.name}}
                         </v-card-title>
@@ -96,11 +96,16 @@
         backdrop-filter: blur(15px) brightness(0.5);
     }
 
-    .projectBox{
-        padding:20px;
+    .gradientBackground{
 
         background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
         background-color: rgb(255, 255, 255);
+    }
+
+    .projectBox{
+        padding:20px;
+        background-color: rgba(255,255,255,0.8);
+
     }
 
     .goalBox{
