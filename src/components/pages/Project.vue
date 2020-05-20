@@ -122,10 +122,6 @@
         text-decoration: none;
     }
 
-    input:focus {
-
-    }
-
     input {
         border: 1px lightgrey solid;
         text-align: center;
