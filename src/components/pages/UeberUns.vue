@@ -3,7 +3,6 @@
         <h1>Über Uns</h1>
         <v-divider></v-divider><br>
         <v-row>
-            <v-divider vertical></v-divider>
             <v-col>
                 <h2 id="was_ist_spenderschlender">Was ist Spenderschlender</h2>
                 <p class="text-left"></p>
