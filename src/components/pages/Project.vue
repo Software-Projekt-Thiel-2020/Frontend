@@ -1,7 +1,7 @@
 <template>
     <div class="gradientBackground">
         <div class="titleHeader text-center">
-            <h1 :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'" class="font-weight-thin white--text" >
+            <h1 :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'" class="font-weight-thin white--text">
                 {{project.type === 'donate' ? 'Spendenseite' : 'Betriebsseite'}}
             </h1>
         </div>
@@ -22,12 +22,14 @@
                                 <v-row>
                                     <v-col>
                                         <h4 class="headline">Gesammelt</h4>
-                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.reached.toFixed(2)}}€</h1>
+                                        <h1 class="display-2 font-weight-thin">
+                                            {{project.donationGoal.reached.toFixed(2)}}€</h1>
 
                                     </v-col>
                                     <v-col>
                                         <h4 class="headline">Ziel</h4>
-                                        <h1 class="display-2 font-weight-thin">{{project.donationGoal.total.toFixed(2)}}€</h1>
+                                        <h1 class="display-2 font-weight-thin">
+                                            {{project.donationGoal.total.toFixed(2)}}€</h1>
 
                                     </v-col>
                                 </v-row>
@@ -40,7 +42,8 @@
                                 ></v-progress-linear>
                                 <br>
                                 <hr>
-                                <currency-input class="mt-3 headline" v-model="donationValue" /><br>
+                                <currency-input class="mt-3 headline" v-model="donationValue"/>
+                                <br>
                                 <v-btn class="mt-2 btn-hover color-9" dark>Betrag Spenden</v-btn>
                             </v-card>
 
@@ -56,7 +59,7 @@
                 </v-col>
                 <v-col>
                     <v-card>
-                        <v-img :src="project.image" />
+                        <v-img :src="project.image"/>
                     </v-card>
                 </v-col>
             </v-row>
@@ -70,9 +73,9 @@
         data: () => ({
             project: {
                 name: "Deutsches Rotes Kreuz",
-                street:"Osnabrücker Str. 62",
-                zip:32312,
-                city:"Lübbecke",
+                street: "Osnabrücker Str. 62",
+                zip: 32312,
+                city: "Lübbecke",
                 type: "donate",
                 homepage: "https://google.de/",
                 image: "https://i.imgur.com/EJOjIMC.jpg",
@@ -83,9 +86,9 @@
             },
             donationValue: 0,
         }),
-        computed:{
-            getDonationGoalPercentage: function(){
-                return this.project.donationGoal.reached/this.project.donationGoal.total*100;
+        computed: {
+            getDonationGoalPercentage: function () {
+                return this.project.donationGoal.reached / this.project.donationGoal.total * 100;
             }
         }
     }
@@ -98,19 +101,19 @@
         backdrop-filter: blur(15px) brightness(0.5);
     }
 
-    .gradientBackground{
+    .gradientBackground {
 
         background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
         background-color: rgb(255, 255, 255);
     }
 
-    .projectBox{
-        padding:20px;
-        background-color: rgba(255,255,255,0.8);
+    .projectBox {
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
 
     }
 
-    .goalBox{
+    .goalBox {
         border: 1px dotted black;
     }
 
@@ -119,11 +122,11 @@
         text-decoration: none !important;
     }
 
-    input:focus{
+    input:focus {
 
     }
 
-    input{
+    input {
         border: 1px lightgrey solid;
         text-align: center;
         border-radius: 50px;
@@ -133,7 +136,7 @@
     .btn-hover {
         background-size: 300% 100%;
         border-radius: 50px;
-        text-shadow: rgba(0,0,0,0.7) 0px 0px 5px;
+        text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
         transition: all .4s ease-in-out;
     }
 
