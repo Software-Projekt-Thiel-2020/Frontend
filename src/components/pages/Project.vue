@@ -1,13 +1,9 @@
 <template>
     <div class="gradientBackground">
         <div class="titleHeader text-center">
-            <h1 class="display-3 hidden-sm-and-down font-weight-thin white--text ">
+            <h1 :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'" class="font-weight-thin white--text" >
                 {{project.type === 'donate' ? 'Spendenseite' : 'Betriebsseite'}}
             </h1>
-            <h1 class="display-1 hidden-md-and-up font-weight-thin white--text ">
-                {{project.type === 'donate' ? 'Spendenseite' : 'Betriebsseite'}}
-            </h1>
-
         </div>
         <v-container>
             <v-row>
