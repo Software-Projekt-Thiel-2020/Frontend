@@ -31,11 +31,11 @@
 
                                     </v-col>
                                 </v-row>
-                                <h2>{{(project.donationGoal.reached/project.donationGoal.total*100).toFixed(1)}}%</h2>
+                                <h2>{{(getDonationGoalPercentage).toFixed(1)}}%</h2>
                                 <v-progress-linear
                                         color="secondary"
                                         height="15"
-                                        :value="project.donationGoal.reached/project.donationGoal.total*100"
+                                        :value="getDonationGoalPercentage"
                                         striped
                                 ></v-progress-linear>
                                 <br>
@@ -81,7 +81,12 @@
                 }
             },
             donationValue: 0,
-        })
+        }),
+        computed:{
+            getDonationGoalPercentage: function(){
+                return this.project.donationGoal.reached/this.project.donationGoal.total*100;
+            }
+        }
     }
 </script>
 
