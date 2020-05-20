@@ -24,13 +24,11 @@
                                         <h4 class="headline">Gesammelt</h4>
                                         <h1 class="display-2 font-weight-thin">
                                             {{project.donationGoal.reached.toFixed(2)}}€</h1>
-
                                     </v-col>
                                     <v-col>
                                         <h4 class="headline">Ziel</h4>
                                         <h1 class="display-2 font-weight-thin">
                                             {{project.donationGoal.total.toFixed(2)}}€</h1>
-
                                     </v-col>
                                 </v-row>
                                 <h2>{{(getDonationGoalPercentage).toFixed(1)}}%</h2>
@@ -46,8 +44,6 @@
                                 <br/>
                                 <v-btn class="mt-2 btn-hover color-9" dark>Betrag Spenden</v-btn>
                             </v-card>
-
-
                         </v-card-text>
                         <v-card-actions>
                             <a :href="project.homepage">
@@ -102,7 +98,6 @@
     }
 
     .gradientBackground {
-
         background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
         background-color: rgb(255, 255, 255);
     }
