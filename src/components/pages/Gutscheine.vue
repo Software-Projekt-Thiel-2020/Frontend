@@ -9,13 +9,13 @@
     <form class="container">
       <div>
         <label for="name">
-          <i class="fas fa-search"></i>
+          <v-icon style="color: black;"> mdi-magnify </v-icon>
         </label>
         <input id="name" type="text" placeholder="Name des Betriebs" />
       </div>
       <div>
         <label for="ort">
-          <i class="fas fa-search"></i>
+          <v-icon style="color: black;"> mdi-magnify </v-icon>
         </label>
         <input id="ort" type="text" placeholder="Stadt/PLZ" />
       </div>
