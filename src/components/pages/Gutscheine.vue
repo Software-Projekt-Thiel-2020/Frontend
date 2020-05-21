@@ -11,33 +11,54 @@
         <label for="name">
           <v-icon style="color: black;"> mdi-magnify </v-icon>
         </label>
-        <input id="name" type="text" placeholder="Name des Betriebs" />
+        <input
+          id="name"
+          type="text"
+          placeholder="Name des Betriebs"
+        >
       </div>
       <div>
         <label for="ort">
           <v-icon style="color: black;"> mdi-magnify </v-icon>
         </label>
-        <input id="ort" type="text" placeholder="Stadt/PLZ" />
+        <input
+          id="ort"
+          type="text"
+          placeholder="Stadt/PLZ"
+        >
       </div>
-      <input class="submit" type="submit" value="Suchen" />
+      <input
+        class="submit"
+        type="submit"
+        value="Suchen"
+      >
     </form>
     <v-container>
       <h2>Ergebnisse:</h2>
     </v-container>
     <v-container class="results">
-      <div v-for="item in items" :key="item.name" class="project">
-        <img src="../../assets/placeholder.png" />
-        <div class="companyData" style="border:0;">
-          <h2>Firmenname: {{item.name}}</h2>
-          <h3>Straße: {{item.straße}} {{item.nummer}}</h3>
-          <h3>PLZ und Ort: {{item.plz}} {{item.ort}}</h3>
+      <div
+        v-for="item in items"
+        :key="item.name"
+        class="project"
+      >
+        <img src="../../assets/placeholder.png">
+        <div
+          class="companyData"
+          style="border:0;"
+        >
+          <h2>Firmenname: {{ item.name }}</h2>
+          <h3>Straße: {{ item.straße }} {{ item.nummer }}</h3>
+          <h3>PLZ und Ort: {{ item.plz }} {{ item.ort }}</h3>
           <h4>
             Zur Website:
-            <a :href="item.website">{{item.website}}</a>
+            <a :href="item.website">{{ item.website }}</a>
           </h4>
         </div>
         <v-btn class="gutscheinButton">
-          <h2 style="text-align:center">Gutschein kaufen</h2>
+          <h2 style="text-align:center">
+            Gutschein kaufen
+          </h2>
         </v-btn>
       </div>
     </v-container>
@@ -46,51 +67,51 @@
 
 <script>
 export default {
-  name: "Gutscheine",
+  name: 'Gutscheine',
   data: () => ({
     items: [
       {
-        name: "Edeka",
-        straße: "Müllerstraße",
+        name: 'Edeka',
+        straße: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
-        ort: "Bünde",
-        website: "https://www.edeka.de/"
+        ort: 'Bünde',
+        website: 'https://www.edeka.de/',
       },
       {
-        name: "ALDI",
-        straße: "Müllerstraße",
+        name: 'ALDI',
+        straße: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
-        ort: "Bünde",
-        website: "https://www.google.com/"
+        ort: 'Bünde',
+        website: 'https://www.google.com/',
       },
       {
-        name: "LIDL",
-        straße: "Müllerstraße",
+        name: 'LIDL',
+        straße: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
-        ort: "Bünde",
-        website: "https://www.google.com/"
+        ort: 'Bünde',
+        website: 'https://www.google.com/',
       },
       {
-        name: "REWE",
-        straße: "Müllerstraße",
+        name: 'REWE',
+        straße: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
-        ort: "Bünde",
-        website: "https://www.google.com/"
+        ort: 'Bünde',
+        website: 'https://www.google.com/',
       },
       {
-        name: "Penny",
-        straße: "Müllerstraße",
+        name: 'Penny',
+        straße: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
-        ort: "Bünde",
-        website: "https://www.google.com/"
-      }
-    ]
-  })
+        ort: 'Bünde',
+        website: 'https://www.google.com/',
+      },
+    ],
+  }),
 };
 </script>
 
@@ -131,7 +152,7 @@ export default {
 }
 
 .companyData {
-  margin-left: 15px; 
+  margin-left: 15px;
   flex-basis:55%
 }
 </style>

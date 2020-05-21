@@ -1,16 +1,16 @@
 <template>
   <v-app>
-    <Navbar/>
+    <Navbar />
     <v-content>
-      <router-view></router-view>
+      <router-view />
     </v-content>
-    <Footer/>
+    <Footer />
   </v-app>
 </template>
 
 <script>
-import Navbar from './components/elements/Navbar';
-import Footer from "./components/elements/Footer";
+import Navbar from './components/elements/Navbar.vue';
+import Footer from './components/elements/Footer.vue';
 
 export default {
   name: 'App',

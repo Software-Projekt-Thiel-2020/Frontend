@@ -1,122 +1,189 @@
 <template>
-    <div class="mainbody">
-        <div class="pageContent">
-            <div class="text-center hidden-sm-and-down">
-                <div class="pageHeader">
-                    <h1 class="display-3 font-weight-thin white--text">
-                        Spenderschlender
-                    </h1>
-                    <h1 class="headline font-weight-thin white--text">
-                        Vertrauensvoll - Transparent - Blockchain
-                    </h1>
-
-                </div>
-                <v-row
-                        align="center"
-                        justify="center"
-                        class="white--text pageContent"
-                >
-                    <v-col class="text-center pageBox" cols="5">
-                        <v-icon class="display-4" style="color: white">mdi-gift-outline</v-icon>
-                        <h1 class="display-1  font-weight-thin mb-6">Spenden</h1>
-                        <h1 class="display-2  font-weight-thin mb-2">Spende über die Blockchain</h1>
-                        <p align="justify" style="margin-left: 15%; margin-right: 15%">
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                            ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                            dolores et ea rebum. Stet clita kasd gubergren, no sea.
-                        </p>
-                        <router-link
-                                to="/spenden"
-                                tag="span"
-                        >
-                            <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-                                Jetzt spenden!
-                            </v-btn>
-                        </router-link>
-                    </v-col>
-                    <v-divider style="border-color:rgba(255,255,255,0.4);z-index: 5; height: 70vh"  vertical></v-divider>
-                    <v-col class="text-center pageBox" cols="5">
-                        <v-icon class="display-4" style="color: white">mdi-wallet-outline</v-icon>
-                        <h1 class="display-1  font-weight-thin mb-6">Gutscheine</h1>
-                        <h1 class="display-2  font-weight-thin mb-2">Unterstütze deine Umgebung!</h1>
-                        <p align="justify" style="margin-left: 15%; margin-right: 15%">
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                            ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                            dolores et ea rebum. Stet clita kasd gubergren, no sea.
-                        </p>
-                        <router-link
-                                to="/gutscheine"
-                                tag="span"
-                        >
-                            <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-                                Gutscheine kaufen!
-                            </v-btn>
-                        </router-link>
-                    </v-col>
-                </v-row>
-            </div>
-            <div class="text-center hidden-md-and-up">
-                <div class="pageHeaderMobile">
-                    <h1 class="display-1 font-weight-thin white--text">
-                        Spenderschlender
-                    </h1>
-                    <h1 class="subtitle-1 font-weight-thin white--text">
-                        Vertrauensvoll - Transparent - Blockchain
-                    </h1>
-
-                </div>
-                <div class="white--text">
-                    <div class="pageBoxMobile">
-                        <v-icon class="display-2" style="color: white">mdi-gift-outline</v-icon>
-                        <h1 class="subtitle-1  font-weight-thin mb-2">Spenden</h1>
-                        <h1 class="headline  font-weight-thin ">Spende über die Blockchain</h1>
-                        <p align="justify" style="margin-left: 15%; margin-right: 15%">
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                            ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                            dolores et ea rebum. Stet clita kasd gubergren, no sea.
-                        </p>
-                        <router-link
-                                to="/gutscheine"
-                                tag="span"
-                        >
-                            <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-                                Jetzt spenden!
-                            </v-btn>
-                        </router-link>
-                    </div>
-                    <hr>
-                    <div class="pageBoxMobile">
-                        <v-divider style="border-color:rgba(255,255,255,0.4);"></v-divider>
-                        <v-icon class="display-2" style="color: white">mdi-wallet-outline</v-icon>
-                        <h1 class="subtitle-1  font-weight-thin mb-6">Gutscheine</h1>
-                        <h1 class="headline  font-weight-thin">Unterstütze deine Umgebung!</h1>
-                        <p align="justify" style="margin-left: 15%; margin-right: 15%">
-                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                            ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                            dolores et ea rebum. Stet clita kasd gubergren, no sea.
-                        </p>
-                        <router-link
-                                to="/gutscheine"
-                                tag="span"
-                        >
-                            <v-btn class="title btn-hover white--text color-9" style="text-transform: none">
-                                Gutscheine kaufen!
-                            </v-btn>
-                        </router-link>
-                    </div>
-                </div>
-            </div>
+  <div class="mainbody">
+    <div class="pageContent">
+      <div class="text-center hidden-sm-and-down">
+        <div class="pageHeader">
+          <h1 class="display-3 font-weight-thin white--text">
+            Spenderschlender
+          </h1>
+          <h1 class="headline font-weight-thin white--text">
+            Vertrauensvoll - Transparent - Blockchain
+          </h1>
         </div>
-        <div class="bgcover"></div>
+        <v-row
+          align="center"
+          justify="center"
+          class="white--text pageContent"
+        >
+          <v-col
+            class="text-center pageBox"
+            cols="5"
+          >
+            <v-icon
+              class="display-4"
+              style="color: white"
+            >
+              mdi-gift-outline
+            </v-icon>
+            <h1 class="display-1  font-weight-thin mb-6">
+              Spenden
+            </h1>
+            <h1 class="display-2  font-weight-thin mb-2">
+              Spende über die Blockchain
+            </h1>
+            <p
+              align="justify"
+              style="margin-left: 15%; margin-right: 15%"
+            >
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+            </p>
+            <router-link
+              to="/spenden"
+              tag="span"
+            >
+              <v-btn
+                class="title btn-hover white--text color-9"
+                style="text-transform: none"
+              >
+                Jetzt spenden!
+              </v-btn>
+            </router-link>
+          </v-col>
+          <v-divider
+            style="border-color:rgba(255,255,255,0.4);z-index: 5; height: 70vh"
+            vertical
+          />
+          <v-col
+            class="text-center pageBox"
+            cols="5"
+          >
+            <v-icon
+              class="display-4"
+              style="color: white"
+            >
+              mdi-wallet-outline
+            </v-icon>
+            <h1 class="display-1  font-weight-thin mb-6">
+              Gutscheine
+            </h1>
+            <h1 class="display-2  font-weight-thin mb-2">
+              Unterstütze deine Umgebung!
+            </h1>
+            <p
+              align="justify"
+              style="margin-left: 15%; margin-right: 15%"
+            >
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+            </p>
+            <router-link
+              to="/gutscheine"
+              tag="span"
+            >
+              <v-btn
+                class="title btn-hover white--text color-9"
+                style="text-transform: none"
+              >
+                Gutscheine kaufen!
+              </v-btn>
+            </router-link>
+          </v-col>
+        </v-row>
+      </div>
+      <div class="text-center hidden-md-and-up">
+        <div class="pageHeaderMobile">
+          <h1 class="display-1 font-weight-thin white--text">
+            Spenderschlender
+          </h1>
+          <h1 class="subtitle-1 font-weight-thin white--text">
+            Vertrauensvoll - Transparent - Blockchain
+          </h1>
+        </div>
+        <div class="white--text">
+          <div class="pageBoxMobile">
+            <v-icon
+              class="display-2"
+              style="color: white"
+            >
+              mdi-gift-outline
+            </v-icon>
+            <h1 class="subtitle-1  font-weight-thin mb-2">
+              Spenden
+            </h1>
+            <h1 class="headline  font-weight-thin ">
+              Spende über die Blockchain
+            </h1>
+            <p
+              align="justify"
+              style="margin-left: 15%; margin-right: 15%"
+            >
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+            </p>
+            <router-link
+              to="/gutscheine"
+              tag="span"
+            >
+              <v-btn
+                class="title btn-hover white--text color-9"
+                style="text-transform: none"
+              >
+                Jetzt spenden!
+              </v-btn>
+            </router-link>
+          </div>
+          <hr>
+          <div class="pageBoxMobile">
+            <v-divider style="border-color:rgba(255,255,255,0.4);" />
+            <v-icon
+              class="display-2"
+              style="color: white"
+            >
+              mdi-wallet-outline
+            </v-icon>
+            <h1 class="subtitle-1  font-weight-thin mb-6">
+              Gutscheine
+            </h1>
+            <h1 class="headline  font-weight-thin">
+              Unterstütze deine Umgebung!
+            </h1>
+            <p
+              align="justify"
+              style="margin-left: 15%; margin-right: 15%"
+            >
+              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+            </p>
+            <router-link
+              to="/gutscheine"
+              tag="span"
+            >
+              <v-btn
+                class="title btn-hover white--text color-9"
+                style="text-transform: none"
+              >
+                Gutscheine kaufen!
+              </v-btn>
+            </router-link>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="bgcover" />
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'Home',
+export default {
+  name: 'Home',
 
-        data: () => ({}),
-    }
+  data: () => ({}),
+};
 </script>
 
 <style>

@@ -1,67 +1,67 @@
 <template>
-    <v-footer
-            dark
-            padless
+  <v-footer
+    dark
+    padless
+  >
+    <v-card
+      flat
+      tile
+      class="primary white--text text-center"
+      style="width: 100vw"
     >
-        <v-card
-                flat
-                tile
-                class="primary white--text text-center"
-                style="width: 100vw"
+      <v-card-text>
+        <router-link
+          to="/agb"
+          tag="span"
+          class="ma-3"
         >
-            <v-card-text>
-                <router-link
-                        to="/agb"
-                        tag="span"
-                        class="ma-3"
-                >
-                    <span class="link white--text">Unsere AGB</span>
-                </router-link>
-                <router-link
-                        to="/datenschutz"
-                        tag="span"
-                        class="ma-3"
-                >
-                    <span class="link white--text">Datenschutzerklärung</span>
-                </router-link>
-                <router-link
-                        to="/impressum"
-                        tag="span"
-                        class="ma-3"
-                >
-                    <span class="link white--text">Impressum</span>
-                </router-link>
+          <span class="link white--text">Unsere AGB</span>
+        </router-link>
+        <router-link
+          to="/datenschutz"
+          tag="span"
+          class="ma-3"
+        >
+          <span class="link white--text">Datenschutzerklärung</span>
+        </router-link>
+        <router-link
+          to="/impressum"
+          tag="span"
+          class="ma-3"
+        >
+          <span class="link white--text">Impressum</span>
+        </router-link>
 
-                <br>
+        <br>
 
-                <router-link
-                        to="/warumspenden"
-                        tag="span"
-                        class="ma-3"
-                >
-                <v-btn
-                        target="_blank"
-                        class="btn-hover color-9 mt-3"
-                        style="text-transform: none"
-                >
-                    Warum Du bei uns spenden solltest...
-                </v-btn>
-                </router-link>
-            </v-card-text>
+        <router-link
+          to="/warumspenden"
+          tag="span"
+          class="ma-3"
+        >
+          <v-btn
+            target="_blank"
+            class="btn-hover color-9 mt-3"
+            style="text-transform: none"
+          >
+            Warum Du bei uns spenden solltest...
+          </v-btn>
+        </router-link>
+      </v-card-text>
 
-            <v-divider></v-divider>
+      <v-divider />
 
-            <v-card-text class="white--text">
-                {{ new Date().getFullYear() }} — <strong>Spenderschlender</strong>
-            </v-card-text>
-        </v-card>
-    </v-footer>
+      <v-card-text class="white--text">
+        {{ new Date().getFullYear() }} — <strong>Spenderschlender</strong>
+      </v-card-text>
+    </v-card>
+  </v-footer>
 </template>
 
 <script>
-    export default {
-        name: "Footer"
-    }
+export default {
+  name: 'Footer',
+};
 </script>
 
 <style scoped>

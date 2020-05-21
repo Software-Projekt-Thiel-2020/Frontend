@@ -1,95 +1,139 @@
 <template>
-    <v-container > <!-- class="mainbody" -->
-        <div>
-            <h1>Mein Profil</h1>
-        </div>
-        <v-row
-                align="left"
-                justify="left"
-                class="pageContent"
-        >
-            <v-col class="text-left pageBox" cols="5">
-                <h2> Meine Adresse: </h2>
-            </v-col>
+  <v-container>
+    <!-- class="mainbody" -->
+    <div>
+      <h1>Mein Profil</h1>
+    </div>
+    <v-row
+      align="left"
+      justify="left"
+      class="pageContent"
+    >
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <h2> Meine Adresse: </h2>
+      </v-col>
 
-            <v-col class="text-left pageBox" cols="5">
-                <h2> Gesamtbetrag aller getätigten Spenden: </h2>
-            </v-col>
-            <v-col class="text-left pageBox" cols="5">
-                <v-row>
-                    <v-col class="text-left pageBox atab" cols="12">
-                        <h3>Straße: {{straße}} {{nummer}}</h3>
-                    </v-col>
-                    <v-col class="text-left pageBox" cols="12">
-                        <h3>PLZ und Ort: {{plz}} {{ort}}</h3>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col class="text-left pageBox" cols="5">
-                <v-row>
-                    <v-col class="text-left pageBox" cols="12">
-                            <h3>Gesamtbetrag: {{betragSpenden}}€</h3>
-                    </v-col>
-                </v-row>
-            </v-col>
-
-            <v-col class="text-left pageBox" cols="5">
-               <h2> Kontaktdaten:</h2>
-            </v-col>
-             <v-col class="text-left pageBox" cols="5">
-               <h2> Gesamtbetrag aller gekauften Gutscheine:</h2>
-            </v-col>
-
-            <v-col class="text-left pageBox" cols="5">
-               <v-row>
-                    <v-col class="text-left pageBox" cols="10">
-                            <h3>E-Mail: {{email}}</h3>
-                    </v-col>
-                    <v-col class="text-left pageBox" cols="10">
-                            <h3>Telefon: {{telefon}}</h3>
-                    </v-col>
-                </v-row>
-            </v-col>
-
-            <v-col class="text-left pageBox" cols="5">
-                <v-row>
-                    <v-col class="text-left pageBox" cols="12">
-                            <h3>Gesamtbetrag: {{betragGutscheine}}€</h3>
-                    </v-col>
-                </v-row>
-            </v-col>
-             
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <h2> Gesamtbetrag aller getätigten Spenden: </h2>
+      </v-col>
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <v-row>
+          <v-col
+            class="text-left pageBox atab"
+            cols="12"
+          >
+            <h3>Straße: {{ straße }} {{ nummer }}</h3>
+          </v-col>
+          <v-col
+            class="text-left pageBox"
+            cols="12"
+          >
+            <h3>PLZ und Ort: {{ plz }} {{ ort }}</h3>
+          </v-col>
         </v-row>
+      </v-col>
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <v-row>
+          <v-col
+            class="text-left pageBox"
+            cols="12"
+          >
+            <h3>Gesamtbetrag: {{ betragSpenden }}€</h3>
+          </v-col>
+        </v-row>
+      </v-col>
 
-        <div class="linkToDonate text-center">
-            <router-link
-                    to="/portfolio"
-                    tag="span"
-                    class="link"
-            >
-                <v-btn>
-                    <h1 style="text-align:center">Meine Spenden und Gutscheine </h1>
-                </v-btn>
-            </router-link>
-        </div>
-    </v-container>
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <h2> Kontaktdaten:</h2>
+      </v-col>
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <h2> Gesamtbetrag aller gekauften Gutscheine:</h2>
+      </v-col>
+
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <v-row>
+          <v-col
+            class="text-left pageBox"
+            cols="10"
+          >
+            <h3>E-Mail: {{ email }}</h3>
+          </v-col>
+          <v-col
+            class="text-left pageBox"
+            cols="10"
+          >
+            <h3>Telefon: {{ telefon }}</h3>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <v-col
+        class="text-left pageBox"
+        cols="5"
+      >
+        <v-row>
+          <v-col
+            class="text-left pageBox"
+            cols="12"
+          >
+            <h3>Gesamtbetrag: {{ betragGutscheine }}€</h3>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+
+    <div class="linkToDonate text-center">
+      <router-link
+        to="/portfolio"
+        tag="span"
+        class="link"
+      >
+        <v-btn>
+          <h1 style="text-align:center">
+            Meine Spenden und Gutscheine
+          </h1>
+        </v-btn>
+      </router-link>
+    </div>
+  </v-container>
 </template>
 
 <script>
-    export default {
-        name: "BenutzerProfil",
-        
-        data: () => ({
-            plz: 20359,
-            ort: "Hamburg",
-            betragSpenden: 300,
-            betragGutscheine: 500,
-            straße: "Reeperbahn",
-            nummer: "108-114",
-            email: "johannes@web.de",
-            telefon: "-"
-        }),
-    }
+export default {
+  name: 'BenutzerProfil',
+
+  data: () => ({
+    plz: 20359,
+    ort: 'Hamburg',
+    betragSpenden: 300,
+    betragGutscheine: 500,
+    straße: 'Reeperbahn',
+    nummer: '108-114',
+    email: 'johannes@web.de',
+    telefon: '-',
+  }),
+};
 </script>
 
 <style scoped>
