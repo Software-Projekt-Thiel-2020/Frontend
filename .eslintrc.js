@@ -18,6 +18,7 @@ module.exports = {
       files: ['*.vue'],
       rules: {
         'max-len': 'off',
+        "linebreak-style": 0,
       },
     },
   ],
