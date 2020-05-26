@@ -12,7 +12,9 @@ module.exports = {
     'plugin:vue/recommended',
     '@vue/airbnb',
   ],
-  rules: {},
+  rules: {
+        "linebreak-style": 0,
+  },
   overrides: [
     {
       files: ['*.vue'],
