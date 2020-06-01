@@ -17,7 +17,11 @@
               :key="donation.name"
               class="project"
             >
-              <img class="picture" src="../../assets/placeholder.png">
+              <img
+                class="picture"
+                src="../../assets/placeholder.png"
+                alt="placeholder"
+              >
               <div
                 class="companyData"
                 style="border:0;"
@@ -46,7 +50,11 @@
               :key="coupon.name"
               class="project"
             >
-              <img class="picture" src="../../assets/placeholder.png">
+              <img
+                class="picture"
+                src="../../assets/placeholder.png"
+                alt="placeholder"
+              >
               <div
                 class="companyData"
                 style="border:0;"
@@ -58,7 +66,12 @@
                   Zur Website:
                   <a :href="coupon.website">{{ coupon.website }}</a>
                 </h4>
-                <h4 v-if="coupon.available == false" class="expired">(Gutschein bereits eingelöst)</h4>
+                <h4
+                  v-if="coupon.available === false"
+                  class="expired"
+                >
+                  (Gutschein bereits eingelöst)
+                </h4>
               </div>
             </div>
           </div>
