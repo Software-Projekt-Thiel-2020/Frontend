@@ -56,11 +56,11 @@
           </h4>
         </div>
         <router-link :to="'project/'+item.id">
-        <v-btn class="spendenButton">
-          <h2 style="text-align:center">
-            Spenden
-          </h2>
-        </v-btn>
+          <v-btn class="spendenButton">
+            <h2 style="text-align:center">
+              Spenden
+            </h2>
+          </v-btn>
         </router-link>
       </div>
     </v-container>
