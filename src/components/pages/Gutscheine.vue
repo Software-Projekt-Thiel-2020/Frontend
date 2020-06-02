@@ -55,11 +55,13 @@
             <a :href="item.website">{{ item.website }}</a>
           </h4>
         </div>
+        <router-link :to="'project/'+item.id">
         <v-btn class="gutscheinButton">
           <h2 style="text-align:center">
             Gutschein kaufen
           </h2>
         </v-btn>
+        </router-link>
       </div>
     </v-container>
   </div>
@@ -71,6 +73,7 @@ export default {
   data: () => ({
     items: [
       {
+        id: 1,
         name: 'Edeka',
         straße: 'Müllerstraße',
         nummer: 1,
@@ -79,6 +82,7 @@ export default {
         website: 'https://www.edeka.de/',
       },
       {
+        id: 2,
         name: 'ALDI',
         straße: 'Müllerstraße',
         nummer: 1,
@@ -87,6 +91,7 @@ export default {
         website: 'https://www.google.com/',
       },
       {
+        id: 3,
         name: 'LIDL',
         straße: 'Müllerstraße',
         nummer: 1,
@@ -95,6 +100,7 @@ export default {
         website: 'https://www.google.com/',
       },
       {
+        id: 4,
         name: 'REWE',
         straße: 'Müllerstraße',
         nummer: 1,
@@ -103,6 +109,7 @@ export default {
         website: 'https://www.google.com/',
       },
       {
+        id: 5,
         name: 'Penny',
         straße: 'Müllerstraße',
         nummer: 1,
