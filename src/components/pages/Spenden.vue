@@ -75,7 +75,7 @@ export default {
       {
         id: 1,
         name: 'Edeka',
-        strasse: 'Müllerstrasse',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -84,7 +84,7 @@ export default {
       {
         id: 2,
         name: 'ALDI',
-        strasse: 'Müllerstrasse',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -93,7 +93,7 @@ export default {
       {
         id: 3,
         name: 'LIDL',
-        strasse: 'Müllerstrasse',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -102,7 +102,7 @@ export default {
       {
         id: 4,
         name: 'REWE',
-        strasse: 'Müllerstrasse',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -111,7 +111,7 @@ export default {
       {
         id: 5,
         name: 'Penny',
-        strasse: 'Müllerstrasse',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
