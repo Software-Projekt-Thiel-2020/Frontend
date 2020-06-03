@@ -2,7 +2,11 @@
   <v-container>
     <!-- class="mainbody" -->
     <div>
-      <p class="display-1 ma-0">Willkommen{{user.name() ? ' '+user.name():''}}!</p><p class="overline">({{user.username}})</p>
+      <p class="display-1 ma-0">
+        Willkommen{{ user.name() ? ' '+user.name():'' }}!
+      </p><p class="overline">
+        ({{ user.username }})
+      </p>
     </div>
     <v-row
       align="left"
