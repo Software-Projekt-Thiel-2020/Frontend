@@ -81,7 +81,10 @@
         @click="signIn"
       >
         <span class="mr-2">Anmelden mit Blockstack</span>
-        <img class="blockstack-logo" src="../../assets/blockstack.svg">
+        <img
+          class="blockstack-logo"
+          src="../../assets/blockstack.svg"
+        >
       </v-btn>
 
 
@@ -98,15 +101,20 @@
             class="hidden-sm-and-down"
             v-on="on"
           >
-              <v-avatar color="white" >
-                <v-icon v-if="user && !user.avatarUrl()" color="indigo">mdi-account-circle</v-icon>
+            <v-avatar color="white">
+              <v-icon
+                v-if="user && !user.avatarUrl()"
+                color="indigo"
+              >
+                mdi-account-circle
+              </v-icon>
 
-                <img
-                        v-if="user && user.avatarUrl()"
-                        :src="user.avatarUrl()"
-                        alt="John"
-                >
-              </v-avatar>
+              <img
+                v-if="user && user.avatarUrl()"
+                :src="user.avatarUrl()"
+                alt="John"
+              >
+            </v-avatar>
           </v-btn>
         </template>
 
@@ -204,9 +212,9 @@
           </router-link>
 
           <v-list-item
-                  color="accent"
-                  v-if="!userSession.isUserSignedIn()"
-                  @click="signIn"
+            v-if="!userSession.isUserSignedIn()"
+            color="accent"
+            @click="signIn"
           >
             <v-list-item-icon>
               <v-icon>mdi-run</v-icon>
@@ -214,9 +222,9 @@
             <v-list-item-title>Anmelden</v-list-item-title>
           </v-list-item>
           <v-list-item
-                  color="accent"
-                  v-if="userSession.isUserSignedIn()"
-                  @click="signOut"
+            v-if="userSession.isUserSignedIn()"
+            color="accent"
+            @click="signOut"
           >
             <v-list-item-icon>
               <v-icon>mdi-run</v-icon>
