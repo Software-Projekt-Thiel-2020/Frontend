@@ -48,18 +48,20 @@
           style="border:0;"
         >
           <h2>Firmenname: {{ item.name }}</h2>
-          <h3>Straße: {{ item.straße }} {{ item.nummer }}</h3>
+          <h3>Straße: {{ item.strasse }} {{ item.nummer }}</h3>
           <h3>PLZ und Ort: {{ item.plz }} {{ item.ort }}</h3>
           <h4>
             Zur Website:
             <a :href="item.website">{{ item.website }}</a>
           </h4>
         </div>
-        <v-btn class="spendenButton">
-          <h2 style="text-align:center">
-            Spenden
-          </h2>
-        </v-btn>
+        <router-link :to="'project/'+item.id">
+          <v-btn class="spendenButton">
+            <h2 style="text-align:center">
+              Spenden
+            </h2>
+          </v-btn>
+        </router-link>
       </div>
     </v-container>
   </div>
@@ -71,40 +73,45 @@ export default {
   data: () => ({
     items: [
       {
+        id: 1,
         name: 'Edeka',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
         website: 'https://www.edeka.de/',
       },
       {
+        id: 2,
         name: 'ALDI',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
         website: 'https://www.google.com/',
       },
       {
+        id: 3,
         name: 'LIDL',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
         website: 'https://www.google.com/',
       },
       {
+        id: 4,
         name: 'REWE',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
         website: 'https://www.google.com/',
       },
       {
+        id: 5,
         name: 'Penny',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstraße',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',

@@ -61,7 +61,7 @@
         class="hidden-sm-and-down"
       >
         <v-btn
-          v-if="loggedIn"
+          v-if="userSession.isUserSignedIn()"
           target="_blank"
           color="accent"
           class="ma-2"
@@ -73,21 +73,23 @@
 
 
       <v-btn
-        v-if="!loggedIn"
+        v-if="!userSession.isUserSignedIn()"
         class="ma-2 hidden-sm-and-down"
         target="_blank"
         rounded
         color="accent"
-        @click="loggedIn = true"
+        @click="signIn"
       >
-        <span class="mr-2">Anmelden</span>
-        <v-icon>mdi-run</v-icon>
-        <v-icon>mdi-arrow-right-thick</v-icon>
+        <span class="mr-2">Anmelden mit Blockstack</span>
+        <img
+          class="blockstack-logo"
+          src="../../assets/blockstack.svg"
+        >
       </v-btn>
 
 
       <v-menu
-        v-if="loggedIn"
+        v-if="userSession.isUserSignedIn()"
         bottom
         left
         :offset-y="true"
@@ -99,8 +101,19 @@
             class="hidden-sm-and-down"
             v-on="on"
           >
-            <v-avatar color="red">
-              <span class="white--text headline">CJ</span>
+            <v-avatar color="white">
+              <v-icon
+                v-if="user && !user.avatarUrl()"
+                color="indigo"
+              >
+                mdi-account-circle
+              </v-icon>
+
+              <img
+                v-if="user && user.avatarUrl()"
+                :src="user.avatarUrl()"
+                alt="John"
+              >
             </v-avatar>
           </v-btn>
         </template>
@@ -121,7 +134,7 @@
           <v-list-item>
             <v-list-item-title
               class="clickable"
-              @click="loggedIn = false"
+              @click="signOut"
             >
               <v-icon class="mr-1">
                 mdi-logout
@@ -173,7 +186,7 @@
           <v-spacer />
 
           <router-link
-            v-if="loggedIn"
+            v-if="userSession.isUserSignedIn()"
             to="/portfolio"
             tag="span"
           >
@@ -186,7 +199,7 @@
           </router-link>
 
           <router-link
-            v-if="loggedIn"
+            v-if="userSession.isUserSignedIn()"
             to="/profil"
             tag="span"
           >
@@ -199,13 +212,24 @@
           </router-link>
 
           <v-list-item
+            v-if="!userSession.isUserSignedIn()"
             color="accent"
-            @click="loggedIn = !loggedIn"
+            @click="signIn"
           >
             <v-list-item-icon>
               <v-icon>mdi-run</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>{{ loggedIn ? 'Abmelden' : 'Anmelden' }}</v-list-item-title>
+            <v-list-item-title>Anmelden</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            v-if="userSession.isUserSignedIn()"
+            color="accent"
+            @click="signOut"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-run</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Abmelden</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -214,16 +238,51 @@
 </template>
 
 <script>
+import * as blockstack from 'blockstack';
+import { userSession } from '../../userSession';
+
 export default {
   name: 'Navbar',
   data: () => ({
     drawer: false,
     loggedIn: false,
+    userSession: null,
+    user: null,
   }),
+  created() {
+    this.userSession = userSession;
+  },
+  mounted() {
+    if (userSession.isUserSignedIn()) {
+      this.userData = userSession.loadUserData();
+      this.user = new blockstack.Person(this.userData.profile);
+      this.user.username = this.userData.username;
+      window.user = this.user;
+    } else if (userSession.isSignInPending()) {
+      userSession.handlePendingSignIn()
+        .then(() => {
+          window.location = window.location.origin;
+        });
+    }
+  },
+  methods: {
+    signIn() {
+      blockstack.redirectToSignIn();
+    },
+    signOut() {
+      window.user = undefined;
+      blockstack.signUserOut(window.location.origin);
+    },
+  },
 };
 </script>
 
 <style scoped>
+    .blockstack-logo{
+      color: white;
+      width: 24px;
+    }
+
     .clickable {
         cursor: pointer
     }

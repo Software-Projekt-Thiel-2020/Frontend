@@ -2,7 +2,11 @@
   <v-container>
     <!-- class="mainbody" -->
     <div>
-      <h1>Mein Profil</h1>
+      <p class="display-1 ma-0">
+        Willkommen{{ user.name() ? ' '+user.name():'' }}!
+      </p><p class="overline">
+        ({{ user.username }})
+      </p>
     </div>
     <v-row
       align="left"
@@ -31,7 +35,7 @@
             class="text-left pageBox atab"
             cols="12"
           >
-            <h3>Straße: {{ straße }} {{ nummer }}</h3>
+            <h3>Straße: {{ strasse }} {{ nummer }}</h3>
           </v-col>
           <v-col
             class="text-left pageBox"
@@ -120,15 +124,17 @@
 </template>
 
 <script>
+
 export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    user: window.user,
     plz: 20359,
     ort: 'Hamburg',
     betragSpenden: 300,
     betragGutscheine: 500,
-    straße: 'Reeperbahn',
+    strasse: 'Reeperbahn',
     nummer: '108-114',
     email: 'johannes@web.de',
     telefon: '-',
