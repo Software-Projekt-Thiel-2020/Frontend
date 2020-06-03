@@ -2,7 +2,7 @@
   <v-container>
     <!-- class="mainbody" -->
     <div>
-      <h1>Mein Profil</h1>
+      <p class="display-1 ma-0">Willkommen{{user.name() ? ' '+user.name():''}}!</p><p class="overline">({{user.username}})</p>
     </div>
     <v-row
       align="left"
@@ -120,10 +120,12 @@
 </template>
 
 <script>
+
 export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    user: window.user,
     plz: 20359,
     ort: 'Hamburg',
     betragSpenden: 300,

@@ -1,0 +1,10 @@
+{
+  "name": "Spenderschlender",
+  "start_url": "http://spenderschlender-dev.3ef.de/",
+  "description": "A blockchain donation and voucher project",
+  "icons": [{
+    "src": "http://blockstack-todos.appartisan.com/logo.png",
+    "sizes": "400x400",
+    "type": "image/png"
+  }]
+}

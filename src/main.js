@@ -19,6 +19,8 @@ Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(VueCurrencyInput);
 
+window.blockstack = require('blockstack');
+
 const routes = [
   { path: '/', component: Home },
   { path: '/agb', component: AGB },
