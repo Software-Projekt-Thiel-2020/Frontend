@@ -78,7 +78,7 @@
         target="_blank"
         rounded
         color="accent"
-        @click="signin"
+        @click="signIn"
       >
         <span class="mr-2">Anmelden mit Blockstack</span>
         <img class="blockstack-logo" src="../../assets/blockstack.svg">
@@ -204,13 +204,24 @@
           </router-link>
 
           <v-list-item
-            color="accent"
-            @click="userSession.isUserSignedIn() ? signOut : signin"
+                  color="accent"
+                  v-if="!userSession.isUserSignedIn()"
+                  @click="signIn"
           >
             <v-list-item-icon>
               <v-icon>mdi-run</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>{{ userSession.isUserSignedIn() ? 'Abmelden' : 'Anmelden' }}</v-list-item-title>
+            <v-list-item-title>Anmelden</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+                  color="accent"
+                  v-if="userSession.isUserSignedIn()"
+                  @click="signOut"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-run</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Abmelden</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -247,7 +258,7 @@ export default {
     }
   },
   methods: {
-    signin() {
+    signIn() {
       blockstack.redirectToSignIn();
     },
     signOut() {
