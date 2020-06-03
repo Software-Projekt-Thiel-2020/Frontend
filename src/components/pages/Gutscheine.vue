@@ -48,7 +48,7 @@
           style="border:0;"
         >
           <h2>Firmenname: {{ item.name }}</h2>
-          <h3>Straße: {{ item.straße }} {{ item.nummer }}</h3>
+          <h3>Straße: {{ item.strasse }} {{ item.nummer }}</h3>
           <h3>PLZ und Ort: {{ item.plz }} {{ item.ort }}</h3>
           <h4>
             Zur Website:
@@ -75,7 +75,7 @@ export default {
       {
         id: 1,
         name: 'Edeka',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstrasse',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -84,7 +84,7 @@ export default {
       {
         id: 2,
         name: 'ALDI',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstrasse',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -93,7 +93,7 @@ export default {
       {
         id: 3,
         name: 'LIDL',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstrasse',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -102,7 +102,7 @@ export default {
       {
         id: 4,
         name: 'REWE',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstrasse',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',
@@ -111,7 +111,7 @@ export default {
       {
         id: 5,
         name: 'Penny',
-        straße: 'Müllerstraße',
+        strasse: 'Müllerstrasse',
         nummer: 1,
         plz: 32257,
         ort: 'Bünde',

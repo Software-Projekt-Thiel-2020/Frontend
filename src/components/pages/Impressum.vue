@@ -4,7 +4,7 @@
     <h3>Angaben gemäß § 5 TMG</h3>
     <p>
       Fh Bielefeld, Standort Minden<br>
-      Artilleriestraße, 9<br>
+      Artilleriestrasse, 9<br>
       Gebäude D<br>
       32427 Minden<br>
     </p>

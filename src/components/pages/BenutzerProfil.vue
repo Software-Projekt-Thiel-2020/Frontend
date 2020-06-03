@@ -31,7 +31,7 @@
             class="text-left pageBox atab"
             cols="12"
           >
-            <h3>Straße: {{ straße }} {{ nummer }}</h3>
+            <h3>Straße: {{ strasse }} {{ nummer }}</h3>
           </v-col>
           <v-col
             class="text-left pageBox"
@@ -130,7 +130,7 @@ export default {
     ort: 'Hamburg',
     betragSpenden: 300,
     betragGutscheine: 500,
-    straße: 'Reeperbahn',
+    strasse: 'Reeperbahn',
     nummer: '108-114',
     email: 'johannes@web.de',
     telefon: '-',
