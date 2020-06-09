@@ -45,35 +45,44 @@
     </v-container>
     <v-container>
       <h2>Ergebnisse:</h2>
-    </v-container>
-    <v-container class="results">
-      <v-card
-        v-for="item in items"
-        :key="item.name"
-        class="project"
-        elevation="5"
-      >
-        <img src="../../assets/placeholder.png">
-        <div
-          class="companyData"
-          style="border:0;"
+      <div v-if="!gotResponse">
+        <v-skeleton-loader
+                v-for="index in 4"
+                :key="index"
+                class="my-10"
+                type="list-item-avatar"
+                tile
+        />
+      </div>
+      <div v-if="gotResponse">
+        <v-card
+                v-for="item in items"
+                :key="item.name"
+                class="project"
+                elevation="5"
         >
-          <h2>Firmenname: {{ item.name }}</h2>
-          <h4>
-            Zur Website:
-            <a :href="item.webpage">{{ item.webpage }}</a>
-          </h4>
-        </div>
-        <v-card-actions>
-          <router-link :to="'project/'+item.id">
-            <v-btn class="spendenButton">
-              <h2 style="text-align:center">
-                Spenden
-              </h2>
-            </v-btn>
-          </router-link>
-        </v-card-actions>
-      </v-card>
+          <img src="../../assets/placeholder.png">
+          <div
+                  class="companyData"
+                  style="border:0;"
+          >
+            <h2>Firmenname: {{ item.name }}</h2>
+            <h4>
+              Zur Website:
+              <a :href="item.webpage">{{ item.webpage }}</a>
+            </h4>
+          </div>
+          <v-card-actions>
+            <router-link :to="'project/'+item.id">
+              <v-btn class="spendenButton">
+                <h2 style="text-align:center">
+                  Spenden
+                </h2>
+              </v-btn>
+            </router-link>
+          </v-card-actions>
+        </v-card>
+      </div>
     </v-container>
   </div>
 </template>
@@ -85,6 +94,7 @@ export default {
   name: 'Spenden',
   data: () => ({
     items: [],
+    gotResponse: false,
   }),
   mounted() {
     axios.get('projects')
@@ -93,6 +103,9 @@ export default {
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        this.gotResponse = true;
       });
   },
 };
