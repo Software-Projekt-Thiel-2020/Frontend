@@ -5,42 +5,53 @@
     </v-container>
     <v-container>
       <h3>Suche nach Betrieben in deiner Nähe!</h3>
+      <v-form class="form-box">
+        <v-container>
+          <v-row>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <v-text-field
+                v-model="searchInstitution"
+                prepend-inner-icon="mdi-magnify"
+                label="Name des Betriebs"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <v-text-field
+                v-model="searchCity"
+                prepend-inner-icon="mdi-magnify"
+                label="Stadt/PLZ"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              sm="4"
+            >
+              <v-btn
+                class="submit"
+                type="submit"
+              >
+                Suchen
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
     </v-container>
-    <form class="container">
-      <div>
-        <label for="name">
-          <v-icon style="color: black;"> mdi-magnify </v-icon>
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Name des Betriebs"
-        >
-      </div>
-      <div>
-        <label for="ort">
-          <v-icon style="color: black;"> mdi-magnify </v-icon>
-        </label>
-        <input
-          id="ort"
-          type="text"
-          placeholder="Stadt/PLZ"
-        >
-      </div>
-      <input
-        class="submit"
-        type="submit"
-        value="Suchen"
-      >
-    </form>
     <v-container>
       <h2>Ergebnisse:</h2>
     </v-container>
     <v-container class="results">
-      <div
+      <v-card
         v-for="item in items"
         :key="item.name"
         class="project"
+        elevation="5"
       >
         <img src="../../assets/placeholder.png">
         <div
@@ -48,119 +59,83 @@
           style="border:0;"
         >
           <h2>Firmenname: {{ item.name }}</h2>
-          <h3>Straße: {{ item.strasse }} {{ item.nummer }}</h3>
-          <h3>PLZ und Ort: {{ item.plz }} {{ item.ort }}</h3>
           <h4>
             Zur Website:
-            <a :href="item.website">{{ item.website }}</a>
+            <a :href="item.webpage">{{ item.webpage }}</a>
           </h4>
         </div>
-        <router-link :to="'project/'+item.id">
-          <v-btn class="spendenButton">
-            <h2 style="text-align:center">
-              Spenden
-            </h2>
-          </v-btn>
-        </router-link>
-      </div>
+        <v-card-actions>
+          <router-link :to="'project/'+item.id">
+            <v-btn class="spendenButton">
+              <h2 style="text-align:center">
+                Spenden
+              </h2>
+            </v-btn>
+          </router-link>
+        </v-card-actions>
+      </v-card>
     </v-container>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Spenden',
   data: () => ({
-    items: [
-      {
-        id: 1,
-        name: 'Edeka',
-        strasse: 'Müllerstraße',
-        nummer: 1,
-        plz: 32257,
-        ort: 'Bünde',
-        website: 'https://www.edeka.de/',
-      },
-      {
-        id: 2,
-        name: 'ALDI',
-        strasse: 'Müllerstraße',
-        nummer: 1,
-        plz: 32257,
-        ort: 'Bünde',
-        website: 'https://www.google.com/',
-      },
-      {
-        id: 3,
-        name: 'LIDL',
-        strasse: 'Müllerstraße',
-        nummer: 1,
-        plz: 32257,
-        ort: 'Bünde',
-        website: 'https://www.google.com/',
-      },
-      {
-        id: 4,
-        name: 'REWE',
-        strasse: 'Müllerstraße',
-        nummer: 1,
-        plz: 32257,
-        ort: 'Bünde',
-        website: 'https://www.google.com/',
-      },
-      {
-        id: 5,
-        name: 'Penny',
-        strasse: 'Müllerstraße',
-        nummer: 1,
-        plz: 32257,
-        ort: 'Bünde',
-        website: 'https://www.google.com/',
-      },
-    ],
+    items: [],
   }),
+  mounted() {
+    axios.get('projects')
+      .then((res) => {
+        this.items = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
 };
 </script>
 
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: row;
-}
-.container div {
-  border: 1px solid black;
-  margin-right: 50px;
-  border-radius: 3px;
-}
 
-.submit {
-  background-color: #c4b3b0;
-  width: 100px;
-  font-weight: bold;
-  border-radius: 3px;
-  border: 1px solid black;
-}
+    .submit {
+        background-color: #c4b3b0;
+        width: 100px;
+        font-weight: bold;
+        border-radius: 3px;
+        border: 1px solid black;
+    }
 
-.results {
-  display: flex;
-  flex-direction: column;
-}
+    .results {
+        display: flex;
+        flex-direction: column;
+    }
 
-.project {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 25px;
-}
+    .project {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 25px;
+    }
 
-.spendenButton {
-  align-self: flex-end;
-  margin-bottom:15px;
-  margin-right: 15px;
-}
+    .form-box {
+        max-width: 700px;
+    }
 
-.companyData {
-  margin-left: 15px;
-  flex-basis:55%
-}
+    .spendenButton {
+        align-self: flex-end;
+        margin-bottom: 15px;
+        margin-right: 15px;
+    }
+
+    .form-input input {
+        border: 1px solid gray;
+    }
+
+    .companyData {
+        margin-left: 15px;
+        flex-basis: 55%
+    }
 </style>
