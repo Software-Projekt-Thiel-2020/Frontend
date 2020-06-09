@@ -4,7 +4,7 @@
       <h1>Spenden</h1>
     </v-container>
     <v-container>
-      <h3>Suche nach Betrieben in deiner Nähe!</h3>
+      <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
       <v-form class="form-box">
         <v-container>
           <v-row>
