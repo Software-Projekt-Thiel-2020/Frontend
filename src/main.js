@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueCurrencyInput from 'vue-currency-input';
 import VueRouter from 'vue-router';
+import axios from 'axios';
 import App from './App.vue';
 import vuetify from './plugins/vuetify';
 import Home from './components/pages/Home.vue';
@@ -14,6 +15,8 @@ import UeberUns from './components/pages/UeberUns.vue';
 import WarumSpenden from './components/pages/WarumSpenden.vue';
 import BenutzerProfil from './components/pages/BenutzerProfil.vue';
 import Project from './components/pages/Project.vue';
+
+axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
