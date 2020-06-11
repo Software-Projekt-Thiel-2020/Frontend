@@ -1,4 +1,4 @@
-<<template>
+<template>
   <div>
     <v-container>
       <h1>Spenden</h1>
