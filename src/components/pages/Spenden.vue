@@ -82,9 +82,7 @@
           <v-card-actions>
             <router-link :to="'project/'+item.id">
               <v-btn class="spendenButton">
-                <h2 style="text-align:center">
-                  Spenden
-                </h2>
+                Spenden
               </v-btn>
             </router-link>
           </v-card-actions>
@@ -149,11 +147,14 @@ export default {
         align-self: flex-end;
         margin-bottom: 15px;
         margin-right: 15px;
+        font-size: 1.5rem;
+        text-decoration: none;
     }
 
     .form-input input {
         border: 1px solid gray;
     }
+
 
     .companyData {
         margin-left: 15px;
