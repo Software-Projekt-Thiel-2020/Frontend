@@ -1,4 +1,4 @@
-<template>
+<<template>
   <div>
     <v-container>
       <h1>Spenden</h1>
@@ -13,7 +13,7 @@
               sm="4"
             >
               <v-text-field
-                v-model="searchInstitution"
+                v-model="searchProject"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
               />
@@ -101,6 +101,8 @@ export default {
     items: [],
     gotResponse: false,
     errorMessage: null,
+    searchProject: '',
+    searchCity: '',
   }),
   mounted() {
     axios.get('projects')
