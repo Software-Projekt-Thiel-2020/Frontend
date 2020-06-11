@@ -47,24 +47,24 @@
       <h2>Ergebnisse:</h2>
       <div v-if="!gotResponse">
         <v-skeleton-loader
-                v-for="index in 4"
-                :key="index"
-                class="my-10"
-                type="list-item-avatar"
-                tile
+          v-for="index in 4"
+          :key="index"
+          class="my-10"
+          type="list-item-avatar"
+          tile
         />
       </div>
       <div v-if="gotResponse">
         <v-card
-                v-for="item in items"
-                :key="item.name"
-                class="project"
-                elevation="5"
+          v-for="item in items"
+          :key="item.name"
+          class="project"
+          elevation="5"
         >
           <img src="../../assets/placeholder.png">
           <div
-                  class="companyData"
-                  style="border:0;"
+            class="companyData"
+            style="border:0;"
           >
             <h2>Firmenname: {{ item.name }}</h2>
             <h4>
