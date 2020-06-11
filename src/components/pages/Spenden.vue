@@ -45,6 +45,13 @@
     </v-container>
     <v-container>
       <h2>Ergebnisse:</h2>
+      <v-alert
+        v-if="errorMessage"
+        :value="true"
+        type="error"
+      >
+        Beim Abruf der Daten ist ein Fehler aufgetreten: {{ errorMessage }}
+      </v-alert>
       <div v-if="!gotResponse">
         <v-skeleton-loader
           v-for="index in 4"
@@ -95,6 +102,7 @@ export default {
   data: () => ({
     items: [],
     gotResponse: false,
+    errorMessage: null,
   }),
   mounted() {
     axios.get('projects')
@@ -102,7 +110,7 @@ export default {
         this.items = res.data;
       })
       .catch((err) => {
-        console.log(err);
+        this.errorMessage = err.toString();
       })
       .finally(() => {
         this.gotResponse = true;
