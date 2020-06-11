@@ -130,11 +130,6 @@ export default {
         border: 1px solid black;
     }
 
-    .results {
-        display: flex;
-        flex-direction: column;
-    }
-
     .project {
         display: flex;
         flex-direction: row;
