@@ -13,7 +13,7 @@
               sm="4"
             >
               <v-text-field
-                v-model="searchInstitution"
+                v-model="searchProject"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
               />
@@ -62,31 +62,36 @@
         />
       </div>
       <div v-if="gotResponse">
-        <v-card
-          v-for="item in items"
-          :key="item.name"
-          class="project"
-          elevation="5"
-        >
-          <img src="../../assets/placeholder.png">
-          <div
-            class="companyData"
-            style="border:0;"
+        <v-row>
+          <v-col
+            v-for="item in items"
+            :key="item.name"
           >
-            <h2>Firmenname: {{ item.name }}</h2>
-            <h4>
-              Zur Website:
-              <a :href="item.webpage">{{ item.webpage }}</a>
-            </h4>
-          </div>
-          <v-card-actions>
-            <router-link :to="'project/'+item.id">
-              <v-btn class="spendenButton">
-                Spenden
-              </v-btn>
-            </router-link>
-          </v-card-actions>
-        </v-card>
+            <v-card
+              class="project"
+              elevation="5"
+            >
+              <img src="../../assets/placeholder.png">
+              <div
+                class="companyData"
+                style="border:0;"
+              >
+                <h2>Firmenname: {{ item.name }}</h2>
+                <h4>
+                  Zur Website:
+                  <a :href="item.webpage">{{ item.webpage }}</a>
+                </h4>
+              </div>
+              <v-card-actions>
+                <router-link :to="'project/'+item.id">
+                  <v-btn class="spendenButton">
+                    Spenden
+                  </v-btn>
+                </router-link>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </v-container>
   </div>
@@ -101,6 +106,8 @@ export default {
     items: [],
     gotResponse: false,
     errorMessage: null,
+    searchProject: '',
+    searchCity: '',
   }),
   mounted() {
     axios.get('projects')
@@ -126,11 +133,6 @@ export default {
         font-weight: bold;
         border-radius: 3px;
         border: 1px solid black;
-    }
-
-    .results {
-        display: flex;
-        flex-direction: column;
     }
 
     .project {
