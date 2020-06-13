@@ -62,31 +62,36 @@
         />
       </div>
       <div v-if="gotResponse">
-        <v-card
-          v-for="item in items"
-          :key="item.name"
-          class="voucher"
-          elevation="5"
-        >
-          <img src="../../assets/placeholder.png">
-          <div
-            class="companyData"
-            style="border:0;"
+        <v-row>
+          <v-col
+            v-for="item in items"
+            :key="item.name"
           >
-            <h2>Firmenname: {{ item.name }}</h2>
-            <h4>
-              Zur Website:
-              <a :href="item.webpage">{{ item.webpage }}</a>
-            </h4>
-          </div>
-          <v-card-actions>
-            <router-link :to="'project/'+item.id">
-              <v-btn class="gutscheinButton">
-                GUTSCHEIN KAUFEN
-              </v-btn>
-            </router-link>
-          </v-card-actions>
-        </v-card>
+            <v-card
+              class="voucher"
+              elevation="5"
+            >
+              <img src="../../assets/placeholder.png">
+              <div
+                class="companyData"
+                style="border:0;"
+              >
+                <h2>Firmenname: {{ item.name }}</h2>
+                <h4>
+                  Zur Website:
+                  <a :href="item.webpage">{{ item.webpage }}</a>
+                </h4>
+              </div>
+              <v-card-actions>
+                <router-link :to="'project/'+item.id">
+                  <v-btn class="gutscheinButton">
+                    GUTSCHEIN KAUFEN
+                  </v-btn>
+                </router-link>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </v-container>
   </div>
@@ -140,17 +145,9 @@ export default {
   }
 
   .gutscheinButton {
-    align-self: flex-end;
-    margin-bottom: 15px;
-    margin-right: 15px;
     font-size: 1.5rem;
     text-decoration: none;
-  }
-
-  .container div {
-  border: 1px solid black;
-  margin-right: 50px;
-  border-radius: 3px;
+      margin-right: 15px;
   }
 
   .form-input input {
