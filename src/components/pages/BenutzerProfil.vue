@@ -1,126 +1,63 @@
 <template>
-  <v-container>
-    <!-- class="mainbody" -->
-    <div>
-      <p class="display-1 ma-0">
-        Willkommen{{ user.name() ? ' '+user.name():'' }}!
-      </p><p class="overline">
-        ({{ user.username }})
-      </p>
-    </div>
-    <v-row
-      align="left"
-      justify="left"
-      class="pageContent"
-    >
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Meine Adresse: </h2>
-      </v-col>
+  <div class="ma-5">
+    <v-container>
+      <div>
+        <h1 class="display-2 ma-0">
+          Willkommen!
+        </h1><p class="display-2 overline">
+          ({{ user.username }})
+        </p>
+      </div>
+      <v-row>
+        <v-col
+          sm="9"
+          class="text-left pageBox"
+        >
+          <h2>Profildaten:</h2>
+          <br>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Gesamtbetrag aller getätigten Spenden: </h2>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox atab"
-            cols="12"
+          <v-row
+            no-gutters
+            class="entry"
           >
-            <h3>Straße: {{ strasse }} {{ nummer }}</h3>
-          </v-col>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
-          >
-            <h3>PLZ und Ort: {{ plz }} {{ ort }}</h3>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
-          >
-            <h3>Gesamtbetrag: {{ betragSpenden }}€</h3>
-          </v-col>
-        </v-row>
-      </v-col>
+            <v-col>
+              <h4>Username:</h4>
+            </v-col>
+            <v-col>
+              <h4>{{ username }}</h4>
+            </v-col>
+          </v-row>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Kontaktdaten:</h2>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Gesamtbetrag aller gekauften Gutscheine:</h2>
-      </v-col>
+          <v-row no-gutters>
+            <v-col>
+              <h4>Vorname:</h4>
+            </v-col>
+            <v-col>
+              <h4>{{ firstname }}</h4>
+            </v-col>
+          </v-row>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="10"
-          >
-            <h3>E-Mail: {{ email }}</h3>
-          </v-col>
-          <v-col
-            class="text-left pageBox"
-            cols="10"
-          >
-            <h3>Telefon: {{ telefon }}</h3>
-          </v-col>
-        </v-row>
-      </v-col>
+          <v-row no-gutters>
+            <v-col>
+              <h4>Nachname:</h4>
+            </v-col>
+            <v-col>
+              <h4>{{ lastname }}</h4>
+            </v-col>
+          </v-row>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
-          >
-            <h3>Gesamtbetrag: {{ betragGutscheine }}€</h3>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-
-    <div class="linkToDonate text-center">
-      <router-link
-        to="/portfolio"
-        tag="span"
-        class="link"
-      >
-        <v-btn>
-          <h1 style="text-align:center">
-            Meine Spenden und Gutscheine
-          </h1>
-        </v-btn>
-      </router-link>
-    </div>
-  </v-container>
+          <v-row no-gutters>
+            <v-col>
+              <h4>E-Mail:</h4>
+            </v-col>
+            <v-col>
+              <h4>{{ email }}</h4>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -130,14 +67,10 @@ export default {
 
   data: () => ({
     user: window.user,
-    plz: 20359,
-    ort: 'Hamburg',
-    betragSpenden: 300,
-    betragGutscheine: 500,
-    strasse: 'Reeperbahn',
-    nummer: '108-114',
-    email: 'johannes@web.de',
-    telefon: '-',
+    username: 'testusername',
+    firstname: 'Vornamen',
+    lastname: 'Nachname',
+    email: 'Test@test.de',
   }),
 };
 </script>
