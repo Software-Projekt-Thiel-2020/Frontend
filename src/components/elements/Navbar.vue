@@ -87,6 +87,21 @@
         >
       </v-btn>
 
+      <router-link
+        to="/register"
+        tag="span"
+        class="hidden-sm-and-down"
+      >
+        <v-btn
+          v-if="userSession.isUserSignedIn()"
+          class="ma-2 hidden-sm-and-down"
+          target="_blank"
+          rounded
+          color="accent"
+        >
+          <span class="mr-2">Registrieren</span>
+        </v-btn>
+      </router-link>
 
       <v-menu
         v-if="userSession.isUserSignedIn()"
