@@ -2,7 +2,7 @@
   <div>
     <v-parallax
       dark
-      height="100"
+      :height="400"
       src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
     >
       <v-row
@@ -11,17 +11,63 @@
       >
         <v-col
           class="text-center"
-          cols="10"
         >
-          <h1 class="display-1 font-weight-thin">
-            <v-icon
-              class="display-2"
-              style="color: white"
-            >
-              mdi-wallet
-            </v-icon>
+          <h1 class="display-2 font-weight-thin">
             Mein Portfolio
           </h1>
+        </v-col>
+        <v-col>
+          <v-card
+                  color="primary"
+                  class="wallet"
+                  dark
+          >
+            <v-toolbar
+                    color="indigo"
+                    dark
+            >
+              <v-spacer />
+
+              <v-toolbar-title>
+                <v-icon
+                        class="display-1"
+                        style="color: white"
+                >
+                  mdi-wallet
+                </v-icon>
+                Mein Wallet
+              </v-toolbar-title>
+              <v-spacer />
+            </v-toolbar>
+            <div class="ma-5 pb-1">
+              <h4>
+                Meine persönliche Wallet Adresse:
+                <v-chip>
+                  <span class="walletAddress">
+                    {{ walletAddress }}
+                  </span>
+                </v-chip>
+              </h4>
+              <span class="caption font-italic" >
+                Guthaben können Sie aufladen, indem Sie Ethereum an ihre Wallet Adresse senden.
+              </span>
+              <v-divider class="my-3" />
+              <div class="text-right">
+                <v-chip
+                        class="px-3 py-6"
+                        color="primary"
+                >
+                  <v-icon class="display-1">
+                    mdi-ethereum
+                  </v-icon>
+                  <h3 class="display-1 font-weight-light">
+                    50.032351ETH
+                  </h3>
+                </v-chip>
+              </div>
+              <span class="" />
+            </div>
+          </v-card>
         </v-col>
       </v-row>
     </v-parallax>
@@ -52,16 +98,34 @@
               </h1>
             </v-card-text>
             <v-row class="ma-2">
-              <v-col v-for="voucher in vouchers" v-bind:key="voucher.id">
+              <v-col
+                v-for="voucher in vouchers"
+                :key="voucher.id"
+              >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
-                  <v-card-title>{{voucher.title}}</v-card-title>
-                  <v-card-subtitle class="overline">Restaurante Panini</v-card-subtitle>
-                  <v-card-text>{{voucher.subject}}</v-card-text>
+                  <v-card-title>{{ voucher.title }}</v-card-title>
+                  <v-card-subtitle class="overline">
+                    Restaurante Panini
+                  </v-card-subtitle>
+                  <v-card-text>{{ voucher.subject }}</v-card-text>
                   <v-card-actions>
-                    <v-btn color="success" v-if="!voucher.used">Einlösen</v-btn>
-                    <v-btn disabled outlined v-if="voucher.used">Eingelöst</v-btn>
-                    <v-spacer></v-spacer>
-                    <h3 class="pricetag font-weight-light">{{voucher.amount}} ETH</h3>
+                    <v-btn
+                      v-if="!voucher.used"
+                      color="success"
+                    >
+                      Einlösen
+                    </v-btn>
+                    <v-btn
+                      v-if="voucher.used"
+                      disabled
+                      outlined
+                    >
+                      Eingelöst
+                    </v-btn>
+                    <v-spacer />
+                    <h3 class="pricetag font-weight-light">
+                      {{ voucher.amount }} ETH
+                    </h3>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -102,6 +166,7 @@
 export default {
   name: 'Historie',
   data: () => ({
+    walletAddress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
     donations: [
       {
         id: 3,
@@ -158,4 +223,12 @@ export default {
     .pricetag{
       font-size: 1.5rem;
     }
+
+  .walletAddress{
+    font-family: Courier;
+  }
+
+  .wallet{
+    max-width: 500px;
+  }
 </style>
