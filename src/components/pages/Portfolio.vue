@@ -44,7 +44,7 @@
                 Meine persönliche Wallet Adresse:
                 <v-chip>
                   <span class="walletAddress">
-                    {{ walletAddress }}
+                    {{ wallet.adress }}
                   </span>
                 </v-chip>
               </h4>
@@ -61,7 +61,7 @@
                     mdi-ethereum
                   </v-icon>
                   <h3 class="display-1 font-weight-light">
-                    50.032351ETH
+                    {{ wallet.amount }}ETH
                   </h3>
                 </v-chip>
               </div>
@@ -99,16 +99,43 @@
               dark
             >
               <v-tab>
-                Gültig
+                <v-chip color="primary">
+                  <v-avatar
+                    left
+                    color="secondary"
+                  >
+                    {{ getVouchers(false).length }}
+                  </v-avatar>
+                  Gültig
+                </v-chip>
               </v-tab>
               <v-tab>
-                Eingelöst
+                <v-chip color="primary">
+                  <v-avatar
+                    left
+                    color="secondary"
+                  >
+                    {{ getVouchers(true).length }}
+                  </v-avatar>
+                  Eingelöst
+                </v-chip>
               </v-tab>
             </v-tabs>
-            <v-row class="ma-2">
+            <v-card-text
+              v-if="vouchers.length == 0"
+              class="text-center"
+            >
+              <h1 class="my-10">
+                Keine Gutscheine vorhanden
+              </h1>
+            </v-card-text>
+            <v-row
+              v-else
+              class="ma-2"
+            >
               <v-col
-                      v-for="voucher in getVouchers(tab)"
-                      :key="voucher.id"
+                v-for="voucher in getVouchers(tab)"
+                :key="voucher.id"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
                   <v-card-title>{{ voucher.title }}</v-card-title>
@@ -118,15 +145,15 @@
                   <v-card-text>{{ voucher.subject }}</v-card-text>
                   <v-card-actions>
                     <v-btn
-                            v-if="!voucher.used"
-                            color="success"
+                      v-if="!voucher.used"
+                      color="success"
                     >
                       Einlösen
                     </v-btn>
                     <v-btn
-                            v-if="voucher.used"
-                            disabled
-                            outlined
+                      v-if="voucher.used"
+                      disabled
+                      outlined
                     >
                       Eingelöst
                     </v-btn>
@@ -138,11 +165,6 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-card-text class="text-center">
-              <h1 class="my-10">
-                Keine Gutscheine vorhanden
-              </h1>
-            </v-card-text>
           </v-card>
         </v-col>
         <v-col>
@@ -180,7 +202,10 @@ export default {
   name: 'Historie',
   data: () => ({
     tab: null,
-    walletAddress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
+    wallet: {
+      adress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
+      amount: '1337.5012',
+    },
     donations: [
       {
         id: 3,
@@ -242,15 +267,15 @@ export default {
 </script>
 
 <style scoped>
-    .pricetag{
-      font-size: 1.5rem;
+    .pricetag {
+        font-size: 1.5rem;
     }
 
-  .walletAddress{
-    font-family: Courier;
-  }
+    .walletAddress {
+        font-family: Courier;
+    }
 
-  .wallet{
-    max-width: 500px;
-  }
+    .wallet {
+        max-width: 500px;
+    }
 </style>
