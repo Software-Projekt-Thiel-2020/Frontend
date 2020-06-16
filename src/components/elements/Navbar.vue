@@ -236,7 +236,7 @@
     </v-navigation-drawer>
 
     <v-dialog
-      v-if="gotResponse && user && !backend_userdata"
+      v-if="gotResponse && (user || register_dialog.successful) && !backend_userdata"
       v-model="register_dialog.show_dialog"
       persistent
       max-width="600px"
@@ -319,6 +319,13 @@
         </v-form>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="register_dialog.successful"
+      top
+      color="success"
+    >
+      Registrierung abgeschlossen!
+    </v-snackbar>
   </div>
 </template>
 
@@ -351,6 +358,7 @@ export default {
         (v) => v.length > 2 || 'Name ist erforderlich',
       ],
       errorMessage: null,
+      successful: false,
     },
   }),
   created() {
@@ -413,6 +421,7 @@ export default {
 
       axios.post('users', {}, { headers })
         .then(() => {
+          this.register_dialog.successful = true;
           this.get_user();
         })
         .catch((err) => {
