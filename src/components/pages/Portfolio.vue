@@ -99,10 +99,13 @@
               dark
             >
               <v-tab>
-                <v-chip color="primary">
+                <v-chip
+                  color="secondary"
+                  class="v-chip--clickable"
+                >
                   <v-avatar
                     left
-                    color="secondary"
+                    color="primary"
                   >
                     {{ getVouchers(false).length }}
                   </v-avatar>
@@ -110,10 +113,13 @@
                 </v-chip>
               </v-tab>
               <v-tab>
-                <v-chip color="primary">
+                <v-chip
+                  color="secondary"
+                  class="v-chip--clickable"
+                >
                   <v-avatar
                     left
-                    color="secondary"
+                    color="primary"
                   >
                     {{ getVouchers(true).length }}
                   </v-avatar>
