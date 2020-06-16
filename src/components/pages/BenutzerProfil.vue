@@ -106,6 +106,7 @@ export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    user: null,
     item: {
       username: 'username',
       firstname: 'firstname',
@@ -125,7 +126,13 @@ export default {
   mounted() {
     axios.get(`users?username=${window.user.username}`)
       .then((res) => {
-        [this.item] = res.data;
+        if (res.data.length === 0) {
+          throw Error('Could not fetch data');
+        }
+        this.item.username = res.data[0].username;
+        this.item.firstname = res.data[0].firstname;
+        this.item.lastname = res.data[0].lastname;
+        this.item.email = res.data[0].email;
       })
       .catch((err) => {
         this.errorMessage = err.toString();
