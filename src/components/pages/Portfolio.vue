@@ -18,20 +18,20 @@
         </v-col>
         <v-col>
           <v-card
-                  color="primary"
-                  class="wallet"
-                  dark
+            color="primary"
+            class="wallet"
+            dark
           >
             <v-toolbar
-                    color="indigo"
-                    dark
+              color="indigo"
+              dark
             >
               <v-spacer />
 
               <v-toolbar-title>
                 <v-icon
-                        class="display-1"
-                        style="color: white"
+                  class="display-1"
+                  style="color: white"
                 >
                   mdi-wallet
                 </v-icon>
@@ -48,14 +48,14 @@
                   </span>
                 </v-chip>
               </h4>
-              <span class="caption font-italic" >
+              <span class="caption font-italic">
                 Guthaben können Sie aufladen, indem Sie Ethereum an ihre Wallet Adresse senden.
               </span>
               <v-divider class="my-3" />
               <div class="text-right">
                 <v-chip
-                        class="px-3 py-6"
-                        color="primary"
+                  class="px-3 py-6"
+                  color="primary"
                 >
                   <v-icon class="display-1">
                     mdi-ethereum
@@ -92,15 +92,23 @@
               </v-toolbar-title>
               <v-spacer />
             </v-toolbar>
-            <v-card-text class="text-center">
-              <h1 class="my-10">
-                Keine Gutscheine vorhanden
-              </h1>
-            </v-card-text>
+            <v-tabs
+              v-model="tab"
+              fixed-tabs
+              background-color="indigo"
+              dark
+            >
+              <v-tab>
+                Gültig
+              </v-tab>
+              <v-tab>
+                Eingelöst
+              </v-tab>
+            </v-tabs>
             <v-row class="ma-2">
               <v-col
-                v-for="voucher in vouchers"
-                :key="voucher.id"
+                      v-for="voucher in getVouchers(tab)"
+                      :key="voucher.id"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
                   <v-card-title>{{ voucher.title }}</v-card-title>
@@ -110,15 +118,15 @@
                   <v-card-text>{{ voucher.subject }}</v-card-text>
                   <v-card-actions>
                     <v-btn
-                      v-if="!voucher.used"
-                      color="success"
+                            v-if="!voucher.used"
+                            color="success"
                     >
                       Einlösen
                     </v-btn>
                     <v-btn
-                      v-if="voucher.used"
-                      disabled
-                      outlined
+                            v-if="voucher.used"
+                            disabled
+                            outlined
                     >
                       Eingelöst
                     </v-btn>
@@ -130,6 +138,11 @@
                 </v-card>
               </v-col>
             </v-row>
+            <v-card-text class="text-center">
+              <h1 class="my-10">
+                Keine Gutscheine vorhanden
+              </h1>
+            </v-card-text>
           </v-card>
         </v-col>
         <v-col>
@@ -166,6 +179,7 @@
 export default {
   name: 'Historie',
   data: () => ({
+    tab: null,
     walletAddress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
     donations: [
       {
@@ -216,6 +230,14 @@ export default {
       },
     ],
   }),
+  methods: {
+    getVouchers(used) {
+      if (used) {
+        return this.vouchers.filter((voucher) => voucher.used);
+      }
+      return this.vouchers.filter((voucher) => !voucher.used);
+    },
+  },
 };
 </script>
 
