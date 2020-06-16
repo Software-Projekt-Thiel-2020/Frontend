@@ -1,80 +1,97 @@
 <template>
   <div>
-    <v-container class="container">
-      <h1>Mein Portfolio</h1>
-    </v-container>
-    <v-container class="container">
-      <v-row>
+    <v-parallax
+      dark
+      height="100"
+      src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+    >
+      <v-row
+        align="center"
+        justify="center"
+      >
         <v-col
-          id="spenden"
-          class="text-left"
-          cols="6"
+          class="text-center"
+          cols="10"
         >
-          <h1>Meine Spenden</h1>
-          <div class="results">
-            <div
-              v-for="donation in donations"
-              :key="donation.name"
-              class="project"
+          <h1 class="display-1 font-weight-thin">
+            <v-icon
+              class="display-2"
+              style="color: white"
             >
-              <img
-                class="picture"
-                src="../../assets/placeholder.png"
-                alt="placeholder"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2>Firmenname: {{ donation.name }}</h2>
-                <h3>Gespendete Summe: {{ donation.amount }}€</h3>
-                <h3>Datum: {{ donation.date }}</h3>
-                <h4>
-                  Zur Website:
-                  <a :href="donation.website">{{ donation.website }}</a>
-                </h4>
-              </div>
-            </div>
-          </div>
+              mdi-wallet
+            </v-icon>
+            Mein Portfolio
+          </h1>
         </v-col>
-
-        <v-col
-          id="gutscheine"
-          class="text-left"
-          cols="6"
-        >
-          <h1>Meine Gutscheine</h1>
-          <div class="results">
-            <div
-              v-for="coupon in coupons"
-              :key="coupon.name"
-              class="project"
+      </v-row>
+    </v-parallax>
+    <v-container>
+      <v-row>
+        <v-col>
+          <v-card>
+            <v-toolbar
+              color="indigo"
+              dark
             >
-              <img
-                class="picture"
-                src="../../assets/placeholder.png"
-                alt="placeholder"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2>Firmenname: {{ coupon.name }}</h2>
-                <h3>Gutscheinwert: {{ coupon.worth }}€ </h3>
-                <h3>Datum: {{ coupon.date }}</h3>
-                <h4>
-                  Zur Website:
-                  <a :href="coupon.website">{{ coupon.website }}</a>
-                </h4>
-                <h4
-                  v-if="coupon.available === false"
-                  class="expired"
+              <v-spacer />
+
+              <v-toolbar-title>
+                <v-icon
+                  class="display-1"
+                  style="color: white"
                 >
-                  (Gutschein bereits eingelöst)
-                </h4>
-              </div>
-            </div>
-          </div>
+                  mdi-wallet-giftcard
+                </v-icon>
+                Meine Gutscheine
+              </v-toolbar-title>
+              <v-spacer />
+            </v-toolbar>
+            <v-card-text class="text-center">
+              <h1 class="my-10">
+                Keine Gutscheine vorhanden
+              </h1>
+            </v-card-text>
+            <v-row class="ma-2">
+              <v-col v-for="voucher in vouchers" v-bind:key="voucher.id">
+                <v-card :color="voucher.used ? '#dddddd' : 'white'">
+                  <v-card-title>{{voucher.title}}</v-card-title>
+                  <v-card-subtitle class="overline">Restaurante Panini</v-card-subtitle>
+                  <v-card-text>{{voucher.subject}}</v-card-text>
+                  <v-card-actions>
+                    <v-btn color="success" v-if="!voucher.used">Einlösen</v-btn>
+                    <v-btn disabled outlined v-if="voucher.used">Eingelöst</v-btn>
+                    <v-spacer></v-spacer>
+                    <h3 class="pricetag font-weight-light">{{voucher.amount}} ETH</h3>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+        <v-col>
+          <v-card>
+            <v-toolbar
+              color="indigo"
+              dark
+            >
+              <v-spacer />
+              <v-toolbar-title>
+                <v-icon
+                  class="display-1"
+                  style="color: white"
+                >
+                  mdi-heart
+                </v-icon>
+                Meine Spenden
+              </v-toolbar-title>
+              <v-spacer />
+            </v-toolbar>
+            <v-card-text class="text-center">
+              <h1 class="my-10">
+                Keine Spenden getätigt
+              </h1>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -87,38 +104,50 @@ export default {
   data: () => ({
     donations: [
       {
-        name: 'Edeka',
-        website: 'https://www.edeka.de/',
-        amount: 15,
-        date: '05.07.1945',
-      },
-      {
-        name: 'ALDI',
-        website: 'https://www.google.com/',
-        amount: 50,
-        date: '29.03.2007',
-      },
-      {
-        name: 'LIDL',
-        website: 'https://www.google.com/',
-        amount: 30,
-        date: '17.05.1999',
+        id: 3,
+        amount: 5012,
+        userid: 2,
+        milestoneid: 1,
       },
     ],
-    coupons: [
+    vouchers: [
       {
-        name: 'REWE',
-        website: 'https://www.google.com/',
-        available: true,
-        worth: 10,
-        date: '27.12.0003',
+        id: 3,
+        amount: 307500,
+        userid: 2,
+        institutionid: 3,
+        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
+        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
+        untilTime: 3164658364,
+        used: true,
+      }, {
+        id: 1,
+        amount: 10703,
+        userid: 1,
+        institutionid: 1,
+        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
+        title: 'Besuch Restaurant Athen 4 Pers.',
+        untilTime: 46456474376,
+        used: false,
       },
       {
-        name: 'Penny',
-        website: 'https://www.google.com/',
-        available: false,
-        worth: 20,
-        date: '01.01.1050',
+        id: 5,
+        amount: 307500,
+        userid: 2,
+        institutionid: 3,
+        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
+        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
+        untilTime: 3164658364,
+        used: true,
+      }, {
+        id: 2,
+        amount: 10703,
+        userid: 1,
+        institutionid: 1,
+        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
+        title: 'Besuch Restaurant Athen 4 Pers.',
+        untilTime: 46456474376,
+        used: false,
       },
     ],
   }),
@@ -126,32 +155,7 @@ export default {
 </script>
 
 <style scoped>
-.results {
-  display: flex;
-  flex-direction: column;
-}
-
-.project {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 25px;
-  border: 1px solid black;
-}
-
-.companyData {
-  margin-left: 15px;
-  flex-basis:55%;
-}
-
-.picture {
-  height: 200px;
-}
-
-.expired {
-  color: #f95235;
-}
-
-.container {
-  margin-left:25px;
-}
+    .pricetag{
+      font-size: 1.5rem;
+    }
 </style>
