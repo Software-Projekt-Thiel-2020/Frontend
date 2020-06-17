@@ -112,7 +112,7 @@
               <img
                 v-if="user && user.avatarUrl()"
                 :src="user.avatarUrl()"
-                alt="John"
+                alt="ProfilePicture"
               >
             </v-avatar>
           </v-btn>
@@ -236,7 +236,7 @@
     </v-navigation-drawer>
 
     <v-dialog
-      v-if="gotResponse && (user || register_dialog.successful) && !backend_userdata"
+      v-if="user && (gotResponse && !error) && (!register_dialog.successful) && (!backend_userdata)"
       v-model="register_dialog.show_dialog"
       persistent
       max-width="600px"
@@ -326,6 +326,15 @@
     >
       Registrierung abgeschlossen!
     </v-snackbar>
+
+    <v-snackbar
+      :value="error"
+      top
+      color="error"
+      :timeout="0"
+    >
+      Konnte Benutzerdaten nicht laden: {{ errorMessage }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -338,11 +347,12 @@ export default {
   name: 'Navbar',
   data: () => ({
     drawer: false,
-    loggedIn: false,
     userSession: null,
     user: null,
     backend_userdata: null,
     gotResponse: false,
+    errorMessage: null,
+    error: false,
     register_dialog: {
       show_dialog: true,
       lastname: '',
@@ -352,7 +362,7 @@ export default {
       valid: true,
       emailRules: [
         (v) => !!v || 'E-mail ist erforderlich',
-        (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'keine valide E-Mail',
+        (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Keine valide E-Mail',
       ],
       nameRules: [
         (v) => v.length > 2 || 'Name ist erforderlich',
@@ -400,10 +410,15 @@ export default {
       axios.get(`users?username=${this.user.username}`)
       // axios.get('users?username=sw2020testuser2.id.blockstack')
         .then((res) => {
-          [this.backend_userdata] = res.data;
+          if (res.data.length === 2) {
+            this.backend_userdata = false;
+          } else {
+            [this.backend_userdata] = res.data;
+          }
         })
         .catch((err) => {
           this.errorMessage = err.toString();
+          this.error = true;
         })
         .finally(() => {
           this.gotResponse = true;
