@@ -14,7 +14,7 @@
           ({{ item.username }})
         </p>
       </div>
-      <v-row v-if="errorMessage == null">
+      <v-row v-if="!errorMessage">
         <v-col
           sm="6"
           class="text-left pageBox"
@@ -24,8 +24,7 @@
 
           <v-form
             ref="form"
-            v-model="newForm"
-            lazy-validation
+            v-model="vForm"
           >
             <v-row no-gutters>
               <v-col>
@@ -73,6 +72,37 @@
               </v-col>
             </v-row>
           </v-form>
+          <v-btn
+            color="error"
+            class="mr-4 mt-4"
+            @click="reset"
+          >
+            Änderungen zurücksetzten
+          </v-btn>
+          <v-btn
+            :disabled="(!valid || !vForm)"
+            color="success"
+            class="mt-4"
+            @click="submit"
+          >
+            Änderungen bestätigen
+          </v-btn>
+          <v-snackbar
+            v-model="snackbar"
+            multi-line
+            :color="snackbarType"
+            centered
+            :timeout="0"
+          >
+            {{ userFeedback }}
+            <v-btn
+              color="white"
+              text
+              @click="snackbar = false"
+            >
+              Close
+            </v-btn>
+          </v-snackbar>
         </v-col>
       </v-row>
       <v-alert
@@ -101,45 +131,106 @@
 
 <script>
 import axios from 'axios';
+import { userSession } from '../../userSession';
 
 export default {
   name: 'BenutzerProfil',
 
   data: () => ({
-    user: null,
     item: {
       username: 'username',
       firstname: 'firstname',
       lastname: 'lastname',
       email: 'email',
     },
-    newForm: true,
+    vForm: true,
     gotResponse: false,
     errorMessage: null,
     newEmail: '',
     newFirstname: '',
     newLastname: '',
     emailRules: [
-      (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v),
+      (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === ''),
     ],
+    snackbar: false,
+    userFeedback: '',
+    snackbarType: null,
   }),
+  computed: {
+    valid() {
+      if (this.newFirstname || this.newLastname || this.newEmail) {
+        return true;
+      }
+      return false;
+    },
+  },
   mounted() {
-    axios.get(`users?username=${window.user.username}`)
-      .then((res) => {
-        if (res.data.length === 0) {
-          throw Error('Could not fetch data');
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      axios.get(`users?username=${window.user.username}`)
+        .then((res) => {
+          if (res.data.length === 0) {
+            this.errorMessage = 'Could not fetch data';
+          } else {
+            this.item.username = res.data[0].username;
+            this.item.firstname = res.data[0].firstname;
+            this.item.lastname = res.data[0].lastname;
+            this.item.email = res.data[0].email;
+          }
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+    reset() {
+      this.newFirstname = '';
+      this.newLastname = '';
+      this.newEmail = '';
+    },
+
+    submit() {
+      if (userSession.isUserSignedIn()) {
+        const headers = {
+          authToken: userSession.loadUserData().authResponseToken,
+        };
+        if (this.newFirstname) {
+          headers.firstname = this.newFirstname;
         }
-        this.item.username = res.data[0].username;
-        this.item.firstname = res.data[0].firstname;
-        this.item.lastname = res.data[0].lastname;
-        this.item.email = res.data[0].email;
-      })
-      .catch((err) => {
-        this.errorMessage = err.toString();
-      })
-      .finally(() => {
-        this.gotResponse = true;
-      });
+        if (this.newLastname) {
+          headers.lastname = this.newLastname;
+        }
+        if (this.newEmail) {
+          headers.email = this.newEmail;
+        }
+
+        axios.put('users', {}, { headers })
+          .then(() => {
+            this.snackSucc();
+            this.loadData();
+          })
+          .catch((err) => {
+            this.snackErr();
+            this.errorMessage = err.toString();
+          });
+      }
+    },
+    snackSucc() {
+      this.snackbar = true;
+      this.snackbarType = 'success';
+      this.userFeedback = 'Das Ändern ihrer Daten war erfolgreich';
+    },
+    snackErr() {
+      this.snackbar = true;
+      this.snackbarType = 'error';
+      this.userFeedback = 'Das Ändern ihrer Daten war NICHT erfolgreich!';
+    },
+
+
   },
 };
 </script>
