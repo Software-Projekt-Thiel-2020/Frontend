@@ -40,6 +40,9 @@ const routes = [
 
 const router = new VueRouter({
   routes, // short for `routes: routes`
+  scrollBehavior() { // immer auf den Seitenanfang springen
+    return { x: 0, y: 0 };
+  },
 });
 
 new Vue({
