@@ -243,6 +243,7 @@
     >
       <v-card>
         <v-form
+          ref="register_form"
           v-model="register_dialog.valid"
         >
           <v-card-title>
@@ -290,7 +291,7 @@
                     v-model="register_dialog.email"
                     label="Email*"
                     required
-                    :rules="register_dialog.emailRules"
+                    :rules="emailConfirmationRules()"
                   />
                 </v-col>
                 <v-col cols="12">
@@ -360,10 +361,6 @@ export default {
       email: '',
       email2: '',
       valid: true,
-      emailRules: [
-        (v) => !!v || 'E-mail ist erforderlich',
-        (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'Keine valide E-Mail',
-      ],
       nameRules: [
         (v) => v.length > 2 || 'Name ist erforderlich',
       ],
@@ -388,6 +385,12 @@ export default {
           window.location = window.location.origin;
         });
     }
+
+    setInterval(() => {
+      if (this.$refs.register_form) {
+        this.$refs.register_form.validate();
+      }
+    }, 250);
   },
   methods: {
     signIn() {
@@ -408,7 +411,6 @@ export default {
 
     get_user() {
       axios.get(`users?username=${this.user.username}`)
-      // axios.get('users?username=sw2020testuser2.id.blockstack')
         .then((res) => {
           if (res.data.length === 2) {
             this.backend_userdata = false;
