@@ -212,6 +212,7 @@ export default {
           .then(() => {
             this.snackSucc();
             this.loadData();
+            this.reset();
           })
           .catch((err) => {
             this.snackErr();
