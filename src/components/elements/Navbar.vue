@@ -112,7 +112,7 @@
               <img
                 v-if="user && user.avatarUrl()"
                 :src="user.avatarUrl()"
-                alt="John"
+                alt="ProfilePicture"
               >
             </v-avatar>
           </v-btn>
@@ -234,20 +234,139 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+
+    <v-dialog
+      v-if="user && (gotResponse && !error) && (!register_dialog.successful) && (!backend_userdata)"
+      v-model="register_dialog.show_dialog"
+      persistent
+      max-width="600px"
+    >
+      <v-card>
+        <v-form
+          ref="register_form"
+          v-model="register_dialog.valid"
+        >
+          <v-card-title>
+            <span class="headline">Registrierung abschließen</span>
+            <v-alert
+              v-if="register_dialog.errorMessage"
+              :value="true"
+              type="error"
+              class="mt-4"
+              style="width: 100%"
+              prominent
+            >
+              Beim Senden der Daten ist ein Fehler aufgetreten:<br> {{ register_dialog.errorMessage }}
+            </v-alert>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="6"
+                >
+                  <v-text-field
+                    v-model="register_dialog.firstname"
+                    label="Vorname*"
+                    required
+                    :rules="register_dialog.nameRules"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="6"
+                >
+                  <v-text-field
+                    v-model="register_dialog.lastname"
+                    label="Nachname*"
+                    required
+                    :rules="register_dialog.nameRules"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="register_dialog.email"
+                    label="Email*"
+                    required
+                    :rules="emailConfirmationRules()"
+                  />
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="register_dialog.email2"
+                    label="Email wiederholen*"
+                    required
+                    :rules="emailConfirmationRules()"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+            <small>* erforderliches Feld</small>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="blue darken-1"
+              text
+              :disabled="!register_dialog.valid"
+              @click="register"
+            >
+              Speichern
+            </v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
+    <v-snackbar
+      v-model="register_dialog.successful"
+      top
+      color="success"
+    >
+      Registrierung abgeschlossen!
+    </v-snackbar>
+
+    <v-snackbar
+      :value="error"
+      top
+      color="error"
+      :timeout="0"
+    >
+      Konnte Benutzerdaten nicht laden: {{ errorMessage }}
+    </v-snackbar>
   </div>
 </template>
 
 <script>
 import * as blockstack from 'blockstack';
+import axios from 'axios';
 import { userSession } from '../../userSession';
 
 export default {
   name: 'Navbar',
   data: () => ({
     drawer: false,
-    loggedIn: false,
     userSession: null,
     user: null,
+    backend_userdata: null,
+    gotResponse: false,
+    errorMessage: null,
+    error: false,
+    register_dialog: {
+      show_dialog: true,
+      lastname: '',
+      firstname: '',
+      email: '',
+      email2: '',
+      valid: true,
+      nameRules: [
+        (v) => v.length > 2 || 'Name ist erforderlich',
+      ],
+      errorMessage: null,
+      successful: false,
+    },
   }),
   created() {
     this.userSession = userSession;
@@ -258,12 +377,20 @@ export default {
       this.user = new blockstack.Person(this.userData.profile);
       this.user.username = this.userData.username;
       window.user = this.user;
+
+      this.get_user();
     } else if (userSession.isSignInPending()) {
       userSession.handlePendingSignIn()
         .then(() => {
           window.location = window.location.origin;
         });
     }
+
+    setInterval(() => {
+      if (this.$refs.register_form) {
+        this.$refs.register_form.validate();
+      }
+    }, 250);
   },
   methods: {
     signIn() {
@@ -272,6 +399,51 @@ export default {
     signOut() {
       window.user = undefined;
       blockstack.signUserOut(window.location.origin);
+    },
+
+    emailConfirmationRules() {
+      return [
+        () => (this.register_dialog.email === this.register_dialog.email2) || 'E-mails müssen identisch sein',
+        (v) => !!v || 'E-mail ist erforderlich',
+        (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'keine valide E-Mail',
+      ];
+    },
+
+    get_user() {
+      axios.get(`users?username=${this.user.username}`)
+        .then((res) => {
+          if (res.data.length === 2) {
+            this.backend_userdata = false;
+          } else {
+            [this.backend_userdata] = res.data;
+          }
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+          this.error = true;
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+
+    register() {
+      const headers = {
+        authToken: this.userData.authResponseToken,
+        username: this.user.username,
+        firstname: this.register_dialog.firstname,
+        lastname: this.register_dialog.lastname,
+        email: this.register_dialog.email,
+      };
+
+      axios.post('users', {}, { headers })
+        .then(() => {
+          this.register_dialog.successful = true;
+          this.get_user();
+        })
+        .catch((err) => {
+          this.register_dialog.errorMessage = err.toString();
+        });
     },
   },
 };
