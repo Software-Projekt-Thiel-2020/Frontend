@@ -37,6 +37,35 @@
         </v-btn>
       </router-link>
 
+      <router-link
+        to="/spenden"
+        tag="span"
+        class="hidden-sm-and-down"
+      >
+        <v-btn
+          target="_blank"
+          color="secondary"
+          class="ma-2"
+        >
+          <span class="mr-2">Spenden</span>
+          <v-icon>mdi-gift-outline</v-icon>
+        </v-btn>
+      </router-link>
+
+      <router-link
+        to="/gutscheine"
+        tag="span"
+        class="hidden-sm-and-down"
+      >
+        <v-btn
+          target="_blank"
+          color="secondary"
+          class="ma-2"
+        >
+          <span class="mr-2">Gutscheine</span>
+          <v-icon>mdi-wallet-outline</v-icon>
+        </v-btn>
+      </router-link>
 
       <router-link
         to="/ueberuns"
@@ -52,6 +81,7 @@
           <v-icon>mdi-information-outline</v-icon>
         </v-btn>
       </router-link>
+
 
       <v-spacer />
 
@@ -150,6 +180,7 @@
       v-model="drawer"
       absolute
       temporary
+      style="position: fixed"
     >
       <v-list
         nav
@@ -170,6 +201,29 @@
             </v-list-item>
           </router-link>
 
+          <router-link
+            to="/spenden"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-gift-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Spenden</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
+          <router-link
+            to="/gutscheine"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-wallet-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Gutscheine</v-list-item-title>
+            </v-list-item>
+          </router-link>
 
           <router-link
             to="/ueberuns"
