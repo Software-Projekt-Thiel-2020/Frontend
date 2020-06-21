@@ -1,174 +1,255 @@
 <template>
-  <v-container>
-    <!-- class="mainbody" -->
-    <div>
-      <p class="display-1 ma-0">
-        Willkommen{{ user.name() ? ' '+user.name():'' }}!
-      </p><p class="overline">
-        ({{ user.username }})
-      </p>
-    </div>
-    <v-row
-      align="left"
-      justify="left"
-      class="pageContent"
-    >
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Meine Adresse: </h2>
-      </v-col>
+  <div
+    class="ma-5"
+  >
+    <v-container>
+      <div>
+        <h1 class="display-2">
+          Willkommen!
+        </h1>
+        <p
+          v-if="errorMessage == null"
+          class="display-2 overline"
+        >
+          ({{ item.username }})
+        </p>
+      </div>
+      <v-row v-if="!errorMessage">
+        <v-col
+          sm="6"
+          class="text-left pageBox"
+        >
+          <h2>Profildaten:</h2>
+          <br>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Gesamtbetrag aller getätigten Spenden: </h2>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox atab"
-            cols="12"
+          <v-form
+            ref="form"
+            v-model="vForm"
           >
-            <h3>Straße: {{ strasse }} {{ nummer }}</h3>
-          </v-col>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
-          >
-            <h3>PLZ und Ort: {{ plz }} {{ ort }}</h3>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
-          >
-            <h3>Gesamtbetrag: {{ betragSpenden }}€</h3>
-          </v-col>
-        </v-row>
-      </v-col>
+            <v-row no-gutters>
+              <v-col>
+                <h4 class="mt-5">
+                  Vorname:
+                </h4>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="newFirstname"
+                  class="inputField"
+                  :placeholder="item.firstname"
+                />
+              </v-col>
+            </v-row>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Kontaktdaten:</h2>
-      </v-col>
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <h2> Gesamtbetrag aller gekauften Gutscheine:</h2>
-      </v-col>
+            <v-row no-gutters>
+              <v-col>
+                <h4 class="mt-5">
+                  Nachname:
+                </h4>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="newLastname"
+                  class="inputField"
+                  :placeholder="item.lastname"
+                />
+              </v-col>
+            </v-row>
 
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="10"
+            <v-row no-gutters>
+              <v-col>
+                <h4 class="mt-5">
+                  E-Mail:
+                </h4>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="newEmail"
+                  class="inputField"
+                  :rules="emailRules"
+                  :placeholder="item.email"
+                />
+              </v-col>
+            </v-row>
+          </v-form>
+          <v-btn
+            color="error"
+            class="mr-4 mt-4"
+            @click="reset"
           >
-            <h3>E-Mail: {{ email }}</h3>
-          </v-col>
-          <v-col
-            class="text-left pageBox"
-            cols="10"
+            Änderungen zurücksetzten
+          </v-btn>
+          <v-btn
+            :disabled="(!valid || !vForm)"
+            color="success"
+            class="mt-4"
+            @click="submit"
           >
-            <h3>Telefon: {{ telefon }}</h3>
-          </v-col>
-        </v-row>
-      </v-col>
-
-      <v-col
-        class="text-left pageBox"
-        cols="5"
-      >
-        <v-row>
-          <v-col
-            class="text-left pageBox"
-            cols="12"
+            Änderungen bestätigen
+          </v-btn>
+          <v-snackbar
+            v-model="snackbar"
+            multi-line
+            :color="snackbarType"
+            centered
+            :timeout="0"
           >
-            <h3>Gesamtbetrag: {{ betragGutscheine }}€</h3>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-
-    <div class="linkToDonate text-center">
-      <router-link
-        to="/portfolio"
-        tag="span"
-        class="link"
+            {{ userFeedback }}
+            <v-btn
+              color="white"
+              text
+              @click="snackbar = false"
+            >
+              Close
+            </v-btn>
+          </v-snackbar>
+        </v-col>
+      </v-row>
+      <v-alert
+        v-else
+        type="error"
+        class="ma-10"
       >
-        <v-btn>
-          <h1 style="text-align:center">
-            Meine Spenden und Gutscheine
-          </h1>
-        </v-btn>
-      </router-link>
-    </div>
-  </v-container>
+        {{ errorMessage }}
+      </v-alert>
+      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
+        <router-link
+          to="/portfolio"
+          tag="span"
+          class="link"
+        >
+          <v-btn>
+            <h1 style="text-align:center">
+              Meine Spenden und Gutscheine
+            </h1>
+          </v-btn>
+        </router-link>
+      </div>
+    </v-container>
+  </div>
 </template>
 
 <script>
+import axios from 'axios';
+import { userSession } from '../../userSession';
 
 export default {
   name: 'BenutzerProfil',
 
   data: () => ({
-    user: window.user,
-    plz: 20359,
-    ort: 'Hamburg',
-    betragSpenden: 300,
-    betragGutscheine: 500,
-    strasse: 'Reeperbahn',
-    nummer: '108-114',
-    email: 'johannes@web.de',
-    telefon: '-',
+    item: {
+      username: 'username',
+      firstname: 'firstname',
+      lastname: 'lastname',
+      email: 'email',
+    },
+    vForm: true,
+    gotResponse: false,
+    errorMessage: null,
+    newEmail: '',
+    newFirstname: '',
+    newLastname: '',
+    emailRules: [
+      (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === ''),
+    ],
+    snackbar: false,
+    userFeedback: '',
+    snackbarType: null,
   }),
+  computed: {
+    valid() {
+      if (this.newFirstname || this.newLastname || this.newEmail) {
+        return true;
+      }
+      return false;
+    },
+  },
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      axios.get(`users?username=${window.user.username}`)
+        .then((res) => {
+          if (res.data.length === 0) {
+            this.errorMessage = 'Could not fetch data';
+          } else {
+            this.item.username = res.data[0].username;
+            this.item.firstname = res.data[0].firstname;
+            this.item.lastname = res.data[0].lastname;
+            this.item.email = res.data[0].email;
+          }
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+    reset() {
+      this.newFirstname = '';
+      this.newLastname = '';
+      this.newEmail = '';
+    },
+
+    submit() {
+      if (userSession.isUserSignedIn()) {
+        const headers = {
+          authToken: userSession.loadUserData().authResponseToken,
+        };
+        if (this.newFirstname) {
+          headers.firstname = this.newFirstname;
+        }
+        if (this.newLastname) {
+          headers.lastname = this.newLastname;
+        }
+        if (this.newEmail) {
+          headers.email = this.newEmail;
+        }
+
+        axios.put('users', {}, { headers })
+          .then(() => {
+            this.snackSucc();
+            this.loadData();
+            this.reset();
+          })
+          .catch((err) => {
+            this.snackErr();
+            this.errorMessage = err.toString();
+          });
+      }
+    },
+    snackSucc() {
+      this.snackbar = true;
+      this.snackbarType = 'success';
+      this.userFeedback = 'Das Ändern ihrer Daten war erfolgreich';
+    },
+    snackErr() {
+      this.snackbar = true;
+      this.snackbarType = 'error';
+      this.userFeedback = 'Das Ändern ihrer Daten war NICHT erfolgreich!';
+    },
+
+
+  },
 };
 </script>
 
 <style scoped>
-     .pageContent {
-    height: calc(100% - 130px);
-  }
 
-  .pageHeader {
-    height: 120px;
-    padding-top: 10px;
-    backdrop-filter: blur(15px) brightness(0.9);
-  }
+    .inputField ::placeholder{
+        color: black!important;
+        opacity: 1;
+    }
 
   .pageBox{
     position:relative;
-    /* top:-10% */
+    width: 100%;
   }
 
   .linkToDonate {
       width: 100%;
+      bottom: 40px;
   }
-
-   .mainbody{
-        position: absolute;
-        top: 0px; /* Header Height */
-        bottom: 0px; /* Footer Height */
-        width: 200%;
-        background: url(../../assets/casedonation.jpg) no-repeat center center fixed;
-        background-size: cover;
-  }
-
 </style>
