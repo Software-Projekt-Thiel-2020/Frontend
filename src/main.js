@@ -16,6 +16,7 @@ import WarumSpenden from './components/pages/WarumSpenden.vue';
 import BenutzerProfil from './components/pages/BenutzerProfil.vue';
 import Project from './components/pages/Project.vue';
 import Registrieren from './components/pages/Registrieren.vue';
+import Institution from './components/pages/Institution.vue';
 
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 
@@ -38,6 +39,7 @@ const routes = [
   { path: '/warumspenden', component: WarumSpenden },
   { path: '/profil', component: BenutzerProfil },
   { path: '/register', component: Registrieren },
+  { path: '/institution', component: Institution },
 ];
 
 const router = new VueRouter({

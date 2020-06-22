@@ -117,22 +117,6 @@
         >
       </v-btn>
 
-      <router-link
-        to="/register"
-        tag="span"
-        class="hidden-sm-and-down"
-      >
-        <v-btn
-          v-if="userSession.isUserSignedIn()"
-          class="ma-2 hidden-sm-and-down"
-          target="_blank"
-          rounded
-          color="accent"
-        >
-          <span class="mr-2">Registrieren</span>
-        </v-btn>
-      </router-link>
-
       <v-menu
         v-if="userSession.isUserSignedIn()"
         bottom
@@ -173,6 +157,18 @@
                 <v-icon class="mr-1">
                   mdi-wrench
                 </v-icon>Mein Profil
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item>
+            <router-link
+              to="/institution"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-wrench
+                </v-icon>Institution erstellen
               </v-list-item-title>
             </router-link>
           </v-list-item>
