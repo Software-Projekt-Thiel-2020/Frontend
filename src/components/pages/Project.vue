@@ -63,6 +63,7 @@
                 <v-btn
                   class="mt-2 btn-hover color-9"
                   dark
+                  @click="donate()"
                 >
                   Betrag Spenden
                 </v-btn>
@@ -86,6 +87,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Project',
   data: () => ({
@@ -109,57 +112,84 @@ export default {
       return (this.project.donationGoal.reached / this.project.donationGoal.total) * 100.0;
     },
   },
+  mounted() {
+    if (window.userSession.isUserSignedIn()) {
+      this.userData = window.userSession.loadUserData();
+    }
+  },
+  methods: {
+    donate() {
+      // console.log('test');
+      // console.log(localStorage.getItem('blockstack-session'));
+      const headers = {
+        authToken: this.userData.authResponseToken,
+        idmilestone: 1,
+        amount: 2,
+        voteEnabled: true,
+      };
+      this.userData = window.userSession.loadUserData();
+      axios.post('http://84.118.2.15/api/donations', {}, { headers })
+        .then(() => {
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+  },
 };
 </script>
 
 <style scoped>
-    .titleHeader {
-        padding-bottom: 15px;
-        padding-top: 10px;
-        backdrop-filter: blur(15px) brightness(0.5);
-    }
+  .titleHeader {
+    padding-bottom: 15px;
+    padding-top: 10px;
+    backdrop-filter: blur(15px) brightness(0.5);
+  }
 
-    .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
-    }
+  .gradientBackground {
+    background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+    background-color: rgb(255, 255, 255);
+  }
 
-    .projectBox {
-        padding: 20px;
-        background-color: rgba(255, 255, 255, 0.8);
+  .projectBox {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
 
-    }
+  }
 
-    .goalBox {
-        border: 1px dotted black;
-    }
-
-
-    a {
-        text-decoration: none;
-    }
-
-    input {
-        border: 1px lightgrey solid;
-        text-align: center;
-        border-radius: 50px;
-    }
+  .goalBox {
+    border: 1px dotted black;
+  }
 
 
-    .btn-hover {
-        background-size: 300% 100%;
-        border-radius: 50px;
-        text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
-        transition: all .4s ease-in-out;
-    }
+  a {
+    text-decoration: none;
+  }
 
-    .btn-hover:hover {
-        background-position: 100% 0;
-        transition: all .4s ease-in-out;
-    }
+  input {
+    border: 1px lightgrey solid;
+    text-align: center;
+    border-radius: 50px;
+  }
 
-    .btn-hover.color-9 {
-        background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
-        box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
-    }
+
+  .btn-hover {
+    background-size: 300% 100%;
+    border-radius: 50px;
+    text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
+    transition: all .4s ease-in-out;
+  }
+
+  .btn-hover:hover {
+    background-position: 100% 0;
+    transition: all .4s ease-in-out;
+  }
+
+  .btn-hover.color-9 {
+    background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
+    box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
+  }
 </style>
