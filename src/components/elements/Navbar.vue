@@ -167,7 +167,7 @@
             >
               <v-list-item-title class="clickable">
                 <v-icon class="mr-1">
-                  mdi-wrench
+                  mdi-bank-plus
                 </v-icon>Institution erstellen
               </v-list-item-title>
             </router-link>
