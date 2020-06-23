@@ -60,6 +60,10 @@
                   class="mt-3 headline"
                 />
                 <br>
+                <h1 class="display-1">
+                  {{ (getDonationETHValue) }} ETH
+                </h1>
+                <br>
                 <v-btn
                   class="mt-2 btn-hover color-9"
                   dark
@@ -106,11 +110,18 @@ export default {
       },
     },
     exrate: 0,
+    eurToEth: 0,
     donationValue: 0,
   }),
   computed: {
     getDonationGoalPercentage() {
       return (this.project.donationGoal.reached / this.project.donationGoal.total) * 100.0;
+    },
+    getDonationETHValue() {
+      if (this.donationValue > 0) {
+        return (this.donationValue * this.eurToEth).toFixed(4);
+      }
+      return null;
     },
   },
   mounted() {
@@ -146,6 +157,7 @@ export default {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
           this.exrate = (res.data.ETH * 1000000);
+          this.eurToEth = res.data.ETH;
           console.log(this.exrate);
         })
         .catch((err) => {
