@@ -105,6 +105,7 @@ export default {
         reached: 631.23,
       },
     },
+    exrate: 0,
     donationValue: 0,
   }),
   computed: {
@@ -115,21 +116,37 @@ export default {
   mounted() {
     if (window.userSession.isUserSignedIn()) {
       this.userData = window.userSession.loadUserData();
+      console.log(this.userData);
     }
+    this.szaboToEuro();
   },
   methods: {
     donate() {
-      // console.log('test');
-      // console.log(localStorage.getItem('blockstack-session'));
+      console.log('test');
       const headers = {
         authToken: this.userData.authResponseToken,
         idmilestone: 1,
-        amount: 2,
+        amount: (this.donationValue * this.exrate),
         voteEnabled: true,
+        etherAccountKey: 'test',
+
       };
       this.userData = window.userSession.loadUserData();
       axios.post('http://84.118.2.15/api/donations', {}, { headers })
         .then(() => {
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+    szaboToEuro() {
+      axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
+        .then((res) => {
+          this.exrate = (res.data.ETH * 1000000);
+          console.log(this.exrate);
         })
         .catch((err) => {
           this.errorMessage = err.toString();
