@@ -9,6 +9,19 @@
           <v-col cols="3" />
           <v-col cols="6">
             <v-text-field
+              v-model="username"
+              outlined
+              required
+              autofocus
+              label="Owner Userame"
+            />
+          </v-col>
+          <v-col cols="3" />
+        </v-row>
+        <v-row>
+          <v-col cols="3" />
+          <v-col cols="6">
+            <v-text-field
               v-model="name"
               outlined
               required
@@ -86,6 +99,7 @@ export default {
     userSession: null,
     userData: null,
     name: '',
+    username: '',
     website: '',
     address: '',
     dialog: {
@@ -109,6 +123,7 @@ export default {
         name: this.name,
         address: this.address,
         webpage: this.website,
+        username: this.username,
       };
       axios.post('institutions', { }, { headers })
         .then(() => {
