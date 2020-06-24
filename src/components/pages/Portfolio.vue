@@ -96,6 +96,7 @@
               v-model="tab"
               fixed-tabs
               background-color="indigo"
+              slider-color="secondary"
               dark
             >
               <v-tab>
@@ -141,6 +142,7 @@
             >
               <v-col
                 v-for="voucher in getVouchers(tab)"
+                cols="12"
                 :key="voucher.id"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
@@ -191,11 +193,38 @@
               </v-toolbar-title>
               <v-spacer />
             </v-toolbar>
-            <v-card-text class="text-center">
+            <v-card-text
+                    v-if="donations.length == 0"
+                    class="text-center"
+            >
               <h1 class="my-10">
-                Keine Spenden getätigt
+                Keine Gutscheine vorhanden
               </h1>
             </v-card-text>
+            <v-row
+                    v-else
+                    class="ma-2"
+            >
+              <v-col
+                      v-for="donation in donations"
+                      cols="12"
+                      :key="donation.id"
+              >
+                <v-card>
+                  <v-card-title>{{ donation.title }}</v-card-title>
+                  <v-card-subtitle class="overline">
+                    Restaurante Panini
+                  </v-card-subtitle>
+                  <v-card-text>{{ donation.subject }}</v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <h3 class="pricetag font-weight-light">
+                      {{ donation.amount }} ETH
+                    </h3>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
       </v-row>
