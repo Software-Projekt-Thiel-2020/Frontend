@@ -160,7 +160,7 @@
               </v-list-item-title>
             </router-link>
           </v-list-item>
-          <v-list-item>
+          <v-list-item v-if="backend_userdata && backend_userdata.group === 'support'">
             <router-link
               to="/institution"
               tag="span"
