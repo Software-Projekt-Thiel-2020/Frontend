@@ -74,7 +74,7 @@
     <v-container>
       <v-row>
         <v-col>
-          <v-card>
+          <v-card color="primary">
             <v-toolbar
               color="indigo"
               dark
@@ -142,13 +142,13 @@
             >
               <v-col
                 v-for="voucher in getVouchers(tab)"
-                cols="12"
                 :key="voucher.id"
+                cols="12"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
                   <v-card-title>{{ voucher.title }}</v-card-title>
                   <v-card-subtitle class="overline">
-                    Restaurante Panini
+                    {{ voucher.institution.title }}
                   </v-card-subtitle>
                   <v-card-text>{{ voucher.subject }}</v-card-text>
                   <v-card-actions>
@@ -176,7 +176,7 @@
           </v-card>
         </v-col>
         <v-col>
-          <v-card>
+          <v-card color="primary">
             <v-toolbar
               color="indigo"
               dark
@@ -194,26 +194,26 @@
               <v-spacer />
             </v-toolbar>
             <v-card-text
-                    v-if="donations.length == 0"
-                    class="text-center"
+              v-if="donations.length == 0"
+              class="text-center"
             >
               <h1 class="my-10">
                 Keine Gutscheine vorhanden
               </h1>
             </v-card-text>
             <v-row
-                    v-else
-                    class="ma-2"
+              v-else
+              class="ma-2"
             >
               <v-col
-                      v-for="donation in donations"
-                      cols="12"
-                      :key="donation.id"
+                v-for="donation in donations"
+                :key="donation.id"
+                cols="12"
               >
                 <v-card>
                   <v-card-title>{{ donation.title }}</v-card-title>
                   <v-card-subtitle class="overline">
-                    Restaurante Panini
+                    {{ donation.project.title }}
                   </v-card-subtitle>
                   <v-card-text>{{ donation.subject }}</v-card-text>
                   <v-card-actions>
@@ -246,6 +246,7 @@ export default {
         id: 3,
         amount: 5012,
         userid: 2,
+        project: { id: 1, title: 'DRK OV Lübbecke' },
         milestoneid: 1,
       },
     ],
@@ -254,7 +255,7 @@ export default {
         id: 3,
         amount: 307500,
         userid: 2,
-        institutionid: 3,
+        institution: { id: 3, title: 'Eiscafe Italia' },
         subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
         title: 'Eis Eisd. Baeckerstr. max 2 Kug',
         untilTime: 3164658364,
@@ -263,7 +264,16 @@ export default {
         id: 1,
         amount: 10703,
         userid: 1,
-        institutionid: 1,
+        institution: { id: 1, title: 'Restaurante Athen' },
+        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
+        title: 'Besuch Restaurant Athen 4 Pers.',
+        untilTime: 46456474376,
+        used: true,
+      }, {
+        id: 2,
+        amount: 10703,
+        userid: 1,
+        institution: { id: 1, title: 'Restaurante Athen' },
         subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
         title: 'Besuch Restaurant Athen 4 Pers.',
         untilTime: 46456474376,
@@ -273,19 +283,10 @@ export default {
         id: 5,
         amount: 307500,
         userid: 2,
-        institutionid: 3,
+        institution: { id: 3, title: 'Eiscafe Italia' },
         subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
         title: 'Eis Eisd. Baeckerstr. max 2 Kug',
         untilTime: 3164658364,
-        used: true,
-      }, {
-        id: 2,
-        amount: 10703,
-        userid: 1,
-        institutionid: 1,
-        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
-        title: 'Besuch Restaurant Athen 4 Pers.',
-        untilTime: 46456474376,
         used: false,
       },
     ],
