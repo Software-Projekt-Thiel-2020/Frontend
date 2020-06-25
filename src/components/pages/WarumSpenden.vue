@@ -29,7 +29,13 @@
         <v-row>
           <v-col cols="6">
             <h3>Spenden hilft der Welt</h3>
-            Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.
+            <p>
+              Besonders in der Zeit von Corona sind etliche lokale Restaurants und Unternehmen kurz vor der Insolvenz.
+              Damit Sie auch in Zukunft in Ihrem Lieblingsrestaurant essen können bietet unsere Seite die perfekte
+              Möglichkeit, um diese zu unterstützen. Bereits eine kleine Spende, oder der Kauf eines Gutscheins, kann es einem
+              Kleinunternehmer ermöglichen, dass sein Betrieb auch weiterhin existiert. Dadurch können Sie auch künftig
+              die Dienste von Betrieben in Ihrer Nähe in Anspruch nehmen.
+            </p>
           </v-col>
           <v-col cols="1" />
           <v-col cols="5">
@@ -46,7 +52,12 @@
           <v-col cols="1" />
           <v-col cols="5">
             <h3>Geld ist geil</h3>
-            Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.Inspirierender Text, welcher Gefühle anspricht.
+            <p>
+              Geld ist geil und deshalb profitieren auch Sie wenn Sie eine Spende tätigen. Abgesehen von dem
+              guten Gefühl, welches Sie erhalten, wenn Sie Menschen in der Not helfen, ist es im Zuge
+              der Coronakriese möglich Ihren gespendeten Betrag von der Steuer abzusetzen. Dies ist allerdings erst ab
+              einer Spende von 200€ der Fall.
+            </p>
           </v-col>
         </v-row>
       </div>
@@ -65,6 +76,10 @@ export default {
   .argument {
     background-color: rgba(205,206,226,0.56);
     padding: 25px;
+  }
+
+  p {
+    text-align: justify;
   }
 
 </style>
