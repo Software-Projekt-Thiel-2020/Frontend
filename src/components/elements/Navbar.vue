@@ -12,7 +12,7 @@
       <router-link
         to="/"
         tag="span"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           class="d-flex align-center text-none"
