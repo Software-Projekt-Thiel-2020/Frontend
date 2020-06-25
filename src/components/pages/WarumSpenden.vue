@@ -53,7 +53,7 @@
           <v-col cols="5">
             <h3>Geld ist geil</h3>
             <p>
-              Geld ist geil und deshalb profitieren auch Sie, wenn Sie ein Spende tätigen. Abgesehen von dem
+              Geld ist geil und deshalb profitieren auch Sie wenn Sie ein Spende tätigen. Abgesehen von dem
               guten Gefühl, dass Sie Menschen in der Not geholfen haben, ist es auch möglich im Zuge
               der Coronakriese Ihren gespendeten Betrag von der Steuer abzusetzen. Dies ist allerdings erst ab
               einer Spende von 200€ der Fall.
