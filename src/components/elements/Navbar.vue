@@ -29,7 +29,8 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
+          color="primary"
+          elevation="0"
           class="ma-2"
         >
           <span class="mr-2">Home</span>
@@ -44,7 +45,8 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
+          color="primary"
+          elevation="0"
           class="ma-2"
         >
           <span class="mr-2">Spenden</span>
@@ -59,7 +61,8 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
+          color="primary"
+          elevation="0"
           class="ma-2"
         >
           <span class="mr-2">Gutscheine</span>
@@ -74,7 +77,8 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
+          color="primary"
+          elevation="0"
           class="ma-2"
         >
           <span class="mr-2">Über uns</span>
@@ -107,7 +111,8 @@
         class="ma-2 hidden-sm-and-down"
         target="_blank"
         rounded
-        color="accent"
+        color="primary"
+        elevation="0"
         @click="signIn"
       >
         <span class="mr-2">Anmelden mit Blockstack</span>
