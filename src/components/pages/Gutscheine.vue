@@ -16,6 +16,7 @@
                 v-model="searchInstitution"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
+                @input="applyFilter"
               />
             </v-col>
             <v-col
@@ -26,18 +27,8 @@
                 v-model="searchCity"
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
+                @input="applyFilter"
               />
-            </v-col>
-            <v-col
-              cols="12"
-              sm="4"
-            >
-              <v-btn
-                class="submit"
-                type="submit"
-              >
-                Suchen
-              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -53,18 +44,21 @@
         Beim Abruf der Daten ist ein Fehler aufgetreten: {{ errorMessage }}
       </v-alert>
       <div v-if="!gotResponse">
-        <v-skeleton-loader
-          v-for="index in 4"
+        <v-skeleton-loader>
+          <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
+           da Anzahl an gefundenen Institutionen beim Laden
+            nicht herauszufinden ist -->
+          v-for="index in 7"
           :key="index"
           class="my-10"
           type="list-item-avatar"
           tile
-        />
+        </v-skeleton-loader>
       </div>
       <div v-if="gotResponse">
         <v-row>
           <v-col
-            v-for="item in items"
+            v-for="item in resultList"
             :key="item.name"
           >
             <v-card
@@ -76,7 +70,7 @@
                 class="companyData"
                 style="border:0;"
               >
-                <h2>Firmenname: {{ item.name }}</h2>
+                <h2>{{ item.name }}</h2>
                 <h4>
                   Zur Website:
                   <a :href="item.webpage">{{ item.webpage }}</a>
@@ -108,6 +102,7 @@ export default {
     searchCity: '',
     gotResponse: false,
     errorMessage: null,
+    resultList: [],
   }),
   mounted() {
     axios.get('institutions')
@@ -119,7 +114,29 @@ export default {
       })
       .finally(() => {
         this.gotResponse = true;
+        this.resultList = this.items;
       });
+  },
+  methods: {
+    applyFilter() {
+      this.resultList = this.items;
+      if (this.searchInstitution.length !== 0 && this.searchCity.length !== 0) {
+        this.filterByName();
+        this.filterByLocation();
+      } else if (this.searchInstitution.length !== 0) {
+        this.filterByName();
+      } else if (this.searchCity.length !== 0) {
+        this.filterByLocation();
+      }
+    },
+    filterByName() {
+      this.resultList = this.resultList.filter(
+        (inst) => inst.name.toLowerCase().search(this.searchInstitution.toLowerCase()) !== -1,
+      );
+    },
+    filterByLocation() {
+      this.resultList = [];
+    },
   },
 };
 </script>
