@@ -16,6 +16,7 @@
                 v-model="searchProject"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
+                @input="filterByName"
               />
             </v-col>
             <v-col
@@ -27,17 +28,6 @@
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
               />
-            </v-col>
-            <v-col
-              cols="12"
-              sm="4"
-            >
-              <v-btn
-                class="submit"
-                type="submit"
-              >
-                Suchen
-              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -54,7 +44,7 @@
       </v-alert>
       <div v-if="!gotResponse">
         <v-skeleton-loader
-          v-for="index in 4"
+          v-for="index in resultList.length"
           :key="index"
           class="my-10"
           type="list-item-avatar"
@@ -64,7 +54,7 @@
       <div v-if="gotResponse">
         <v-row>
           <v-col
-            v-for="item in items"
+            v-for="item in resultList"
             :key="item.name"
           >
             <v-card
@@ -76,7 +66,7 @@
                 class="companyData"
                 style="border:0;"
               >
-                <h2>Firmenname: {{ item.name }}</h2>
+                <h2>{{ item.name }}</h2>
                 <h4>
                   Zur Website:
                   <a :href="item.webpage">{{ item.webpage }}</a>
@@ -108,6 +98,7 @@ export default {
     errorMessage: null,
     searchProject: '',
     searchCity: '',
+    resultList: [],
   }),
   mounted() {
     axios.get('projects')
@@ -119,7 +110,20 @@ export default {
       })
       .finally(() => {
         this.gotResponse = true;
+        this.filterByName();
       });
+  },
+  methods: {
+    filterByName() {
+      if (this.searchProject.length !== 0) {
+        this.resultList = this.resultList.filter((inst) => {
+          if (inst.name.search(this.searchProject) !== -1) return true;
+          return false;
+        });
+      } else {
+        this.resultList = this.items;
+      }
+    },
   },
 };
 </script>
