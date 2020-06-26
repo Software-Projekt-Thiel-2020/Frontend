@@ -115,7 +115,6 @@ export default {
       });
   },
   methods: {
-    // ToDo: Case insensitive search
     applyFilter() {
       this.resultList = this.items;
       if (this.searchProject.length !== 0 && this.searchCity.length !== 0) {
@@ -129,7 +128,7 @@ export default {
     },
     filterByName() {
       this.resultList = this.resultList.filter(
-        (inst) => inst.name.search(this.searchProject) !== -1,
+        (inst) => inst.name.toLowerCase().search(this.searchProject.toLowerCase()) !== -1,
       );
     },
     filterByLocation() {
