@@ -16,7 +16,7 @@
                 v-model="searchProject"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
-                @input="filterByName"
+                @input="applyFilter"
               />
             </v-col>
             <v-col
@@ -27,6 +27,7 @@
                 v-model="searchCity"
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
+                @input="applyFilter"
               />
             </v-col>
           </v-row>
@@ -110,19 +111,29 @@ export default {
       })
       .finally(() => {
         this.gotResponse = true;
-        this.filterByName();
+        this.resultList = this.items;
       });
   },
   methods: {
-    filterByName() {
-      if (this.searchProject.length !== 0) {
-        this.resultList = this.resultList.filter((inst) => {
-          if (inst.name.search(this.searchProject) !== -1) return true;
-          return false;
-        });
-      } else {
-        this.resultList = this.items;
+    // ToDo: Case insensitive search
+    applyFilter() {
+      this.resultList = this.items;
+      if (this.searchProject.length !== 0 && this.searchCity.length !== 0) {
+        this.filterByName();
+        this.filterByLocation();
+      } else if (this.searchProject.length !== 0) {
+        this.filterByName();
+      } else if (this.searchCity.length !== 0) {
+        this.filterByLocation();
       }
+    },
+    filterByName() {
+      this.resultList = this.resultList.filter(
+        (inst) => inst.name.search(this.searchProject) !== -1,
+      );
+    },
+    filterByLocation() {
+      this.resultList = [];
     },
   },
 };
