@@ -44,13 +44,17 @@
         Beim Abruf der Daten ist ein Fehler aufgetreten: {{ errorMessage }}
       </v-alert>
       <div v-if="!gotResponse">
-        <v-skeleton-loader
-          v-for="index in resultList.length"
+        <v-skeleton-loader>
+          <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
+           da Anzahl an gefundenen Institutionen beim Laden
+            nicht herauszufinden ist -->
+          v-for="index in 7"
           :key="index"
           class="my-10"
           type="list-item-avatar"
           tile
-        />
+          />
+        </v-skeleton-loader>
       </div>
       <div v-if="gotResponse">
         <v-row>
