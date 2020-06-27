@@ -83,7 +83,7 @@
                 </h4>
               </div>
               <v-card-actions>
-                <router-link :to="'project/'+item.id">
+                <router-link :to="'projectGutschein/'+item.id">
                   <v-btn class="gutscheinButton">
                     GUTSCHEIN KAUFEN
                   </v-btn>
