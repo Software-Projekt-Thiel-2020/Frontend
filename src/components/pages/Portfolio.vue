@@ -43,8 +43,17 @@
               <h4>
                 Meine persönliche Wallet Adresse:
                 <v-chip>
-                  <span class="walletAddress">
-                    {{ wallet.adress }}
+                  <span
+                    v-if="!gotResponse"
+                    class="walletAddress"
+                  >
+                    loading....
+                  </span>
+                  <span
+                    v-else
+                    class="walletAddress"
+                  >
+                    {{ user.publickey }}
                   </span>
                 </v-chip>
               </h4>
@@ -60,8 +69,17 @@
                   <v-icon class="display-1">
                     mdi-ethereum
                   </v-icon>
-                  <h3 class="display-1 font-weight-light">
-                    {{ wallet.amount }}ETH
+                  <h3
+                    v-if="!gotResponse"
+                    class="display-1 font-weight-light"
+                  >
+                    {{ 0 }}-ETH
+                  </h3>
+                  <h3
+                    v-else
+                    class="display-1 font-weight-light"
+                  >
+                    {{ user.balance }}-ETH
                   </h3>
                 </v-chip>
               </div>
@@ -105,10 +123,18 @@
                   class="v-chip--clickable"
                 >
                   <v-avatar
+                    v-if="gotResponse"
                     left
                     color="primary"
                   >
                     {{ getVouchers(false).length }}
+                  </v-avatar>
+                  <v-avatar
+                    v-else
+                    left
+                    color="primary"
+                  >
+                    0
                   </v-avatar>
                   Gültig
                 </v-chip>
@@ -119,17 +145,33 @@
                   class="v-chip--clickable"
                 >
                   <v-avatar
+                    v-if="gotResponse"
                     left
                     color="primary"
                   >
                     {{ getVouchers(true).length }}
+                  </v-avatar>
+                  <v-avatar
+                    v-else
+                    left
+                    color="primary"
+                  >
+                    0
                   </v-avatar>
                   Eingelöst
                 </v-chip>
               </v-tab>
             </v-tabs>
             <v-card-text
-              v-if="vouchers.length == 0"
+              v-if="vErrMsg.length !== 0"
+              class="text-center"
+            >
+              <h1 class="my-10">
+                {{ vErrMsg }}
+              </h1>
+            </v-card-text>
+            <v-card-text
+              v-else-if="vouchers === null || vouchers === undefined"
               class="text-center"
             >
               <h1 class="my-10">
@@ -146,39 +188,30 @@
                 cols="12"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
-                  <v-list-item three-line>
-                    <v-list-item-avatar
-                      tile
-                      size="100"
-                      color="grey"
-                    />
-                    <v-list-item-content>
-                      <v-card-title>{{ voucher.title }}</v-card-title>
-                      <v-card-subtitle class="overline pb-2">
-                        {{ voucher.institution.title }}
-                      </v-card-subtitle>
-                      <v-card-text>{{ voucher.subject }}</v-card-text>
-                    </v-list-item-content>
-                    <div class="text-center">
-                      <h3 class="pricetag font-weight-light">
-                        {{ voucher.amount }} ETH
-                      </h3>
-                      <v-spacer />
-                      <v-btn
-                        v-if="!voucher.used"
-                        color="success"
-                      >
-                        Einlösen
-                      </v-btn>
-                      <v-btn
-                        v-if="voucher.used"
-                        disabled
-                        outlined
-                      >
-                        Eingelöst
-                      </v-btn>
-                    </div>
-                  </v-list-item>
+                  <v-card-title>{{ voucher.titel }}</v-card-title>
+                  <v-card-subtitle class="overline">
+                    {{ voucher.titel }}
+                  </v-card-subtitle>
+                  <v-card-text>{{ voucher.description }}</v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      v-if="!voucher.used"
+                      color="success"
+                    >
+                      Einlösen
+                    </v-btn>
+                    <v-btn
+                      v-if="voucher.used"
+                      disabled
+                      outlined
+                    >
+                      Eingelöst
+                    </v-btn>
+                    <v-spacer />
+                    <h3 class="pricetag font-weight-light">
+                      {{ voucher.price }} ETH
+                    </h3>
+                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
@@ -203,11 +236,19 @@
               <v-spacer />
             </v-toolbar>
             <v-card-text
-              v-if="donations.length == 0"
+              v-if="dErrMsg.length !== 0"
               class="text-center"
             >
               <h1 class="my-10">
-                Keine Gutscheine vorhanden
+                {{ dErrMsg }}
+              </h1>
+            </v-card-text>
+            <v-card-text
+              v-else-if="donations === null || donations === undefined"
+              class="text-center"
+            >
+              <h1 class="my-10">
+                Keine Spenden getätigt
               </h1>
             </v-card-text>
             <v-row
@@ -219,25 +260,18 @@
                 :key="donation.id"
                 cols="12"
               >
-                <v-card color="white">
-                  <v-list-item three-line>
-                    <v-list-item-avatar
-                      tile
-                      size="100"
-                      color="grey"
-                    />
-                    <v-list-item-content>
-                      <v-card-title class="">
-                        {{ donation.project.title }}
-                      </v-card-title>
-                      <v-card-text>{{ donation.subject }}</v-card-text>
-                    </v-list-item-content>
-                    <div class="text-center">
-                      <h3 class="pricetag font-weight-light">
-                        {{ donation.amount }} ETH
-                      </h3>
-                    </div>
-                  </v-list-item>
+                <v-card>
+                  <v-card-title>{{ donation.projectname }}</v-card-title>
+                  <v-card-subtitle class="overline">
+                    {{ donation.projectname }}
+                  </v-card-subtitle>
+                  <v-card-text>{{ donation.projectname }}</v-card-text>
+                  <v-card-actions>
+                    <v-spacer />
+                    <h3 class="pricetag font-weight-light">
+                      {{ donation.amount }} ETH
+                    </h3>
+                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
@@ -249,88 +283,80 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Historie',
   data: () => ({
     tab: null,
-    wallet: {
-      adress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
-      amount: '1337.5012',
-    },
-    donations: [
-      {
-        id: 3,
-        amount: 5012,
-        userid: 2,
-        project: { id: 1, title: 'DRK OV Lübbecke' },
-        timestamp: 1593121144,
-        milestoneid: 1,
-      },
-    ],
-    vouchers: [
-      {
-        id: 3,
-        amount: 307500,
-        userid: 2,
-        institution: { id: 3, title: 'Eiscafe Italia' },
-        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
-        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
-        untilTime: 3164658364,
-        used: true,
-      }, {
-        id: 1,
-        amount: 10703,
-        userid: 1,
-        institution: { id: 1, title: 'Restaurante Athen' },
-        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
-        title: 'Besuch Restaurant Athen 4 Pers.',
-        untilTime: 46456474376,
-        used: true,
-      }, {
-        id: 2,
-        amount: 10703,
-        userid: 1,
-        institution: { id: 1, title: 'Restaurante Athen' },
-        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
-        title: 'Besuch Restaurant Athen 4 Pers.',
-        untilTime: 46456474376,
-        used: false,
-      },
-      {
-        id: 5,
-        amount: 307500,
-        userid: 2,
-        institution: { id: 3, title: 'Eiscafe Italia' },
-        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
-        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
-        untilTime: 3164658364,
-        used: false,
-      },
-    ],
+    donations: null,
+    vouchers: null,
+    errorMessage: '',
+    vErrMsg: '',
+    dErrMsg: '',
+    gotResponse: false,
+    user: null,
   }),
+  mounted() {
+    axios.get(`users?username=${window.user.username}`)
+      .then((res) => {
+        if (res.data.length === 0) {
+          this.errorMessage = 'Could not fetch data';
+        } else {
+          [this.user] = res.data;
+          this.donations = this.loadDonations();
+          this.vouchers = this.loadVouchers();
+        }
+      }).catch((err) => {
+        this.errorMessage = err.toString();
+      }).finally(() => {
+        this.gotResponse = true;
+      });
+  },
   methods: {
     getVouchers(used) {
-      if (used) {
+      if (this.vouchers === null || this.vouchers === undefined) {
+        return [];
+      }
+      if (used === true) {
         return this.vouchers.filter((voucher) => voucher.used);
       }
       return this.vouchers.filter((voucher) => !voucher.used);
     },
-
-
+    loadVouchers() {
+      axios.get(`vouchers/user?idUser=${this.user.id}`)
+        .then((res) => {
+          if (res.data.length !== 0) {
+            this.vouchers = res.data;
+          }
+        }).catch((err) => {
+          this.vErrMsg = err.toString();
+        });
+    },
+    loadDonations() {
+      axios.get(`donations?iduser=${this.user.id}`)
+        .then((res) => {
+          if (res.data.length !== 0) {
+            this.donations = res.data;
+          }
+        }).catch((err) => {
+          this.dErrMsg = err.toString();
+        });
+    },
   },
 };
 </script>
 
 <style scoped>
-    .pricetag {
-        font-size: 1.7rem;
-    }
+  .pricetag {
+      font-size: 1.7rem;
+  }
 
-    .walletAddress {
-        font-family: Courier;
-    }
+  .walletAddress {
+    font-family: Courier;
+  }
 
-    .wallet {
-        max-width: 500px;
-    }
+  .wallet {
+    max-width: 500px;
+  }
 </style>
