@@ -39,14 +39,21 @@
               </v-toolbar-title>
               <v-spacer />
             </v-toolbar>
-
-            <!-- TODO: Wallet laden -->
             <div class="ma-5 pb-1">
               <h4>
                 Meine persönliche Wallet Adresse:
                 <v-chip>
-                  <span class="walletAddress">
-                    {{ wallet.adress }}
+                  <span
+                    v-if="!gotResponse"
+                    class="walletAddress"
+                  >
+                    loading....
+                  </span>
+                  <span
+                    v-else
+                    class="walletAddress"
+                  >
+                    {{ user.publickey }}
                   </span>
                 </v-chip>
               </h4>
@@ -62,8 +69,17 @@
                   <v-icon class="display-1">
                     mdi-ethereum
                   </v-icon>
-                  <h3 class="display-1 font-weight-light">
-                    {{ wallet.amount }}ETH
+                  <h3
+                    v-if="!gotResponse"
+                    class="display-1 font-weight-light"
+                  >
+                    {{ 0 }}-ETH
+                  </h3>
+                  <h3
+                    v-else
+                    class="display-1 font-weight-light"
+                  >
+                    {{ user.balance }}-ETH
                   </h3>
                 </v-chip>
               </div>
@@ -155,7 +171,7 @@
               </h1>
             </v-card-text>
             <v-card-text
-              v-else-if="vouchers === null"
+              v-else-if="vouchers === null || vouchers === undefined"
               class="text-center"
             >
               <h1 class="my-10">
@@ -228,7 +244,7 @@
               </h1>
             </v-card-text>
             <v-card-text
-              v-else-if="donations === null"
+              v-else-if="donations === null || donations === undefined"
               class="text-center"
             >
               <h1 class="my-10">
@@ -273,16 +289,13 @@ export default {
   name: 'Historie',
   data: () => ({
     tab: null,
-    wallet: {
-      adress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
-      amount: '1337.5012',
-    },
     donations: null,
     vouchers: null,
     errorMessage: '',
     vErrMsg: '',
     dErrMsg: '',
     gotResponse: false,
+    user: null,
   }),
   mounted() {
     axios.get(`users?username=${window.user.username}`)
@@ -290,11 +303,7 @@ export default {
         if (res.data.length === 0) {
           this.errorMessage = 'Could not fetch data';
         } else {
-          this.userid = res.data[0].id;
-
-          // TODO: REMOVE HARDCODED UID
-          this.userid = 1;
-
+          [this.user] = res.data;
           this.donations = this.loadDonations();
           this.vouchers = this.loadVouchers();
         }
@@ -315,22 +324,20 @@ export default {
       return this.vouchers.filter((voucher) => !voucher.used);
     },
     loadVouchers() {
-      axios.get(`vouchers/user?idUser=${this.userid}`)
+      axios.get(`vouchers/user?idUser=${this.user.id}`)
         .then((res) => {
-          this.vouchers = res.data;
-          if (res.data.length === 0) {
-            this.vErrMsg = 'Could not fetch data';
+          if (res.data.length !== 0) {
+            this.vouchers = res.data;
           }
         }).catch((err) => {
           this.vErrMsg = err.toString();
         });
     },
     loadDonations() {
-      axios.get(`donations?iduser=${this.userid}`)
+      axios.get(`donations?iduser=${this.user.id}`)
         .then((res) => {
-          this.donations = res.data;
-          if (res.data.length === 0) {
-            this.dErrMsg = 'Could not fetch data';
+          if (res.data.length !== 0) {
+            this.donations = res.data;
           }
         }).catch((err) => {
           this.dErrMsg = err.toString();
