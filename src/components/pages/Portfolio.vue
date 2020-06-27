@@ -39,6 +39,8 @@
               </v-toolbar-title>
               <v-spacer />
             </v-toolbar>
+
+            <!-- TODO: Wallet laden -->
             <div class="ma-5 pb-1">
               <h4>
                 Meine persönliche Wallet Adresse:
@@ -105,10 +107,18 @@
                   class="v-chip--clickable"
                 >
                   <v-avatar
+                    v-if="gotResponse === true"
                     left
                     color="primary"
                   >
                     {{ getVouchers(false).length }}
+                  </v-avatar>
+                  <v-avatar
+                    v-else
+                    left
+                    color="primary"
+                  >
+                    0
                   </v-avatar>
                   Gültig
                 </v-chip>
@@ -119,17 +129,33 @@
                   class="v-chip--clickable"
                 >
                   <v-avatar
+                    v-if="gotResponse === true"
                     left
                     color="primary"
                   >
                     {{ getVouchers(true).length }}
+                  </v-avatar>
+                  <v-avatar
+                    v-else
+                    left
+                    color="primary"
+                  >
+                    0
                   </v-avatar>
                   Eingelöst
                 </v-chip>
               </v-tab>
             </v-tabs>
             <v-card-text
-              v-if="vouchers.length == 0"
+              v-if="vErrMsg.length !== 0"
+              class="text-center"
+            >
+              <h1 class="my-10">
+                {{ vErrMsg }}
+              </h1>
+            </v-card-text>
+            <v-card-text
+              v-else-if="vouchers === null"
               class="text-center"
             >
               <h1 class="my-10">
@@ -146,11 +172,11 @@
                 cols="12"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
-                  <v-card-title>{{ voucher.title }}</v-card-title>
+                  <v-card-title>{{ voucher.titel }}</v-card-title>
                   <v-card-subtitle class="overline">
-                    {{ voucher.institution.title }}
+                    {{ voucher.titel }}
                   </v-card-subtitle>
-                  <v-card-text>{{ voucher.subject }}</v-card-text>
+                  <v-card-text>{{ voucher.description }}</v-card-text>
                   <v-card-actions>
                     <v-btn
                       v-if="!voucher.used"
@@ -167,7 +193,7 @@
                     </v-btn>
                     <v-spacer />
                     <h3 class="pricetag font-weight-light">
-                      {{ voucher.amount }} ETH
+                      {{ voucher.price }} ETH
                     </h3>
                   </v-card-actions>
                 </v-card>
@@ -194,11 +220,19 @@
               <v-spacer />
             </v-toolbar>
             <v-card-text
-              v-if="donations.length == 0"
+              v-if="dErrMsg.length !== 0"
               class="text-center"
             >
               <h1 class="my-10">
-                Keine Gutscheine vorhanden
+                {{ dErrMsg }}
+              </h1>
+            </v-card-text>
+            <v-card-text
+              v-else-if="donations === null"
+              class="text-center"
+            >
+              <h1 class="my-10">
+                Keine Spenden getätigt
               </h1>
             </v-card-text>
             <v-row
@@ -211,11 +245,11 @@
                 cols="12"
               >
                 <v-card>
-                  <v-card-title>{{ donation.title }}</v-card-title>
+                  <v-card-title>{{ donation.projectname }}</v-card-title>
                   <v-card-subtitle class="overline">
-                    {{ donation.project.title }}
+                    {{ donation.projectname }}
                   </v-card-subtitle>
-                  <v-card-text>{{ donation.subject }}</v-card-text>
+                  <v-card-text>{{ donation.projectname }}</v-card-text>
                   <v-card-actions>
                     <v-spacer />
                     <h3 class="pricetag font-weight-light">
@@ -233,6 +267,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Historie',
   data: () => ({
@@ -241,77 +277,79 @@ export default {
       adress: '0x1D1479C185d32EB90533a08b36B3CFa5F84A0E6B',
       amount: '1337.5012',
     },
-    donations: [
-      {
-        id: 3,
-        amount: 5012,
-        userid: 2,
-        project: { id: 1, title: 'DRK OV Lübbecke' },
-        milestoneid: 1,
-      },
-    ],
-    vouchers: [
-      {
-        id: 3,
-        amount: 307500,
-        userid: 2,
-        institution: { id: 3, title: 'Eiscafe Italia' },
-        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
-        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
-        untilTime: 3164658364,
-        used: true,
-      }, {
-        id: 1,
-        amount: 10703,
-        userid: 1,
-        institution: { id: 1, title: 'Restaurante Athen' },
-        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
-        title: 'Besuch Restaurant Athen 4 Pers.',
-        untilTime: 46456474376,
-        used: true,
-      }, {
-        id: 2,
-        amount: 10703,
-        userid: 1,
-        institution: { id: 1, title: 'Restaurante Athen' },
-        subject: 'Ein Restaurantbesuch beim Griechen Athen, bis zu 4 Personen.',
-        title: 'Besuch Restaurant Athen 4 Pers.',
-        untilTime: 46456474376,
-        used: false,
-      },
-      {
-        id: 5,
-        amount: 307500,
-        userid: 2,
-        institution: { id: 3, title: 'Eiscafe Italia' },
-        subject: 'Für ein leckeres Eis bei der Eisdiele in der Bäckerstraße, bis zu 2 Kugeln.',
-        title: 'Eis Eisd. Baeckerstr. max 2 Kug',
-        untilTime: 3164658364,
-        used: false,
-      },
-    ],
+    donations: null,
+    vouchers: null,
+    errorMessage: '',
+    vErrMsg: '',
+    dErrMsg: '',
+    gotResponse: false,
   }),
+  mounted() {
+    axios.get(`users?username=${window.user.username}`)
+      .then((res) => {
+        if (res.data.length === 0) {
+          this.errorMessage = 'Could not fetch data';
+        } else {
+          this.userid = res.data[0].id;
+
+          // TODO: REMOVE HARDCODED UID
+          this.userid = 1;
+
+          this.donations = this.loadDonations();
+          this.vouchers = this.loadVouchers();
+        }
+      }).catch((err) => {
+        this.errorMessage = err.toString();
+      }).finally(() => {
+        this.gotResponse = true;
+      });
+  },
   methods: {
     getVouchers(used) {
-      if (used) {
+      if (this.vouchers === null || this.vouchers === undefined) {
+        return [];
+      }
+      if (used === true) {
         return this.vouchers.filter((voucher) => voucher.used);
       }
       return this.vouchers.filter((voucher) => !voucher.used);
+    },
+    loadVouchers() {
+      axios.get(`vouchers/user?idUser=${this.userid}`)
+        .then((res) => {
+          this.vouchers = res.data;
+          if (res.data.length === 0) {
+            this.vErrMsg = 'Could not fetch data';
+          }
+        }).catch((err) => {
+          this.vErrMsg = err.toString();
+        });
+    },
+    loadDonations() {
+      axios.get(`donations?iduser=${this.userid}`)
+        .then((res) => {
+          this.donations = res.data;
+          if (res.data.length === 0) {
+            this.dErrMsg = 'Could not fetch data';
+          }
+        }).catch((err) => {
+          this.dErrMsg = err.toString();
+        });
     },
   },
 };
 </script>
 
 <style scoped>
-    .pricetag {
-        font-size: 1.5rem;
-    }
+  .pricetag {
+    font-size: 1.5rem;
+  }
 
-    .walletAddress {
-        font-family: Courier;
-    }
+  .walletAddress {
+    font-family: Courier;
+  }
 
-    .wallet {
-        max-width: 500px;
-    }
+  .wallet {
+    max-width: 500px;
+  }
 </style>
