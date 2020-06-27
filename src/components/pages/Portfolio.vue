@@ -146,30 +146,39 @@
                 cols="12"
               >
                 <v-card :color="voucher.used ? '#dddddd' : 'white'">
-                  <v-card-title>{{ voucher.title }}</v-card-title>
-                  <v-card-subtitle class="overline">
-                    {{ voucher.institution.title }}
-                  </v-card-subtitle>
-                  <v-card-text>{{ voucher.subject }}</v-card-text>
-                  <v-card-actions>
-                    <v-btn
-                      v-if="!voucher.used"
-                      color="success"
-                    >
-                      Einlösen
-                    </v-btn>
-                    <v-btn
-                      v-if="voucher.used"
-                      disabled
-                      outlined
-                    >
-                      Eingelöst
-                    </v-btn>
-                    <v-spacer />
-                    <h3 class="pricetag font-weight-light">
-                      {{ voucher.amount }} ETH
-                    </h3>
-                  </v-card-actions>
+                  <v-list-item three-line>
+                    <v-list-item-avatar
+                      tile
+                      size="100"
+                      color="grey"
+                    />
+                    <v-list-item-content>
+                      <v-card-title>{{ voucher.title }}</v-card-title>
+                      <v-card-subtitle class="overline pb-2">
+                        {{ voucher.institution.title }}
+                      </v-card-subtitle>
+                      <v-card-text>{{ voucher.subject }}</v-card-text>
+                    </v-list-item-content>
+                    <div class="text-center">
+                      <h3 class="pricetag font-weight-light">
+                        {{ voucher.amount }} ETH
+                      </h3>
+                      <v-spacer />
+                      <v-btn
+                        v-if="!voucher.used"
+                        color="success"
+                      >
+                        Einlösen
+                      </v-btn>
+                      <v-btn
+                        v-if="voucher.used"
+                        disabled
+                        outlined
+                      >
+                        Eingelöst
+                      </v-btn>
+                    </div>
+                  </v-list-item>
                 </v-card>
               </v-col>
             </v-row>
@@ -210,18 +219,25 @@
                 :key="donation.id"
                 cols="12"
               >
-                <v-card>
-                  <v-card-title>{{ donation.title }}</v-card-title>
-                  <v-card-subtitle class="overline">
-                    {{ donation.project.title }}
-                  </v-card-subtitle>
-                  <v-card-text>{{ donation.subject }}</v-card-text>
-                  <v-card-actions>
-                    <v-spacer />
-                    <h3 class="pricetag font-weight-light">
-                      {{ donation.amount }} ETH
-                    </h3>
-                  </v-card-actions>
+                <v-card color="white">
+                  <v-list-item three-line>
+                    <v-list-item-avatar
+                      tile
+                      size="100"
+                      color="grey"
+                    />
+                    <v-list-item-content>
+                      <v-card-title class="">
+                        {{ donation.project.title }}
+                      </v-card-title>
+                      <v-card-text>{{ donation.subject }}</v-card-text>
+                    </v-list-item-content>
+                    <div class="text-center">
+                      <h3 class="pricetag font-weight-light">
+                        {{ donation.amount }} ETH
+                      </h3>
+                    </div>
+                  </v-list-item>
                 </v-card>
               </v-col>
             </v-row>
@@ -247,6 +263,7 @@ export default {
         amount: 5012,
         userid: 2,
         project: { id: 1, title: 'DRK OV Lübbecke' },
+        timestamp: 1593121144,
         milestoneid: 1,
       },
     ],
@@ -298,13 +315,15 @@ export default {
       }
       return this.vouchers.filter((voucher) => !voucher.used);
     },
+
+
   },
 };
 </script>
 
 <style scoped>
     .pricetag {
-        font-size: 1.5rem;
+        font-size: 1.7rem;
     }
 
     .walletAddress {
