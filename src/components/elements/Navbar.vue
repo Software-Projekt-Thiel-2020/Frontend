@@ -12,7 +12,7 @@
       <router-link
         to="/"
         tag="span"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           class="d-flex align-center text-none"
@@ -117,7 +117,6 @@
         >
       </v-btn>
 
-
       <v-menu
         v-if="userSession.isUserSignedIn()"
         bottom
@@ -158,6 +157,18 @@
                 <v-icon class="mr-1">
                   mdi-wrench
                 </v-icon>Mein Profil
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item v-if="backend_userdata && backend_userdata.group === 'support'">
+            <router-link
+              to="/institution"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-bank-plus
+                </v-icon>Institution erstellen
               </v-list-item-title>
             </router-link>
           </v-list-item>

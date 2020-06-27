@@ -76,8 +76,10 @@
                 class="companyData"
                 style="border:0;"
               >
-                <h2>Firmenname: {{ item.name }}</h2>
-                <h4>
+                <h2 class="ma-3">
+                  {{ item.name }}
+                </h2>
+                <h4 class="ma-3">
                   Zur Website:
                   <a :href="item.webpage">{{ item.webpage }}</a>
                 </h4>
