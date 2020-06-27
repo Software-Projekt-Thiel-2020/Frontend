@@ -31,7 +31,7 @@
               <v-toolbar-title>
                 <v-icon
                   class="display-1"
-                  style="color: white"
+                  style="color: #ffffff"
                 >
                   mdi-wallet
                 </v-icon>
@@ -73,13 +73,13 @@
                     v-if="!gotResponse"
                     class="display-1 font-weight-light"
                   >
-                    {{ 0 }}-ETH
+                    {{ 0 }} ETH
                   </h3>
                   <h3
                     v-else
                     class="display-1 font-weight-light"
                   >
-                    {{ user.balance }}-ETH
+                    {{ user.balance * weiFormula }} ETH
                   </h3>
                 </v-chip>
               </div>
@@ -288,6 +288,7 @@ import axios from 'axios';
 export default {
   name: 'Historie',
   data: () => ({
+    weiFormula: 1000000000000000000,
     tab: null,
     donations: null,
     vouchers: null,
@@ -304,6 +305,7 @@ export default {
           this.errorMessage = 'Could not fetch data';
         } else {
           [this.user] = res.data;
+          this.user.id = 1;
           this.donations = this.loadDonations();
           this.vouchers = this.loadVouchers();
         }
