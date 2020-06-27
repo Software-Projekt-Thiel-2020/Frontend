@@ -170,20 +170,21 @@
                 {{ vErrMsg }}
               </h1>
             </v-card-text>
-            <v-card-text
-              v-else-if="vouchers === null || vouchers === undefined"
-              class="text-center"
-            >
-              <h1 class="my-10">
-                Keine Gutscheine vorhanden
-              </h1>
-            </v-card-text>
             <v-row
               v-else
               class="ma-2"
             >
+              <v-card-text
+                v-if="tabVouchers.length === 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  Keine Gutscheine vorhanden
+                </h1>
+              </v-card-text>
               <v-col
-                v-for="voucher in getVouchers(tab)"
+                v-for="voucher in tabVouchers"
+                v-else
                 :key="voucher.id"
                 cols="12"
               >
@@ -197,6 +198,7 @@
                     <v-btn
                       v-if="!voucher.used"
                       color="success"
+                      @click="redeemVoucher(voucher.id)"
                     >
                       Einlösen
                     </v-btn>
@@ -298,6 +300,11 @@ export default {
     gotResponse: false,
     user: null,
   }),
+  computed: {
+    tabVouchers() {
+      return this.getVouchers(this.tab);
+    },
+  },
   mounted() {
     axios.get(`users?username=${window.user.username}`)
       .then((res) => {
@@ -320,7 +327,7 @@ export default {
       if (this.vouchers === null || this.vouchers === undefined) {
         return [];
       }
-      if (used === true) {
+      if (used) {
         return this.vouchers.filter((voucher) => voucher.used);
       }
       return this.vouchers.filter((voucher) => !voucher.used);
@@ -344,6 +351,8 @@ export default {
         }).catch((err) => {
           this.dErrMsg = err.toString();
         });
+    },
+    redeemVoucher() {
     },
   },
 };
