@@ -89,14 +89,22 @@
               </v-col>
               <v-col class="voucherData">
                 <h4>
-                  Noch auf Lager:
+                  Läuft ab in:
                 </h4>
-                {{ voucher.amount }}
+                {{ voucher.validTime / 60 / 60 / 24 }} Tagen
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="voucherData">
+                <h5>
+                  Wurde bereits {{ voucher.amount }} mal gekauft
+                </h5>
               </v-col>
             </v-row>
             <v-btn
               class="mt-2 btn-hover color-9"
               dark
+              @click="buyVoucher(voucher.id)"
             >
               Gutschein kaufen
             </v-btn>
@@ -124,6 +132,34 @@
       color="error"
     >
       Institution konnten nicht geladen werden {{ dialogProject.errorMessage }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialogEth.error"
+      top
+      color="error"
+    >
+      Etherum Wechselkurs konnte nicht geladen werden {{ dialogEth.errorMessage }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialogBuyVoucher.error"
+      top
+      color="error"
+    >
+      Gutschein konnte nicht gekauft werden {{ dialogVoucher.errorMessage }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialogBuyVoucher.successfull"
+      top
+      color="success"
+    >
+      Gutschein gekauft
+    </v-snackbar>
+    <v-snackbar
+      v-model="notLoggedin"
+      top
+      color="error"
+    >
+      Bitte melden Sie sich an
     </v-snackbar>
   </div>
 </template>
@@ -153,9 +189,18 @@ export default {
       errorMessage: '',
       error: false,
     },
+    dialogBuyVoucher: {
+      errorMessage: '',
+      error: false,
+      successfull: false,
+    },
+    dialogEth: {
+      errorMessage: '',
+      error: false,
+    },
+    notLoggedin: false,
     exrate: 0,
     eurToEth: 0,
-    currPrice: 0,
   }),
   created() {
     this.userSession = userSession;
@@ -207,11 +252,27 @@ export default {
           this.eurToEth = res.data.ETH;
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
-        })
-        .finally(() => {
-          this.gotResponse = true;
+          this.dialogEth.errorMessage = err.toString();
+          this.dialogEth.error = true;
         });
+    },
+    buyVoucher(id) {
+      if (this.userData == null) {
+        this.notLoggedin = true;
+      } else {
+        const headers = {
+          idVoucher: id,
+          authToken: this.userData.authResponseToken,
+        };
+        axios.post('vouchers/user', { }, { headers })
+          .then(() => {
+            this.dialogBuyVoucher.successfull = true;
+          })
+          .catch((err) => {
+            this.dialogBuyVoucher.errorMessage = err.toString();
+            this.dialogBuyVoucher.error = true;
+          });
+      }
     },
   },
 };
@@ -271,6 +332,10 @@ export default {
     .voucherData {
       text-align: left;
       margin-left: 25px;
+    }
+
+    .voucherData h5 {
+      font-style: italic;
     }
 
     .noVouchers {
