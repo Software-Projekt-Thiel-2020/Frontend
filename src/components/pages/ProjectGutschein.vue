@@ -1,17 +1,8 @@
 <template>
   <div class="gradientBackground">
-    <div class="titleHeader text-center">
-      <h1
-        :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
-        class="font-weight-thin white--text"
-      >
-        Betriebsseite
-      </h1>
-    </div>
     <v-container>
       <v-row>
-        <v-col cols="1" />
-        <v-col cols="10">
+        <v-col>
           <v-card
             class="projectBox"
             elevation="4"
@@ -19,12 +10,16 @@
             <div class="d-flex flex-no-wrap justify-space-between">
               <div>
                 <v-card-title class="font-weight-light display-1">
-                  {{ project[0].name }}
+                  Infos über den Betrieb
                 </v-card-title>
                 <v-card-text>
+                  <p class="institutionName">
+                    Name: {{ project[0].name }}
+                  </p>
                   <div class="mb-4">
-                    <h3>Adresse</h3>
-                    {{ project[0].address }}
+                    <p>
+                      Adresse: {{ project[0].address }}
+                    </p>
                   </div>
                 </v-card-text>
                 <v-card-actions>
@@ -43,7 +38,6 @@
             </div>
           </v-card>
         </v-col>
-        <v-col cols="1" />
       </v-row>
       <v-row>
         <v-col class="titleHeader text-center">
@@ -341,5 +335,9 @@ export default {
     .noVouchers {
       text-align: center;
       color: red;
+    }
+
+    .institutionName {
+      font-size: 20px;
     }
 </style>
