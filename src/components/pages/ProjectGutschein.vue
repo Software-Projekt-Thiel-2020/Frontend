@@ -83,9 +83,9 @@
               </v-col>
               <v-col class="voucherData">
                 <h4>
-                  Läuft ab in:
+                  Gültigkeit:
                 </h4>
-                {{ voucher.validTime / 60 / 60 / 24 }} Tagen
+                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahre
               </v-col>
             </v-row>
             <v-row>
