@@ -18,6 +18,7 @@ import Project from './components/pages/Project.vue';
 import Institution from './components/pages/Institution.vue';
 
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
+window.apiurl = process.env.VUE_APP_BASE_URL;
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
