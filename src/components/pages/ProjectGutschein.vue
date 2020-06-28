@@ -49,71 +49,84 @@
           </h1>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col
-          v-for="voucher in vouchers"
-          :key="voucher.id"
-          cols="6"
-        >
-          <v-card
-            elevation="7"
-            class="py-6 text-center"
+      <v-layout
+        v-if="loadingVouchers == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
+      <div v-else>
+        <v-row>
+          <v-col
+            v-for="voucher in vouchers"
+            :key="voucher.id"
+            cols="6"
           >
-            <v-row>
-              <v-col>
-                <h3 class="headline">
-                  {{ voucher.title }}
-                </h3>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Beschreibung:
-                </h4>
-                {{ voucher.subject }}
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Preis:
-                </h4>
-                {{ getETHValue(voucher.price) }}€
-              </v-col>
-              <v-col class="voucherData">
-                <h4>
-                  Gültigkeit:
-                </h4>
-                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahre
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h5>
-                  Wurde bereits {{ voucher.amount }} mal gekauft
-                </h5>
-              </v-col>
-            </v-row>
-            <v-btn
-              :id="voucher.id"
-              class="mt-2 btn-hover color-9"
-              dark
-              :loading="loading && indexClicked == voucher.id"
-              @click="buyVoucher(voucher.id)"
+            <v-card
+              elevation="7"
+              class="py-6 text-center"
             >
-              Gutschein kaufen
-            </v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row v-if="vouchers.length==0">
-        <v-col class="noVouchers">
-          <h3>
-            Keine Gutscheine vorhanden
-          </h3>
-        </v-col>
-      </v-row>
+              <v-row>
+                <v-col>
+                  <h3 class="headline">
+                    {{ voucher.title }}
+                  </h3>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="voucherData">
+                  <h4>
+                    Beschreibung:
+                  </h4>
+                  {{ voucher.subject }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="voucherData">
+                  <h4>
+                    Preis:
+                  </h4>
+                  {{ getETHValue(voucher.price) }}€
+                </v-col>
+                <v-col class="voucherData">
+                  <h4>
+                    Gültigkeit:
+                  </h4>
+                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahre
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="voucherData">
+                  <h5>
+                    Wurde bereits {{ voucher.amount }} mal gekauft
+                  </h5>
+                </v-col>
+              </v-row>
+              <v-btn
+                :id="voucher.id"
+                class="mt-2 btn-hover color-9"
+                dark
+                :loading="loading && indexClicked == voucher.id"
+                @click="buyVoucher(voucher.id)"
+              >
+                Gutschein kaufen
+              </v-btn>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-if="vouchers.length==0">
+          <v-col class="noVouchers">
+            <h3>
+              Keine Gutscheine vorhanden
+            </h3>
+          </v-col>
+        </v-row>
+      </div>
     </v-container>
     <v-snackbar
       v-model="dialogVoucher.error"
@@ -177,6 +190,7 @@ export default {
     }],
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
+    loadingVouchers: true,
     dialogVoucher: {
       errorMessage: '',
       error: false,
@@ -242,6 +256,8 @@ export default {
         .catch((err) => {
           this.dialogVoucher.errorMessage = err.toString();
           this.dialogVoucher.error = true;
+        }).finally(() => {
+          this.loadingVouchers = false;
         });
     },
     weiToEuro() {
@@ -267,11 +283,11 @@ export default {
         axios.post('vouchers/user', { }, { headers })
           .then(() => {
             this.dialogBuyVoucher.successfull = true;
-            this.loading = false;
           })
           .catch((err) => {
             this.dialogBuyVoucher.errorMessage = err.toString();
             this.dialogBuyVoucher.error = true;
+          }).finally(() => {
             this.loading = false;
           });
       }
