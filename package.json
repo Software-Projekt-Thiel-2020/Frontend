@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "blockstack": "^21.1.0",
+    "blockstack": "^21.0.0",
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
     "vue-currency-input": "^1.18.3",
