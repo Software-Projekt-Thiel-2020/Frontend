@@ -116,7 +116,6 @@ export default {
     axios.get('institutions')
       .then((res) => {
         this.items = res.data;
-        console.log(this.items);
       })
       .catch((err) => {
         this.errorMessage = err.toString();
