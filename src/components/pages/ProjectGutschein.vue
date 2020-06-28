@@ -23,7 +23,7 @@
                   </div>
                 </v-card-text>
                 <v-card-actions>
-                  <a :href="project[0].webpage">
+                  <a :href="'//'+project[0].webpage">
                     <v-btn outlined>Webseite besuchen</v-btn>
                   </a>
                 </v-card-actions>
@@ -96,8 +96,10 @@
               </v-col>
             </v-row>
             <v-btn
+              :id="voucher.id"
               class="mt-2 btn-hover color-9"
               dark
+              :loading="loading && indexClicked == voucher.id"
               @click="buyVoucher(voucher.id)"
             >
               Gutschein kaufen
@@ -194,7 +196,9 @@ export default {
     },
     notLoggedin: false,
     exrate: 0,
-    eurToEth: 0,
+    ethToEur: 0,
+    loading: false,
+    indexClicked: null,
   }),
   created() {
     this.userSession = userSession;
@@ -206,12 +210,12 @@ export default {
     if (userSession.isUserSignedIn()) {
       this.userData = userSession.loadUserData();
     }
-    this.szaboToEuro();
+    this.weiToEuro();
   },
   methods: {
     getETHValue(value) {
       if (value > 0) {
-        return (value * this.eurToEth).toFixed(2);
+        return (value * this.ethToEur).toFixed(4);
       }
       return null;
     },
@@ -230,6 +234,7 @@ export default {
     loadVouchers() {
       let url = 'vouchers/institution?idInstitution=';
       url += this.institutionId;
+      url += '&available=1';
       axios.get(url)
         .then((res) => {
           this.vouchers = res.data;
@@ -239,11 +244,10 @@ export default {
           this.dialogVoucher.error = true;
         });
     },
-    szaboToEuro() {
-      axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
+    weiToEuro() {
+      axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR')
         .then((res) => {
-          this.exrate = (res.data.ETH * 1000000);
-          this.eurToEth = res.data.ETH;
+          this.ethToEur = res.data.EUR / 1000000000000000000;
         })
         .catch((err) => {
           this.dialogEth.errorMessage = err.toString();
@@ -258,13 +262,17 @@ export default {
           idVoucher: id,
           authToken: this.userData.authResponseToken,
         };
+        this.loading = true;
+        this.indexClicked = id;
         axios.post('vouchers/user', { }, { headers })
           .then(() => {
             this.dialogBuyVoucher.successfull = true;
+            this.loading = false;
           })
           .catch((err) => {
             this.dialogBuyVoucher.errorMessage = err.toString();
             this.dialogBuyVoucher.error = true;
+            this.loading = false;
           });
       }
     },
