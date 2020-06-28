@@ -89,6 +89,26 @@
         </v-col>
       </v-row>
     </v-parallax>
+    <v-alert
+      v-model="redeemFail"
+      dismissible
+      prominent
+      tile
+      class="text-center"
+      type="error"
+    >
+      Beim Einlösen von '{{ redeemVTitle }}' ist ein Fehler aufgetreten {{ errorMessage }}
+    </v-alert>
+    <v-alert
+      v-model="redeemSucc"
+      dismissible
+      prominent
+      tile
+      class="text-center"
+      type="success"
+    >
+      Gutschein '{{ redeemVTitle }}' erfolgreich eingelöst!
+    </v-alert>
     <v-container>
       <v-row>
         <v-col>
@@ -198,7 +218,7 @@
                     <v-btn
                       v-if="!voucher.used"
                       color="success"
-                      @click="redeemVoucher(voucher.id)"
+                      @click="redeemVoucher(voucher)"
                     >
                       Einlösen
                     </v-btn>
@@ -286,6 +306,7 @@
 
 <script>
 import axios from 'axios';
+import { userSession } from '../../userSession';
 
 export default {
   name: 'Historie',
@@ -299,6 +320,9 @@ export default {
     dErrMsg: '',
     gotResponse: false,
     user: null,
+    redeemVTitle: null,
+    redeemFail: false,
+    redeemSucc: false,
   }),
   computed: {
     tabVouchers() {
@@ -306,23 +330,25 @@ export default {
     },
   },
   mounted() {
-    axios.get(`users?username=${window.user.username}`)
-      .then((res) => {
-        if (res.data.length === 0) {
-          this.errorMessage = 'Could not fetch data';
-        } else {
-          [this.user] = res.data;
-          this.user.id = 1;
-          this.donations = this.loadDonations();
-          this.vouchers = this.loadVouchers();
-        }
-      }).catch((err) => {
-        this.errorMessage = err.toString();
-      }).finally(() => {
-        this.gotResponse = true;
-      });
+    this.loadData();
   },
   methods: {
+    loadData() {
+      axios.get(`users?username=${window.user.username}`)
+        .then((res) => {
+          if (res.data.length === 0) {
+            this.errorMessage = 'Could not fetch data';
+          } else {
+            [this.user] = res.data;
+            this.donations = this.loadDonations();
+            this.vouchers = this.loadVouchers();
+          }
+        }).catch((err) => {
+          this.errorMessage = err.toString();
+        }).finally(() => {
+          this.gotResponse = true;
+        });
+    },
     getVouchers(used) {
       if (this.vouchers === null || this.vouchers === undefined) {
         return [];
@@ -352,7 +378,22 @@ export default {
           this.dErrMsg = err.toString();
         });
     },
-    redeemVoucher() {
+    redeemVoucher(voucher) {
+      const head = {
+        authToken: userSession.loadUserData().authResponseToken,
+        id: voucher.id,
+      };
+      axios.delete('vouchers/user', { headers: head, data: {} })
+        .then(() => {
+          this.redeemSucc = true;
+        }).catch((err) => {
+          this.errorMessage = err.toString();
+          this.redeemFail = true;
+        }).finally(() => {
+          this.redeemVTitle = voucher.titel;
+          this.loadData();
+          window.scrollTo(0, 0);
+        });
     },
   },
 };
