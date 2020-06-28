@@ -71,7 +71,10 @@
               class="project"
               elevation="5"
             >
-              <img class="elementImage" :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'">
+              <img
+                class="elementImage"
+                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+              >
               <div
                 class="companyData"
                 style="border:0;"
