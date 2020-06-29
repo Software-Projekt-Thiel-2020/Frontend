@@ -95,7 +95,7 @@
       <div v-if="!gotResponse">
         <v-skeleton-loader>
           <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
-           da Anzahl an gefundenen Institutionen beim Laden
+           da Anzahl an gefundenen Projekte beim Laden
             nicht herauszufinden ist -->
           v-for="index in 7"
           :key="index"
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     load() {
-      axios.get('institutions')
+      axios.get('projects')
         .then((res) => {
           this.items = res.data;
         })
@@ -227,10 +227,10 @@ export default {
       this.errorMessage = '';
       this.load();
     },
-    loadInstitutions() {
+    loadProjects() {
       if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
         let url = '';
-        url = 'institutions?name=';
+        url = 'projects?name=';
         if (this.searchName) {
           url = url.concat(`${this.searchName}`);
         }
@@ -241,7 +241,7 @@ export default {
           .then((res) => {
             this.resultList = res.data;
             if (this.resultList.length === 0) {
-              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+              this.errorMessage = 'Es konnten keine Projekte gefunden werden';
             }
           })
           .catch((err) => {
@@ -265,16 +265,16 @@ export default {
               this.latitude = res.data[0].lat;
             }
             if (this.latitude === -1 || this.longitude === -1) {
-              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+              this.errorMessage = 'Es konnten keine Projekte gefunden werden';
             } else {
-              this.loadInstitutions();
+              this.loadProjects();
             }
           })
           .catch((err) => {
             this.errorMessage = err.toString();
           });
       } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
-        this.loadInstitutions();
+        this.loadProjects();
       }
     },
   },
