@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="content">
     <v-parallax
       dark
       :height="400"
@@ -109,12 +109,16 @@
     >
       Gutschein '{{ redeemVTitle }}' erfolgreich eingelöst!
     </v-alert>
-    <v-container>
+    <div>
+      <v-container>
       <v-row>
         <v-col>
-          <v-card color="primary">
+          <v-card
+            color="primary"
+            dark
+          >
             <v-toolbar
-              color="indigo"
+              color="primary"
               dark
             >
               <v-spacer />
@@ -133,7 +137,7 @@
             <v-tabs
               v-model="tab"
               fixed-tabs
-              background-color="indigo"
+              background-color="primary"
               slider-color="secondary"
               dark
             >
@@ -198,7 +202,7 @@
                 v-if="tabVouchers.length === 0"
                 class="text-center"
               >
-                <h1 class="my-10">
+                <h1 class="my-10 noEntryText">
                   Keine Gutscheine vorhanden
                 </h1>
               </v-card-text>
@@ -208,7 +212,10 @@
                 :key="voucher.id"
                 cols="12"
               >
-                <v-card :color="voucher.used ? '#dddddd' : 'white'">
+                <v-card
+                  :color="voucher.used ? '#dddddd' : 'white'"
+                  dark
+                >
                   <v-card-title>{{ voucher.titel }}</v-card-title>
                   <v-card-subtitle class="overline">
                     {{ voucher.titel }}
@@ -240,9 +247,12 @@
           </v-card>
         </v-col>
         <v-col>
-          <v-card color="primary">
+          <v-card
+            color="primary"
+            dark
+          >
             <v-toolbar
-              color="indigo"
+              color="primary"
               dark
             >
               <v-spacer />
@@ -269,7 +279,7 @@
               v-else-if="donations === null || donations === undefined"
               class="text-center"
             >
-              <h1 class="my-10">
+              <h1 class="my-10 noEntryText">
                 Keine Spenden getätigt
               </h1>
             </v-card-text>
@@ -301,6 +311,7 @@
         </v-col>
       </v-row>
     </v-container>
+    </div>
   </div>
 </template>
 
@@ -400,12 +411,22 @@ export default {
 </script>
 
 <style scoped>
+  #content{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    min-height: 100%;
+  }
+
   .pricetag {
       font-size: 1.7rem;
   }
 
   .walletAddress {
     font-family: Courier;
+  }
+
+  .noEntryText{
+    color: rgba(255,255,255,0.7);
   }
 
   .wallet {
