@@ -172,7 +172,7 @@ export default {
     resultList: [],
     longitude: -1,
     latitude: -1,
-    radius: 1,
+    radius: 10,
     lCodes: ['DE', 'AT', 'CH'],
     searchCode: 'DE',
     apiurl: window.apiurl,
@@ -223,7 +223,7 @@ export default {
       this.searchPlace = '';
       this.longitude = -1;
       this.latitude = -1;
-      this.radius = 1;
+      this.radius = 10;
       this.errorMessage = '';
       this.load();
     },
