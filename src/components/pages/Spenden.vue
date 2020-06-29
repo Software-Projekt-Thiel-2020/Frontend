@@ -229,7 +229,6 @@ export default {
     },
     loadInstitutions() {
       if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
-        console.log('Drinnen');
         let url = '';
         url = 'institutions?name=';
         if (this.searchName) {
@@ -240,7 +239,6 @@ export default {
         }
         axios.get(url)
           .then((res) => {
-            console.log(res);
             this.resultList = res.data;
             if (this.resultList.length === 0) {
               this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
