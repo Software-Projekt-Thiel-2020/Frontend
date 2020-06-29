@@ -6,7 +6,7 @@
           :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
           class="font-weight-thin white--text"
         >
-          neues Projekt anlegen
+          Neues Projekt anlegen
         </h1>
       </div>
     </div>
@@ -55,9 +55,9 @@
         <v-text-field
           v-model="project.goal"
           type="number"
-          min="0"
+          min="1"
           oninput="validity.valid||(value='');"
-          label="Spendenziel (in Szabo)"
+          label="Spendenziel in Szabo"
           outlined
           clearable
         />
@@ -120,6 +120,28 @@
         Spendenprojekt anlegen
       </v-btn>
     </v-row>
+    <v-snackbar
+      v-model="dialog.successful"
+      bottom
+      color="success"
+    >
+      Spendenprojekt erstellt!
+    </v-snackbar>
+
+    <v-snackbar
+      v-model="dialog.error"
+      bottom
+      color="error"
+    >
+      Spendenprojekt konnte nicht erstellt werden: {{ dialog.errorMessage }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialog.notLoggedIn"
+      top
+      color="error"
+    >
+      Loggen Sie sich ein, um ein Spendenprojekt erstellen zu können
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -131,6 +153,12 @@ import { userSession } from '../../userSession';
 export default {
   name: 'ProjektAnlegen',
   data: () => ({
+    dialog: {
+      notLoggedIn: false,
+      successful: false,
+      error: false,
+      errorMessage: '',
+    },
     userSession: null,
     userData: null,
     error: false,
@@ -141,9 +169,8 @@ export default {
     project: {
       title: '',
       website: '',
-      idInstitution: null,
-      goal: 0,
-      requiredVotes: null,
+      idInstitution: 0,
+      goal: 1,
       until: 0,
       milestones: [],
     },
@@ -154,9 +181,8 @@ export default {
   mounted() {
     if (userSession.isUserSignedIn()) {
       this.userData = userSession.loadUserData();
-      console.log('eingeloggt');
     } else {
-      console.log('nicht eingeloggt');
+      this.dialog.notloggedIn = true;
     }
   },
   methods: {
@@ -174,21 +200,21 @@ export default {
     },
     createSpendenProjekt() {
       const headers = {
-        // authToken: this.userData.authResponseToken,
+        authToken: this.userData.authResponseToken,
         name: this.project.title,
         website: this.project.website,
         idInstitution: this.project.idInstitution,
         goal: this.project.goal,
-        requiredVotes: this.project.requiredVotes,
         until: this.project.until,
         milestones: this.project.milestones,
       };
       axios.post('projects', {}, { headers })
-        .then((response) => {
-          console.log(response);
+        .then(() => {
+          this.dialog.successful = true;
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          this.dialog.errorMessage = err.toString();
+          this.dialog.error = true;
         });
     },
   },
