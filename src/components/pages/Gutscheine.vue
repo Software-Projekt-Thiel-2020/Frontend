@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     load() {
-      axios.get('institutions')
+      axios.get('institutions?has_vouchers=1')
         .then((res) => {
           console.log(res);
           this.items = res.data;
@@ -231,7 +231,7 @@ export default {
     loadInstitutions() {
       if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
         let url = '';
-        url = 'institutions?name=';
+        url = 'institutions?has_vouchers=1&name=';
         if (this.searchName) {
           url = url.concat(`${this.searchName}`);
         }
@@ -242,7 +242,7 @@ export default {
           .then((res) => {
             this.resultList = res.data;
             if (this.resultList.length === 0) {
-              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+              this.errorMessage = 'Es konnten keine Institutionen mit Gutscheinen gefunden werden';
             }
           })
           .catch((err) => {
@@ -266,7 +266,7 @@ export default {
               this.latitude = res.data[0].lat;
             }
             if (this.latitude === -1 || this.longitude === -1) {
-              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+              this.errorMessage = 'Es konnten keine Institutionen mit Gutscheinen gefunden werden';
             } else {
               this.loadInstitutions();
             }
