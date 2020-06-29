@@ -111,206 +111,204 @@
     </v-alert>
     <div>
       <v-container>
-      <v-row>
-        <v-col>
-          <v-card
-            color="primary"
-            dark
-          >
-            <v-toolbar
+        <v-row>
+          <v-col>
+            <v-card
+              color="primary"
+            >
+              <v-toolbar
+                color="primary"
+                dark
+              >
+                <v-spacer />
+
+                <v-toolbar-title>
+                  <v-icon
+                    class="display-1"
+                    style="color: white"
+                  >
+                    mdi-wallet-giftcard
+                  </v-icon>
+                  Meine Gutscheine
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
+              <v-tabs
+                v-model="tab"
+                fixed-tabs
+                background-color="primary"
+                slider-color="secondary"
+                dark
+              >
+                <v-tab>
+                  <v-chip
+                    color="secondary"
+                    class="v-chip--clickable"
+                  >
+                    <v-avatar
+                      v-if="gotResponse"
+                      left
+                      color="primary"
+                    >
+                      {{ getVouchers(false).length }}
+                    </v-avatar>
+                    <v-avatar
+                      v-else
+                      left
+                      color="primary"
+                    >
+                      0
+                    </v-avatar>
+                    Gültig
+                  </v-chip>
+                </v-tab>
+                <v-tab>
+                  <v-chip
+                    color="secondary"
+                    class="v-chip--clickable"
+                  >
+                    <v-avatar
+                      v-if="gotResponse"
+                      left
+                      color="primary"
+                    >
+                      {{ getVouchers(true).length }}
+                    </v-avatar>
+                    <v-avatar
+                      v-else
+                      left
+                      color="primary"
+                    >
+                      0
+                    </v-avatar>
+                    Eingelöst
+                  </v-chip>
+                </v-tab>
+              </v-tabs>
+              <v-card-text
+                v-if="vErrMsg.length !== 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  {{ vErrMsg }}
+                </h1>
+              </v-card-text>
+              <v-row
+                v-else
+                class="ma-2"
+              >
+                <v-card-text
+                  v-if="tabVouchers.length === 0"
+                  class="text-center"
+                >
+                  <h1 class="my-10 noEntryText">
+                    Keine Gutscheine vorhanden
+                  </h1>
+                </v-card-text>
+                <v-col
+                  v-for="voucher in tabVouchers"
+                  v-else
+                  :key="voucher.id"
+                  cols="12"
+                >
+                  <v-card
+                    :color="voucher.used ? '#dddddd' : 'white'"
+                  >
+                    <v-card-title>{{ voucher.titel }}</v-card-title>
+                    <v-card-subtitle class="overline">
+                      {{ voucher.titel }}
+                    </v-card-subtitle>
+                    <v-card-text>{{ voucher.description }}</v-card-text>
+                    <v-card-actions>
+                      <v-btn
+                        v-if="!voucher.used"
+                        color="success"
+                        @click="redeemVoucher(voucher)"
+                      >
+                        Einlösen
+                      </v-btn>
+                      <v-btn
+                        v-if="voucher.used"
+                        disabled
+                        outlined
+                      >
+                        Eingelöst
+                      </v-btn>
+                      <v-spacer />
+                      <h3 class="pricetag font-weight-light">
+                        {{ voucher.price }} ETH
+                      </h3>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card
               color="primary"
               dark
             >
-              <v-spacer />
-
-              <v-toolbar-title>
-                <v-icon
-                  class="display-1"
-                  style="color: white"
-                >
-                  mdi-wallet-giftcard
-                </v-icon>
-                Meine Gutscheine
-              </v-toolbar-title>
-              <v-spacer />
-            </v-toolbar>
-            <v-tabs
-              v-model="tab"
-              fixed-tabs
-              background-color="primary"
-              slider-color="secondary"
-              dark
-            >
-              <v-tab>
-                <v-chip
-                  color="secondary"
-                  class="v-chip--clickable"
-                >
-                  <v-avatar
-                    v-if="gotResponse"
-                    left
-                    color="primary"
+              <v-toolbar
+                color="primary"
+                dark
+              >
+                <v-spacer />
+                <v-toolbar-title>
+                  <v-icon
+                    class="display-1"
+                    style="color: white"
                   >
-                    {{ getVouchers(false).length }}
-                  </v-avatar>
-                  <v-avatar
-                    v-else
-                    left
-                    color="primary"
-                  >
-                    0
-                  </v-avatar>
-                  Gültig
-                </v-chip>
-              </v-tab>
-              <v-tab>
-                <v-chip
-                  color="secondary"
-                  class="v-chip--clickable"
-                >
-                  <v-avatar
-                    v-if="gotResponse"
-                    left
-                    color="primary"
-                  >
-                    {{ getVouchers(true).length }}
-                  </v-avatar>
-                  <v-avatar
-                    v-else
-                    left
-                    color="primary"
-                  >
-                    0
-                  </v-avatar>
-                  Eingelöst
-                </v-chip>
-              </v-tab>
-            </v-tabs>
-            <v-card-text
-              v-if="vErrMsg.length !== 0"
-              class="text-center"
-            >
-              <h1 class="my-10">
-                {{ vErrMsg }}
-              </h1>
-            </v-card-text>
-            <v-row
-              v-else
-              class="ma-2"
-            >
+                    mdi-heart
+                  </v-icon>
+                  Meine Spenden
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
               <v-card-text
-                v-if="tabVouchers.length === 0"
+                v-if="dErrMsg.length !== 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  {{ dErrMsg }}
+                </h1>
+              </v-card-text>
+              <v-card-text
+                v-else-if="donations === null || donations === undefined"
                 class="text-center"
               >
                 <h1 class="my-10 noEntryText">
-                  Keine Gutscheine vorhanden
+                  Keine Spenden getätigt
                 </h1>
               </v-card-text>
-              <v-col
-                v-for="voucher in tabVouchers"
+              <v-row
                 v-else
-                :key="voucher.id"
-                cols="12"
+                class="ma-2"
               >
-                <v-card
-                  :color="voucher.used ? '#dddddd' : 'white'"
-                  dark
+                <v-col
+                  v-for="donation in donations"
+                  :key="donation.id"
+                  cols="12"
                 >
-                  <v-card-title>{{ voucher.titel }}</v-card-title>
-                  <v-card-subtitle class="overline">
-                    {{ voucher.titel }}
-                  </v-card-subtitle>
-                  <v-card-text>{{ voucher.description }}</v-card-text>
-                  <v-card-actions>
-                    <v-btn
-                      v-if="!voucher.used"
-                      color="success"
-                      @click="redeemVoucher(voucher)"
-                    >
-                      Einlösen
-                    </v-btn>
-                    <v-btn
-                      v-if="voucher.used"
-                      disabled
-                      outlined
-                    >
-                      Eingelöst
-                    </v-btn>
-                    <v-spacer />
-                    <h3 class="pricetag font-weight-light">
-                      {{ voucher.price }} ETH
-                    </h3>
-                  </v-card-actions>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card
-            color="primary"
-            dark
-          >
-            <v-toolbar
-              color="primary"
-              dark
-            >
-              <v-spacer />
-              <v-toolbar-title>
-                <v-icon
-                  class="display-1"
-                  style="color: white"
-                >
-                  mdi-heart
-                </v-icon>
-                Meine Spenden
-              </v-toolbar-title>
-              <v-spacer />
-            </v-toolbar>
-            <v-card-text
-              v-if="dErrMsg.length !== 0"
-              class="text-center"
-            >
-              <h1 class="my-10">
-                {{ dErrMsg }}
-              </h1>
-            </v-card-text>
-            <v-card-text
-              v-else-if="donations === null || donations === undefined"
-              class="text-center"
-            >
-              <h1 class="my-10 noEntryText">
-                Keine Spenden getätigt
-              </h1>
-            </v-card-text>
-            <v-row
-              v-else
-              class="ma-2"
-            >
-              <v-col
-                v-for="donation in donations"
-                :key="donation.id"
-                cols="12"
-              >
-                <v-card>
-                  <v-card-title>{{ donation.projectname }}</v-card-title>
-                  <v-card-subtitle class="overline">
-                    {{ donation.projectname }}
-                  </v-card-subtitle>
-                  <v-card-text>{{ donation.projectname }}</v-card-text>
-                  <v-card-actions>
-                    <v-spacer />
-                    <h3 class="pricetag font-weight-light">
-                      {{ donation.amount }} ETH
-                    </h3>
-                  </v-card-actions>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
+                  <v-card>
+                    <v-card-title>{{ donation.projectname }}</v-card-title>
+                    <v-card-subtitle class="overline">
+                      {{ donation.projectname }}
+                    </v-card-subtitle>
+                    <v-card-text>{{ donation.projectname }}</v-card-text>
+                    <v-card-actions>
+                      <v-spacer />
+                      <h3 class="pricetag font-weight-light">
+                        {{ donation.amount }} ETH
+                      </h3>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </div>
 </template>
