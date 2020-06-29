@@ -14,6 +14,7 @@
           <v-card
             class="projectBox"
             elevation="4"
+            v-if="project"
           >
             <v-card-title class="font-weight-light display-1">
               {{ project.name }}
@@ -28,7 +29,8 @@
                 elevation="7"
                 class="py-6 text-center"
               >
-                <v-row>
+                <v-row
+                v-if="project.milestones && project.milestones.length != 0">
                   <v-col>
                     <h4 class="headline">
                       Gesammelt
@@ -96,19 +98,8 @@ import axios from 'axios';
 export default {
   name: 'Project',
   data: () => ({
-    project: {
-      name: 'Deutsches Rotes Kreuz',
-      street: 'Osnabrücker Str. 62',
-      zip: 32312,
-      city: 'Lübbecke',
-      type: 'donate',
-      homepage: 'https://google.de/',
-      image: 'https://i.imgur.com/EJOjIMC.jpg',
-      donationGoal: {
-        total: 5000.00,
-        reached: 631.23,
-      },
-    },
+    project: undefined,
+    projectid: 0,
     exrate: 0,
     eurToEth: 0,
     donationValue: 0,
@@ -123,6 +114,10 @@ export default {
       }
       return null;
     },
+
+  },
+  created() {
+    this.projectid = this.$route.params.id;
   },
   mounted() {
     if (window.userSession.isUserSignedIn()) {
@@ -130,6 +125,7 @@ export default {
       console.log(this.userData);
     }
     this.szaboToEuro();
+    this.loadProject();
   },
   methods: {
     donate() {
@@ -159,6 +155,20 @@ export default {
           this.exrate = (res.data.ETH * 1000000);
           this.eurToEth = res.data.ETH;
           console.log(this.exrate);
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+        });
+    },
+    loadProject() {
+      let url = 'projects?id=';
+      url += this.projectid;
+      axios.get(url)
+        .then((res) => {
+          this.project = res.data;
         })
         .catch((err) => {
           this.errorMessage = err.toString();
