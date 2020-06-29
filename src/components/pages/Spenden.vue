@@ -105,7 +105,6 @@
           />
         </v-skeleton-loader>
       </div>
-      <!-- ToDo: Zeilenumbruch ohne v-html -->
       <v-alert
         v-if="errorMessage"
         :value="true"
