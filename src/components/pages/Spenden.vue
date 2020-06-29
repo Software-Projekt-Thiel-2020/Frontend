@@ -41,7 +41,7 @@
               <v-text-field
                 v-model="radius"
                 prepend-inner-icon="mdi-radius-outline"
-                label="Radius"
+                label="Radius(km)"
               />
             </v-col>
             <v-col
@@ -110,8 +110,14 @@
         v-if="errorMessage"
         :value="true"
         type="error"
-        v-html="errorMessage"
-      />
+      >
+        <div
+          v-for="line in errorMessage.split('\n')"
+          :key="line"
+        >
+          {{ line }}<br>
+        </div>
+      </v-alert>
       <div v-else-if="gotResponse">
         <v-row>
           <v-col
@@ -204,7 +210,7 @@ export default {
         this.longitude = pos.coords.longitude;
         this.latitude = pos.coords.latitude;
       }, (err) => {
-        this.errorMessage = `${err.toString()}<br>Darf die Seite den Standort verwenden?`;
+        this.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
       });
     },
     reset() {
@@ -239,24 +245,28 @@ export default {
       }
     },
     suchen() {
-      if (this.latitude === -1 || this.longitude === -1) {
-        if (this.searchPlace && this.searchCode) {
-          axios.get(`https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&postalcode=${this.searchPlace}&format=json&limit=1`)
-            .then((res) => {
-              if (res.data.length !== 0) {
-                this.longitude = res.data[0].lon;
-                this.latitude = res.data[0].lat;
-              }
-              if (this.latitude === -1 || this.longitude === -1) {
-                this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
-              } else {
-                this.loadInstitutions();
-              }
-            })
-            .catch((err) => {
-              this.errorMessage = err.toString();
-            });
+      if (this.searchPlace && this.searchCode) {
+        let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
+        if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
+          url = url.concat(`&postalcode=${this.searchPlace}`);
+        } else {
+          url = url.concat(`&city=${this.searchPlace}`);
         }
+        axios.get(url)
+          .then((res) => {
+            if (res.data.length !== 0) {
+              this.longitude = res.data[0].lon;
+              this.latitude = res.data[0].lat;
+            }
+            if (this.latitude === -1 || this.longitude === -1) {
+              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+            } else {
+              this.loadInstitutions();
+            }
+          })
+          .catch((err) => {
+            this.errorMessage = err.toString();
+          });
       }
       // else nur nach namen suchen
       if (this.errorMessage === '') {
