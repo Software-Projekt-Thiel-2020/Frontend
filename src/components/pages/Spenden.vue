@@ -1,34 +1,90 @@
 <template>
   <div>
-    <v-container>
+    <v-container class="mt-2">
       <h1>Spenden</h1>
     </v-container>
     <v-container>
       <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
-      <v-form class="form-box">
+      <v-form class="form-box ml-0">
         <v-container>
           <v-row>
             <v-col
-              cols="12"
-              sm="4"
+              cols="4"
             >
               <v-text-field
-                v-model="searchProject"
+                v-model="searchName"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Betriebs"
-                @input="applyFilter"
               />
             </v-col>
             <v-col
-              cols="12"
-              sm="4"
+              cols="2"
+            >
+              <v-select
+                v-model="searchCode"
+                :items="lCodes"
+                label="Ländercode"
+              />
+            </v-col>
+            <v-col
+              cols="3"
             >
               <v-text-field
-                v-model="searchCity"
+                v-model="searchPlace"
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
-                @input="applyFilter"
               />
+            </v-col>
+            <v-col
+              cols="2"
+            >
+              <v-text-field
+                v-model="radius"
+                prepend-inner-icon="mdi-radius-outline"
+                label="Radius"
+              />
+            </v-col>
+            <v-col
+              cols="1"
+            >
+              <v-btn
+                fab
+                class="mt-1"
+                :color="locationButton"
+                label="Mich finden"
+                @click="getOwnLocation"
+              >
+                <v-icon>mdi-crosshairs-gps</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col
+              cols="3"
+            >
+              <v-btn
+                min-width="150"
+                max-width="150"
+                color="success"
+                large
+                :disabled="searchButton"
+                @click="suchen"
+              >
+                Suchen
+              </v-btn>
+            </v-col>
+            <v-col
+              cols="3"
+            >
+              <v-btn
+                min-width="150"
+                max-width="150"
+                color="error"
+                large
+                @click="reset"
+              >
+                Zurücksetzten
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -36,13 +92,6 @@
     </v-container>
     <v-container>
       <h2>Ergebnisse:</h2>
-      <v-alert
-        v-if="errorMessage"
-        :value="true"
-        type="error"
-      >
-        Beim Abruf der Daten ist ein Fehler aufgetreten: {{ errorMessage }}
-      </v-alert>
       <div v-if="!gotResponse">
         <v-skeleton-loader>
           <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
@@ -56,7 +105,14 @@
           />
         </v-skeleton-loader>
       </div>
-      <div v-if="gotResponse">
+      <!-- ToDo: Zeilenumbruch ohne v-html -->
+      <v-alert
+        v-if="errorMessage"
+        :value="true"
+        type="error"
+        v-html="errorMessage"
+      />
+      <div v-else-if="gotResponse">
         <v-row>
           <v-col
             v-for="item in resultList"
@@ -100,43 +156,112 @@ export default {
   data: () => ({
     items: [],
     gotResponse: false,
-    errorMessage: null,
-    searchProject: '',
-    searchCity: '',
+    errorMessage: '',
+    searchName: '',
+    searchPlace: '',
     resultList: [],
+    longitude: -1,
+    latitude: -1,
+    radius: 0,
+    lCodes: ['DE', 'PL', 'USA'],
+    searchCode: 'DE',
   }),
+  computed: {
+    locationButton() {
+      if (this.latitude !== -1 && this.longitude !== -1) {
+        return 'success';
+      }
+      return 'primary';
+    },
+    searchButton() {
+      return !(this.searchName !== '' || (this.longitude !== -1 && this.latitude !== -1) || (this.searchPlace !== '' && this.searchCode !== ''));
+    },
+  },
   mounted() {
-    axios.get('projects')
-      .then((res) => {
-        this.items = res.data;
-      })
-      .catch((err) => {
-        this.errorMessage = err.toString();
-      })
-      .finally(() => {
-        this.gotResponse = true;
-        this.resultList = this.items;
-      });
+    this.load();
   },
   methods: {
-    applyFilter() {
-      this.resultList = this.items;
-      if (this.searchProject.length !== 0 && this.searchCity.length !== 0) {
-        this.filterByName();
-        this.filterByLocation();
-      } else if (this.searchProject.length !== 0) {
-        this.filterByName();
-      } else if (this.searchCity.length !== 0) {
-        this.filterByLocation();
+    load() {
+      axios.get('institutions')
+        .then((res) => {
+          this.items = res.data;
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
+        })
+        .finally(() => {
+          this.gotResponse = true;
+          this.resultList = this.items;
+        });
+    },
+    getOwnLocation() {
+      if (!('geolocation' in navigator)) {
+        this.errorMessage = 'Geolocation ist nicht verfügbar';
+        return;
+      }
+      navigator.geolocation.getCurrentPosition((pos) => {
+        this.location = pos;
+        this.longitude = pos.coords.longitude;
+        this.latitude = pos.coords.latitude;
+      }, (err) => {
+        this.errorMessage = `${err.toString()}<br>Darf die Seite den Standort verwenden?`;
+      });
+    },
+    reset() {
+      this.searchName = '';
+      this.searchPlace = '';
+      this.longitude = -1;
+      this.latitude = -1;
+      this.radius = 1;
+      this.errorMessage = '';
+      this.load();
+    },
+    loadInstitutions() {
+      if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
+        let url = '';
+        url = 'institutions?name=';
+        if (this.searchName) {
+          url = url.concat(`${this.searchName}`);
+        }
+        if (this.longitude !== -1 && this.latitude !== -1) {
+          url = url.concat(`&longitude=${this.longitude}&latitude=${this.latitude}&radius=${this.radius}`);
+        }
+        axios.get(url)
+          .then((res) => {
+            this.resultList = res.data;
+            if (this.resultList.length === 0) {
+              this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+            }
+          })
+          .catch((err) => {
+            this.errorMessage = err.toString();
+          });
       }
     },
-    filterByName() {
-      this.resultList = this.resultList.filter(
-        (inst) => inst.name.toLowerCase().search(this.searchProject.toLowerCase()) !== -1,
-      );
-    },
-    filterByLocation() {
-      this.resultList = [];
+    suchen() {
+      if (this.latitude === -1 || this.longitude === -1) {
+        if (this.searchPlace && this.searchCode) {
+          axios.get(`https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&postalcode=${this.searchPlace}&format=json&limit=1`)
+            .then((res) => {
+              if (res.data.length !== 0) {
+                this.longitude = res.data[0].lon;
+                this.latitude = res.data[0].lat;
+              }
+              if (this.latitude === -1 || this.longitude === -1) {
+                this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
+              } else {
+                this.loadInstitutions();
+              }
+            })
+            .catch((err) => {
+              this.errorMessage = err.toString();
+            });
+        }
+      }
+      // else nur nach namen suchen
+      if (this.errorMessage === '') {
+        this.loadInstitutions();
+      }
     },
   },
 };
@@ -144,14 +269,6 @@ export default {
 
 
 <style scoped>
-
-    .submit {
-        background-color: #c4b3b0;
-        width: 100px;
-        font-weight: bold;
-        border-radius: 3px;
-        border: 1px solid black;
-    }
 
     .project {
         display: flex;
@@ -161,6 +278,7 @@ export default {
 
     .form-box {
         max-width: 700px;
+        margin-left: 0px;
     }
 
     .spendenButton {
