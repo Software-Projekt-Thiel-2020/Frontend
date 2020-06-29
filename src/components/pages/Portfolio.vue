@@ -341,8 +341,8 @@ export default {
     redeemVTitle: null,
     redeemFail: false,
     redeemSucc: false,
-    voucherPage: 0,
-    donationPage: 0,
+    voucherPage: 1,
+    donationPage: 1,
   }),
   computed: {
     tabVouchers() {
