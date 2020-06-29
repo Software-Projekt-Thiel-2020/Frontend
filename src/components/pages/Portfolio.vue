@@ -206,7 +206,7 @@
                   </h1>
                 </v-card-text>
                 <v-col
-                  v-for="voucher in tabVouchers"
+                  v-for="voucher in tabVouchers.slice((voucherPage*4)-4,voucherPage*4)"
                   v-else
                   :key="voucher.id"
                   cols="12"
@@ -242,6 +242,15 @@
                   </v-card>
                 </v-col>
               </v-row>
+              <div class="text-center">
+                <v-pagination
+                        v-model="voucherPage"
+                        :length="Math.ceil(tabVouchers.length/4)"
+                        :total-visible="7"
+                        light
+                        color="secondary"
+                ></v-pagination>
+              </div>
             </v-card>
           </v-col>
           <v-col>
@@ -332,6 +341,8 @@ export default {
     redeemVTitle: null,
     redeemFail: false,
     redeemSucc: false,
+    voucherPage: 0,
+    donationPage: 0,
   }),
   computed: {
     tabVouchers() {
