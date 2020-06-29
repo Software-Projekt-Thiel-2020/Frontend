@@ -146,7 +146,7 @@
               <v-card-actions>
                 <router-link :to="'projectGutschein/'+item.id">
                   <v-btn class="spendenButton">
-                    Gutschein kaufen
+                    Zur Übersicht
                   </v-btn>
                 </router-link>
               </v-card-actions>
@@ -195,7 +195,6 @@ export default {
     load() {
       axios.get('institutions?has_vouchers=1')
         .then((res) => {
-          console.log(res);
           this.items = res.data;
         })
         .catch((err) => {
