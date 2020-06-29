@@ -162,7 +162,7 @@
 import axios from 'axios';
 
 export default {
-  name: 'Spenden',
+  name: 'Gutscheine',
   data: () => ({
     items: [],
     gotResponse: false,
