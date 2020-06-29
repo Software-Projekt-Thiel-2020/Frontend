@@ -172,8 +172,8 @@ export default {
     resultList: [],
     longitude: -1,
     latitude: -1,
-    radius: 0,
-    lCodes: ['DE', 'PL', 'USA'],
+    radius: 1,
+    lCodes: ['DE', 'AT', 'CH'],
     searchCode: 'DE',
     apiurl: window.apiurl,
   }),
@@ -229,6 +229,7 @@ export default {
     },
     loadInstitutions() {
       if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
+        console.log('Drinnen');
         let url = '';
         url = 'institutions?name=';
         if (this.searchName) {
@@ -239,6 +240,7 @@ export default {
         }
         axios.get(url)
           .then((res) => {
+            console.log(res);
             this.resultList = res.data;
             if (this.resultList.length === 0) {
               this.errorMessage = 'Es konnten keine Institutionen gefunden werden';
@@ -250,6 +252,7 @@ export default {
       }
     },
     suchen() {
+      this.errorMessage = '';
       if (this.searchPlace && this.searchCode) {
         let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
         if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
@@ -272,9 +275,7 @@ export default {
           .catch((err) => {
             this.errorMessage = err.toString();
           });
-      }
-      // else nur nach namen suchen
-      if (this.errorMessage === '') {
+      } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
         this.loadInstitutions();
       }
     },
