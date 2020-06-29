@@ -138,6 +138,7 @@
                 fixed-tabs
                 background-color="primary"
                 slider-color="secondary"
+                @change="voucherPage = 1"
                 dark
               >
                 <v-tab>
