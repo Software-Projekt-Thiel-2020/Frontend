@@ -128,13 +128,18 @@
               class="project"
               elevation="5"
             >
-              <img src="../../assets/placeholder.png">
+              <img
+                class="elementImage"
+                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+              >
               <div
                 class="companyData"
                 style="border:0;"
               >
-                <h2>{{ item.name }}</h2>
-                <h4>
+                <h2 class="ma-3">
+                  {{ item.name }}
+                </h2>
+                <h4 class="ma-3">
                   Zur Website:
                   <a :href="item.webpage">{{ item.webpage }}</a>
                 </h4>
@@ -171,6 +176,7 @@ export default {
     radius: 0,
     lCodes: ['DE', 'PL', 'USA'],
     searchCode: 'DE',
+    apiurl: window.apiurl,
   }),
   computed: {
     locationButton() {
@@ -303,6 +309,10 @@ export default {
         border: 1px solid gray;
     }
 
+    .elementImage{
+      max-width: 200px;
+      max-height: 200px;
+    }
 
     .companyData {
         margin-left: 15px;
