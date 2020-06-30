@@ -29,8 +29,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Home</span>
           <v-icon>mdi-home</v-icon>
@@ -44,8 +45,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Spenden</span>
           <v-icon>mdi-gift-outline</v-icon>
@@ -59,8 +61,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Gutscheine</span>
           <v-icon>mdi-wallet-outline</v-icon>
@@ -74,8 +77,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Über uns</span>
           <v-icon>mdi-information-outline</v-icon>
@@ -93,21 +97,42 @@
         <v-btn
           v-if="userSession.isUserSignedIn()"
           target="_blank"
-          color="accent"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Mein Portfolio</span>
           <v-icon>mdi-wallet</v-icon>
         </v-btn>
       </router-link>
 
+      <v-btn
+        v-if="userSession.isUserSignedIn()"
+        class="d-flex align-center text-none ma-0"
+        text
+      >
+        <h3
+          v-if="!gotResponse"
+        >
+          {{ 0.00 }} ETH
+        </h3>
+        <h3
+          v-else
+        >
+          {{ (backend_userdata.balance / (1000000000000000000)).toFixed(2) }} ETH
+        </h3>
+        <v-icon class="display-1">
+          mdi-ethereum
+        </v-icon>
+      </v-btn>
 
       <v-btn
         v-if="!userSession.isUserSignedIn()"
-        class="ma-2 hidden-sm-and-down"
+        class="ma-0 hidden-sm-and-down"
         target="_blank"
         rounded
-        color="accent"
+        color="primary"
+        elevation="0"
         @click="signIn"
       >
         <span class="mr-2">Anmelden mit Blockstack</span>
