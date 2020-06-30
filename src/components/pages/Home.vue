@@ -35,9 +35,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+              Mit unserem Transparenten verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem du gerne helfen möchtest.
             </p>
             <router-link
               to="/spenden"
@@ -75,9 +73,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich dazusein.
             </p>
             <router-link
               to="/gutscheine"
@@ -120,9 +116,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+              Mit unserem Transparenten verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem du gerne helfen möchtest.
             </p>
             <router-link
               to="/spenden"
@@ -155,9 +149,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-              ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea rebum. Stet clita kasd gubergren, no sea.
+              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich dazusein.
             </p>
             <router-link
               to="/gutscheine"
@@ -218,8 +210,8 @@ export default {
     .mainbody {
         position: relative;
         z-index: 0;
-        top: 0px; /* Header Height */
-        bottom: 0px; /* Footer Height */
+        top: 0; /* Header Height */
+        bottom: 0; /* Footer Height */
         width: 100%;
         min-height: 100%;
         background-color: black;
@@ -230,7 +222,7 @@ export default {
     .bgcover {
         position: fixed;
         z-index: 1;
-        top: 0px; /* Header Height */
+        top: 0; /* Header Height */
         width: 100%;
         height: 100vh;
         background: linear-gradient(to right, rgba(26, 225, 79, 0.3), rgba(63, 134, 237, 0.3));
@@ -240,7 +232,7 @@ export default {
     .btn-hover {
         background-size: 300% 100%;
         border-radius: 50px;
-        text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
+        text-shadow: rgba(0, 0, 0, 0.7) 0 0 5px;
         transition: all .4s ease-in-out;
     }
 

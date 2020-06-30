@@ -10,19 +10,20 @@
     </p>
     <h4>Vertreten durch:</h4>
     <p>
-      Thomas Mustermann<br>
-      Alana Musterfrau
+      ---------------------- <br>
+      ----------------------<br>
+      ----------------------
     </p>
     <h3>Kontakt</h3>
     <p>
-      Telefon: +49(0) 123 44 55 66<br>
-      Telefax: +49(0) 123 44 55 99<br>
-      E-Mail: mustermann@fh-bielefeld.de
+      Telefon: ----------------------<br>
+      Telefax: ----------------------<br>
+      E-Mail:  ----------------------
     </p>
     <h3>Umsatzsteuer-ID</h3>
     <p>
       Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz:<br>
-      DE 999 999 999
+      DE --- --- ---
     </p>
     <h3>EU-Streitschlichtung</h3>
     <p>
