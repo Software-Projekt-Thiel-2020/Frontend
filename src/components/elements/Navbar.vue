@@ -97,7 +97,8 @@
         <v-btn
           v-if="userSession.isUserSignedIn()"
           target="_blank"
-          color="accent"
+          color="primary"
+          elevation="0"
           class="ma-2"
         >
           <span class="mr-2">Mein Portfolio</span>
