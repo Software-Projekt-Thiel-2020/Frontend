@@ -18,6 +18,7 @@ import Project from './components/pages/Project.vue';
 import ProjektAnlegen from './components/pages/ProjektAnlegen.vue';
 import Institution from './components/pages/Institution.vue';
 import ProjectGutschein from './components/pages/ProjectGutschein.vue';
+import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
 
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 window.apiurl = process.env.VUE_APP_BASE_URL;
@@ -43,6 +44,7 @@ const routes = [
   { path: '/projektanlegen', component: ProjektAnlegen },
   { path: '/institution', component: Institution },
   { path: '/projectGutschein/:id', component: ProjectGutschein },
+  { path: '/InstitutionEditieren/', component: InstitutionEditieren },
 ];
 
 const router = new VueRouter({
