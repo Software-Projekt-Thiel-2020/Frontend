@@ -138,8 +138,8 @@
                 fixed-tabs
                 background-color="primary"
                 slider-color="secondary"
-                @change="voucherPage = 1"
                 dark
+                @change="voucherPage = 1"
               >
                 <v-tab>
                   <v-chip
@@ -245,12 +245,12 @@
               </v-row>
               <div class="text-center">
                 <v-pagination
-                        v-model="voucherPage"
-                        :length="Math.ceil(tabVouchers.length/4)"
-                        :total-visible="7"
-                        light
-                        color="secondary"
-                ></v-pagination>
+                  v-model="voucherPage"
+                  :length="Math.ceil(tabVouchers.length/4)"
+                  :total-visible="7"
+                  light
+                  color="secondary"
+                />
               </div>
             </v-card>
           </v-col>
