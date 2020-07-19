@@ -30,8 +30,13 @@
     <v-row>
       <v-col cols="6">
         <v-overflow-btn
-          label="Institution (optional)"
-          target="#dropdown-example"
+          v-model="project.idInstitution"
+          label="Institution"
+          target="#dropdown-institution"
+          :items="allInstitutionsSortedNameId"
+          item-text="name"
+          item-value="id"
+          hint="optional"
           auto-select-first
           outlined
           clearable
@@ -81,7 +86,7 @@
           </template>
           <v-date-picker
             v-model="date"
-            min="2020-06-23"
+            :min="today"
             @input="dateMenu = false"
           />
         </v-menu>
@@ -165,11 +170,14 @@ export default {
     dateMenu: false,
     timeMenu: false,
     date: '',
+    today: '',
     time: '',
+    allInstitutions: [],
+    allInstitutionsSortedNameId: [],
     project: {
       title: '',
       website: '',
-      idInstitution: 0,
+      idInstitution: null,
       goal: 1,
       until: 0,
       milestones: [],
@@ -184,8 +192,21 @@ export default {
     } else {
       this.dialog.notloggedIn = true;
     }
+    this.getTodaysDate();
+    this.getAllInstitutions();
   },
   methods: {
+    getTodaysDate() {
+      this.today = new Date().toJSON().slice(0, 10);
+    },
+    getAllInstitutions() {
+      axios.get('/institutions').then((res) => {
+        this.allInstitutions = res.data;
+        for (let i = 0; i < this.allInstitutions.length; i += 1) {
+          this.allInstitutionsSortedNameId.push({ name: this.allInstitutions[i].name, id: this.allInstitutions[i].id });
+        }
+      });
+    },
     calcMainUntil() {
       if (this.date !== '' && this.time !== '') {
         this.calcUntil();
