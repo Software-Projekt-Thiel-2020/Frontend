@@ -125,6 +125,117 @@
         Spendenprojekt anlegen
       </v-btn>
     </v-row>
+    <v-row>
+      <v-data-table
+        :headers="headers"
+        :items="project.milestones"
+        sort-by="calories"
+      >
+        <template v-slot:top>
+          <v-toolbar
+            flat
+            color="white"
+          >
+            <v-toolbar-title>Weitere Meilensteine</v-toolbar-title>
+            <v-spacer />
+            <v-dialog
+              v-model="dialog2"
+              max-width="500"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="primary"
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  Neues Item
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editedItem.name"
+                          label="Meilensteinname"
+                          outlined
+                          clearable
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editedItem.goal"
+                          label="Spendenziel"
+                          type="number"
+                          min="1"
+                          oninput="validity.valid||(value='');"
+                          outlined
+                          clearable
+                        />
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editedItem.requiredVotes"
+                          label="Benötigte Stimmen"
+                          type="number"
+                          min="1"
+                          oninput="validity.valid||(value='');"
+                          outlined
+                          clearable
+                        />
+                      </v-col>
+                      <v-col>
+                        <v-date-picker
+                          v-model="editedItem.until"
+                          :min="today"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="close"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="save"
+                  >
+                    Save
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+            small
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-data-table>
+    </v-row>
     <v-snackbar
       v-model="dialog.successful"
       bottom
@@ -164,6 +275,32 @@ export default {
       error: false,
       errorMessage: '',
     },
+    dialog2: false,
+    headers: [
+      {
+        text: 'Meilensteinname',
+        align: 'start',
+        sortable: false,
+        value: 'name',
+      },
+      { text: 'Spendenziel', value: 'goal' },
+      { text: 'benötigte Stimmen', value: 'requiredVotes' },
+      { text: 'Meilensteinende', value: 'until' },
+      { text: 'Actions', value: 'actions', sortable: false },
+    ],
+    editedIndex: -1,
+    editedItem: {
+      name: '',
+      goal: 0,
+      requiredVotes: 0,
+      until: 0,
+    },
+    defaultItem: {
+      name: '',
+      goal: 0,
+      requiredVotes: 0,
+      until: 0,
+    },
     userSession: null,
     userData: null,
     error: false,
@@ -178,11 +315,23 @@ export default {
       title: '',
       website: '',
       idInstitution: null,
+      requiredVotes: null,
       goal: 1,
       until: 0,
       milestones: [],
     },
   }),
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? 'Neuer Meilenstein' : 'Meilenstein bearbeiten';
+    },
+    watch: {
+      dialog2(val) {
+        // eslint-disable-next-line no-unused-expressions
+        val || this.close();
+      },
+    },
+  },
   created() {
     this.userSession = userSession;
   },
@@ -196,6 +345,30 @@ export default {
     this.getAllInstitutions();
   },
   methods: {
+    editItem(item) {
+      this.editedIndex = this.project.milestones.indexOf(item);
+      this.editedItem = { ...item };
+      this.dialog2 = true;
+    },
+    deleteItem(item) {
+      const index = this.project.milestones.indexOf(item);
+      this.project.milestones.splice(index, 1);
+    },
+    close() {
+      this.dialog2 = false;
+      this.$nextTick(() => {
+        this.editedItem = { ...this.defaultItem };
+        this.editedIndex = -1;
+      });
+    },
+    save() {
+      if (this.editedIndex > -1) {
+        Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
+      } else {
+        this.project.milestones.push(this.editedItem);
+      }
+      this.close();
+    },
     getTodaysDate() {
       this.today = new Date().toJSON().slice(0, 10);
     },
@@ -226,6 +399,7 @@ export default {
         website: this.project.website,
         idInstitution: this.project.idInstitution,
         goal: this.project.goal,
+        requiredVotes: this.project.requiredVotes,
         until: this.project.until,
         milestones: this.project.milestones,
       };
