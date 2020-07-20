@@ -31,12 +31,11 @@
       <v-col cols="6">
         <v-overflow-btn
           v-model="project.idInstitution"
-          label="Institution"
+          label="Institution (optional)"
           target="#dropdown-institution"
           :items="allInstitutionsSortedNameId"
           item-text="name"
           item-value="id"
-          hint="optional"
           auto-select-first
           outlined
           clearable
@@ -62,7 +61,7 @@
           type="number"
           min="1"
           oninput="validity.valid||(value='');"
-          label="Spendenziel in Szabo"
+          label="Spendenziel in Wei"
           outlined
           clearable
         />
@@ -87,7 +86,7 @@
           <v-date-picker
             v-model="date"
             :min="today"
-            @input="dateMenu = false"
+            @input="afterDayInput"
           />
         </v-menu>
       </v-col>
@@ -102,6 +101,7 @@
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="time"
+              :disabled="blockTime"
               label="Uhrzeit eingeben (GMT)"
               readonly
               v-bind="attrs"
@@ -111,9 +111,125 @@
           <v-time-picker
             v-model="time"
             format="24hr"
-            @input="timeMenu = false"
+            @input="afterTimeInput"
           />
         </v-menu>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-data-table
+          :headers="headers"
+          :items="project.milestones"
+          sort-by="calories"
+        >
+          <template v-slot:top>
+            <v-toolbar
+              flat
+              color="white"
+            >
+              <v-toolbar-title>Weitere Meilensteine</v-toolbar-title>
+              <v-spacer />
+              <v-dialog
+                v-model="dialog2"
+                max-width="400"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    :disabled="blockAdditionalMilestones"
+                    color="primary"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    Neues Item
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">{{ formTitle }}</span>
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="editedItem.name"
+                            label="Meilensteinname"
+                            outlined
+                            clearable
+                            autofocus
+                          />
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="editedItem.goal"
+                            label="Spendenziel in Wei"
+                            type="number"
+                            min="1"
+                            oninput="validity.valid||(value='');"
+                            outlined
+                            clearable
+                          />
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="editedItem.requiredVotes"
+                            label="Benötigte Stimmen"
+                            type="number"
+                            min="1"
+                            oninput="validity.valid||(value='');"
+                            outlined
+                            clearable
+                          />
+                        </v-col>
+                        <v-col>
+                          <v-date-picker
+                            v-model="editedItem.until"
+                            :min="today"
+                            :max="date"
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="close"
+                    >
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      color="blue darken-1"
+                      text
+                      @click="save"
+                    >
+                      Save
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-toolbar>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              small
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-data-table>
       </v-col>
     </v-row>
     <v-row>
@@ -124,117 +240,6 @@
       >
         Spendenprojekt anlegen
       </v-btn>
-    </v-row>
-    <v-row>
-      <v-data-table
-        :headers="headers"
-        :items="project.milestones"
-        sort-by="calories"
-      >
-        <template v-slot:top>
-          <v-toolbar
-            flat
-            color="white"
-          >
-            <v-toolbar-title>Weitere Meilensteine</v-toolbar-title>
-            <v-spacer />
-            <v-dialog
-              v-model="dialog2"
-              max-width="500"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="primary"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  Neues Item
-                </v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editedItem.name"
-                          label="Meilensteinname"
-                          outlined
-                          clearable
-                        />
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editedItem.goal"
-                          label="Spendenziel"
-                          type="number"
-                          min="1"
-                          oninput="validity.valid||(value='');"
-                          outlined
-                          clearable
-                        />
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editedItem.requiredVotes"
-                          label="Benötigte Stimmen"
-                          type="number"
-                          min="1"
-                          oninput="validity.valid||(value='');"
-                          outlined
-                          clearable
-                        />
-                      </v-col>
-                      <v-col>
-                        <v-date-picker
-                          v-model="editedItem.until"
-                          :min="today"
-                        />
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="close"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click="save"
-                  >
-                    Save
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            @click="editItem(item)"
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(item)"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-data-table>
     </v-row>
     <v-snackbar
       v-model="dialog.successful"
@@ -269,6 +274,8 @@ import { userSession } from '../../userSession';
 export default {
   name: 'ProjektAnlegen',
   data: () => ({
+    blockTime: true,
+    blockAdditionalMilestones: true,
     dialog: {
       notLoggedIn: false,
       successful: false,
@@ -291,15 +298,15 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: '',
-      goal: 0,
-      requiredVotes: 0,
-      until: 0,
+      goal: 1,
+      requiredVotes: 1,
+      until: null,
     },
     defaultItem: {
       name: '',
-      goal: 0,
-      requiredVotes: 0,
-      until: 0,
+      goal: 1,
+      requiredVotes: 1,
+      until: null,
     },
     userSession: null,
     userData: null,
@@ -345,6 +352,15 @@ export default {
     this.getAllInstitutions();
   },
   methods: {
+    afterDayInput() {
+      this.dateMenu = false;
+      this.blockTime = false;
+    },
+    afterTimeInput() {
+      this.timeMenu = false;
+      this.blockAdditionalMilestones = false;
+      this.calcUntil();
+    },
     editItem(item) {
       this.editedIndex = this.project.milestones.indexOf(item);
       this.editedItem = { ...item };
@@ -381,15 +397,14 @@ export default {
       });
     },
     calcMainUntil() {
-      if (this.date !== '' && this.time !== '') {
-        this.calcUntil();
+      if (this.project.until !== 0) {
         this.createSpendenProjekt();
       }
     },
     calcUntil() {
       const dateArray = this.date.split(('-'), 3);
       const timeArray = this.time.split((':'), 2);
-      this.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10),
+      this.project.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10),
         parseInt(timeArray[0], 10), parseInt(timeArray[1], 10));
     },
     createSpendenProjekt() {
