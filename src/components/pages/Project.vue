@@ -5,16 +5,16 @@
         :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
         class="font-weight-thin white--text"
       >
-        {{ project.type === 'donate' ? 'Spendenseite' : 'Betriebsseite' }}
+        Spendenseite
       </h1>
     </div>
-    <v-container>
+    <v-container v-if="project">
       <v-row>
         <v-col>
           <v-card
+            v-if="project"
             class="projectBox"
             elevation="4"
-            v-if="project"
           >
             <v-card-title class="font-weight-light display-1">
               {{ project.name }}
@@ -29,32 +29,37 @@
                 elevation="7"
                 class="py-6 text-center"
               >
-                <v-row
-                v-if="project.milestones && project.milestones.length != 0">
-                  <v-col>
-                    <h4 class="headline">
-                      Gesammelt
-                    </h4>
-                    <h1 class="display-2 font-weight-thin">
-                      {{ project.donationGoal.reached.toFixed(2) }}€
-                    </h1>
-                  </v-col>
-                  <v-col>
-                    <h4 class="headline">
-                      Ziel
-                    </h4>
-                    <h1 class="display-2 font-weight-thin">
-                      {{ project.donationGoal.total.toFixed(2) }}€
-                    </h1>
-                  </v-col>
-                </v-row>
-                <h2>{{ (getDonationGoalPercentage).toFixed(1) }}%</h2>
-                <v-progress-linear
-                  color="secondary"
-                  height="15"
-                  :value="getDonationGoalPercentage"
-                  striped
-                />
+                <div
+                        v-for="milestone in project.milestones"
+                        v-bind:key="milestone.id">
+                  <v-row
+                  >
+                    <v-col>
+                      <h4 class="headline">
+                        Gesammelt
+                      </h4>
+                      <h1 class="display-2 font-weight-thin">
+                        {{ (milestone.currentVotes/milestone.requiredVotes).toFixed(2) }} Stimmen
+                      </h1>
+                    </v-col>
+                    <v-col>
+                      <h4 class="headline">
+                        Ziel
+                      </h4>
+                      <h1 class="display-2 font-weight-thin">
+                        {{ milestone.requiredVotes }} Stimmen
+                      </h1>
+                    </v-col>
+                  </v-row>
+                  <h2>{{ (milestone.currentVotes/milestone.requiredVotes).toFixed(1)}}%</h2>
+                  <v-progress-linear
+                          color="secondary"
+                          height="15"
+                          :value="(milestone.currentVotes/milestone.requiredVotes)"
+                          striped
+                  />
+
+                </div>
                 <br>
                 <hr>
                 <currency-input
@@ -103,11 +108,9 @@ export default {
     exrate: 0,
     eurToEth: 0,
     donationValue: 0,
+    goalPercentage: 0,
   }),
   computed: {
-    getDonationGoalPercentage() {
-      return (this.project.donationGoal.reached / this.project.donationGoal.total) * 100.0;
-    },
     getDonationETHValue() {
       if (this.donationValue > 0) {
         return (this.donationValue * this.eurToEth).toFixed(4);
@@ -164,10 +167,11 @@ export default {
         });
     },
     loadProject() {
-      let url = 'projects?id=';
+      let url = 'projects/';
       url += this.projectid;
       axios.get(url)
         .then((res) => {
+          console.log(res.data);
           this.project = res.data;
         })
         .catch((err) => {
