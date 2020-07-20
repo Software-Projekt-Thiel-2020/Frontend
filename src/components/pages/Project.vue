@@ -152,7 +152,7 @@ export default {
     szaboToEuro() {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
-          this.exrate = (res.data.ETH * 1000000);
+          this.exrate = (res.data.ETH * 1000000000000000000);
           this.eurToEth = res.data.ETH;
           console.log(this.exrate);
         })
