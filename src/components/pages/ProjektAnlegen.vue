@@ -418,7 +418,7 @@ export default {
         until: this.project.until,
         milestones: this.project.milestones,
       };
-      axios.post('projects', {}, { headers })
+      axios.post('/projects', {}, { headers })
         .then(() => {
           this.dialog.successful = true;
         })
