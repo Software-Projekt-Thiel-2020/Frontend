@@ -112,7 +112,7 @@
         text
       >
         <h3
-          v-if="!gotResponse"
+          v-if="!gotResponse || error"
         >
           {{ 0.00 }} ETH
         </h3>
@@ -311,6 +311,19 @@
             </v-list-item-icon>
             <v-list-item-title>Anmelden</v-list-item-title>
           </v-list-item>
+          <router-link
+            v-if="backend_userdata && backend_userdata.group === 'support'"
+            to="/institution"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bank-plus</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Institution erstellen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
           <v-list-item
             v-if="userSession.isUserSignedIn()"
             color="accent"
