@@ -1,6 +1,5 @@
 <template>
   <div>
-    <v-btn @click="showAlert('test', 'success')"></v-btn>
     <v-container>
       <h4 class="display-1 center">
         Wähle eine deiner Institutionen aus, um diese zu editieren.
@@ -258,7 +257,7 @@ export default {
           this.items = res.data;
         })
         .catch((err) => {
-          this.show(err.toString(), 'error');
+          this.showAlert(err.toString(), 'error');
         })
         .finally(() => {
           this.gotResponse = true;
@@ -310,7 +309,6 @@ export default {
 </script>
 
 <style scoped>
-
   .institution {
     display: flex;
     flex-direction: row;
