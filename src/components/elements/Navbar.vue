@@ -426,18 +426,32 @@
     <v-snackbar
       v-model="register_dialog.successful"
       top
+      app
       color="success"
+      :timeout="timeout"
     >
       Registrierung abgeschlossen!
+      <v-btn
+        depressed
+        color="success"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
-
     <v-snackbar
       :value="error"
       top
+      app
       color="error"
-      :timeout="0"
+      :timeout="timeout"
     >
       Konnte Benutzerdaten nicht laden: {{ errorMessage }}
+      <v-btn
+        depressed
+        color="error"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -470,6 +484,7 @@ export default {
       errorMessage: null,
       successful: false,
     },
+    timeout: 10000,
   }),
   created() {
     this.userSession = userSession;
