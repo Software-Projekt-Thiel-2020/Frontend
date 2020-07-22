@@ -173,6 +173,23 @@
                       />
                     </v-col>
                   </v-row>
+                  <v-row>
+                    <v-col>
+                      <l-map
+                        :zoom="zoom"
+                        :center="center"
+                        :options="mapOptions"
+                        @click="setMarkerPos"
+                        style="height: 300px; width: 500px; position:relative; z-index: 0"
+                      >
+                        <l-tile-layer
+                          :url="url"
+                          :attribution="attribution"
+                        />
+                        <l-marker :lat-lng="marker" />
+                      </l-map>
+                    </v-col>
+                  </v-row>
                   <v-row gutters>
                     <v-col
                       class="mt-5"
@@ -232,10 +249,17 @@
 
 <script>
 import axios from 'axios';
+import { latLng } from 'leaflet';
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { userSession } from '../../userSession';
 
 export default {
   name: 'InstitutionEditieren',
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+  },
   data: () => ({
     items: [],
     gotResponse: false,
@@ -245,10 +269,20 @@ export default {
     alert: false,
     alertType: null,
     userFeedback: '',
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    center: null,
+    marker: null,
+    zoom: 13,
+    mapOptions: {
+      zoomSnap: 0.5,
+    },
   }),
   mounted() {
     // TODO: nur die Institutionen des Besitzers anzeigen
     this.load();
+    setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 250);
   },
   methods: {
     load() {
@@ -264,10 +298,18 @@ export default {
           this.resultList = this.items;
         });
     },
+    setMarkerPos(event) {
+      this.marker = event.latlng;
+      this.editElement.latitude = this.marker.lat;
+      this.editElement.longitude = this.marker.lng;
+    },
     editClick(inst) {
       if (inst !== null && inst !== undefined) {
         if (typeof inst === 'object' && Object.keys(inst).length > 0) {
           this.editElement = JSON.parse(JSON.stringify(inst));
+          const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          this.center = coords;
+          this.marker = coords;
           this.overlay = true;
           return;
         }
