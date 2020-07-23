@@ -173,14 +173,24 @@
                       />
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <v-col>
+                  <v-row gutters>
+                    <v-col
+                      class="mt-5"
+                      cols="2"
+                    >
+                      <h4>Koordinaten:</h4>
+                    </v-col>
+                    <v-col
+                      class="mt-5"
+                      cols="2"
+                    >
                       <l-map
+                        ref="map"
                         :zoom="zoom"
                         :center="center"
                         :options="mapOptions"
-                        @click="setMarkerPos"
                         style="height: 300px; width: 500px; position:relative; z-index: 0"
+                        @click="setMarkerPos"
                       >
                         <l-tile-layer
                           :url="url"
@@ -191,12 +201,6 @@
                     </v-col>
                   </v-row>
                   <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      cols="2"
-                    >
-                      <h4>Koordinaten:</h4>
-                    </v-col>
                     <v-col>
                       <v-text-field
                         v-model="editElement.longitude"
@@ -251,6 +255,7 @@
 import axios from 'axios';
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { userSession } from '../../userSession';
 
 export default {
@@ -280,13 +285,11 @@ export default {
     },
   }),
   mounted() {
-    // TODO: nur die Institutionen des Besitzers anzeigen
     this.load();
-    setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 250);
   },
   methods: {
     load() {
-      axios.get('institutions')
+      axios.get(`institutions?username=${window.user.username}`)
         .then((res) => {
           this.items = res.data;
         })
@@ -311,6 +314,9 @@ export default {
           this.center = coords;
           this.marker = coords;
           this.overlay = true;
+          setTimeout(() => {
+            this.$refs.map.mapObject.invalidateSize();
+          }, 100);
           return;
         }
       }
