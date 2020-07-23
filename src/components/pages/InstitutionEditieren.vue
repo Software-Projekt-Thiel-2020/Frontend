@@ -8,7 +8,6 @@
     </v-container>
 
     <v-container>
-      <!-- TODO: V-Alert ist beim Laden kurz zu sehen -->
       <v-alert
         v-if="alert"
         :type="alertType"
@@ -83,7 +82,6 @@
             </v-card>
           </v-col>
         </v-row>
-        <!-- TODO: Inst Cards verrutschen! -->
         <v-dialog
           v-if="overlay"
           v-model="overlay"
@@ -96,7 +94,9 @@
             </v-card-title>
             <v-card-text>
               <v-container>
-                <v-form>
+                <v-form
+                  v-model="form"
+                >
                   <v-row gutters>
                     <v-col
                       class="mt-5"
@@ -107,7 +107,11 @@
                     <v-col>
                       <v-text-field
                         v-model="editElement.name"
-                        :placeholder="editElement.name"
+                        :value="editElement.name"
+                        :rules="notEmpty"
+                        class="inputField"
+                        clearable
+                        required
                       />
                     </v-col>
                   </v-row>
@@ -130,12 +134,15 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Internet-Seite:</h4>
+                      <h4>Website:</h4>
                     </v-col>
                     <v-col>
                       <v-text-field
                         v-model="editElement.webpage"
                         :placeholder="editElement.webpage"
+                        :rules="notEmpty"
+                        class="inputField"
+                        required
                       />
                     </v-col>
                   </v-row>
@@ -148,13 +155,16 @@
                     </v-col>
                     <v-col>
                       <v-textarea
-                        value="editElement.description"
-                        :placeholder="editElement.description"
+                        v-model="editElement.description"
+                        :value="editElement.description"
                         clearable
                         counter
                         no-resize
                         outlined
-                        height="80"
+                        :rules="notEmpty"
+                        required
+                        class="inputField"
+                        height="120"
                         background-color="grey lighten-4"
                       />
                     </v-col>
@@ -170,6 +180,9 @@
                       <v-text-field
                         v-model="editElement.address"
                         :placeholder="editElement.address"
+                        :rules="notEmpty"
+                        class="inputField"
+                        required
                       />
                     </v-col>
                   </v-row>
@@ -206,6 +219,9 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
+                        :rules="notEmpty"
+                        class="inputField"
+                        required
                       />
                     </v-col>
                     <v-col>
@@ -213,6 +229,9 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
+                        :rules="notEmpty"
+                        class="inputField"
+                        required
                       />
                     </v-col>
                   </v-row>
@@ -227,20 +246,21 @@
                 style="width: 50%"
               >
                 <v-btn
+                  color="error"
+                  block
+                  tile
+                  @click="closeOverlay()"
+                >
+                  Schließen
+                </v-btn>
+                <v-btn
+                  :disabled="!form"
                   color="success"
                   block
                   tile
                   @click="changeInst()"
                 >
                   Bestätigen
-                </v-btn>
-                <v-btn
-                  color="error"
-                  block
-                  tile
-                  @click="overlay = false"
-                >
-                  Schließen
                 </v-btn>
               </v-btn-toggle>
             </v-card-actions>
@@ -270,10 +290,25 @@ export default {
     gotResponse: false,
     apiurl: window.apiurl,
     overlay: false,
-    editElement: null,
+    editElement: {
+      id: null,
+      authToken: null,
+      name: null,
+      picturePath: null,
+      webpage: null,
+      description: null,
+      address: null,
+      longitude: null,
+      latitude: null,
+    },
+    instName: null,
     alert: false,
     alertType: null,
     userFeedback: '',
+    form: false,
+    notEmpty: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -309,7 +344,18 @@ export default {
     editClick(inst) {
       if (inst !== null && inst !== undefined) {
         if (typeof inst === 'object' && Object.keys(inst).length > 0) {
-          this.editElement = JSON.parse(JSON.stringify(inst));
+          this.editElement.id = inst.id;
+          this.editElement.authToken = inst.authToken;
+          this.editElement.name = inst.name;
+          this.editElement.picturePath = inst.picturePath;
+          this.editElement.webpage = inst.webpage;
+          this.editElement.description = inst.description;
+          this.editElement.address = inst.address;
+          this.editElement.longitude = inst.longitude;
+          this.editElement.latitude = inst.latitude;
+
+          this.instName = inst.name;
+
           const coords = latLng(this.editElement.latitude, this.editElement.longitude);
           this.center = coords;
           this.marker = coords;
@@ -323,13 +369,21 @@ export default {
       this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
     },
     changeInst() {
-      if (userSession.isUserSignedIn() && this.editElement != null) {
+      if (userSession.isUserSignedIn()) {
         const headers = this.editElement;
         headers.authToken = userSession.loadUserData().authResponseToken;
-        // TODO: Picture abhängig von Issue #83
         delete headers.picturePath;
+        if (headers.name === this.instName) {
+          delete headers.name;
+        }
 
-        axios.patch('institutions', {}, { headers })
+        // TODO: Description kann man nicht setzten --> Axios Error
+        const { description } = headers;
+        delete headers.description;
+
+        // TODO: Picture abhängig von Issue #83
+
+        axios.patch('institutions', { description }, { headers })
           .then(() => {
             this.load();
             this.showAlert('Das Ändern der Daten war erfolgreich', 'success');
@@ -340,6 +394,10 @@ export default {
             this.overlay = false;
           });
       }
+    },
+    closeOverlay() {
+      this.overlay = false;
+      this.editElement = {};
     },
     showAlert(msg, type) {
       this.alert = true;
@@ -371,5 +429,10 @@ export default {
   .companyData {
     margin-left: 15px;
     flex-basis: 55%
+  }
+
+  .inputField ::placeholder{
+    color: black!important;
+    opacity: 1;
   }
 </style>
