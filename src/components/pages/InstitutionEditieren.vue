@@ -36,9 +36,9 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="!gotResponse || items.size === 0">
+      <div v-if="!gotResponse || items.length === 0">
         <v-card
-          class="pa-10 ma-5"
+          class="pa-10 ma-7"
           elevation="5"
           color="red lighten-2"
         >
@@ -96,7 +96,7 @@
           persistent
         >
           <v-card>
-            <v-card-title>
+            <v-card-title class="text-center">
               Institution bearbeiten
             </v-card-title>
             <v-card-text>
@@ -109,7 +109,9 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Institutionsname:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Institutionsname:
+                      </h4>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -127,13 +129,26 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Bild:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Bild:
+                      </h4>
                     </v-col>
-                    <v-col>
+                    <v-col cols="3">
                       <img
                         class="elementImage"
                         :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
                       >
+                    </v-col>
+                    <v-col
+                      cols="3"
+                    >
+                      <v-file-input
+                        v-model="editElement.picture"
+                        prepend-icon="mdi-camera"
+                        clearable
+                        label="Bild hochladen"
+                        accept="image/*"
+                      />
                     </v-col>
                   </v-row>
                   <v-row gutters>
@@ -141,7 +156,9 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Website:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Website:
+                      </h4>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -158,7 +175,9 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Beschreibung:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Beschreibung:
+                      </h4>
                     </v-col>
                     <v-col>
                       <v-textarea
@@ -181,7 +200,9 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Adresse:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Adresse:
+                      </h4>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -198,7 +219,9 @@
                       class="mt-5"
                       cols="2"
                     >
-                      <h4>Koordinaten:</h4>
+                      <h4 class="font-weight-medium fromField">
+                        Koordinaten:
+                      </h4>
                     </v-col>
                     <v-col
                       class="mt-5"
@@ -302,6 +325,7 @@ export default {
       authToken: null,
       name: null,
       picturePath: null,
+      picture: null,
       webpage: null,
       description: null,
       address: null,
@@ -377,23 +401,43 @@ export default {
     },
     changeInst() {
       if (userSession.isUserSignedIn()) {
-        const headers = this.editElement;
-        headers.authToken = userSession.loadUserData().authResponseToken;
+        let headers = this.editElement;
+        const authToken = userSession.loadUserData().authResponseToken;
+        headers.authToken = authToken;
+
         delete headers.picturePath;
         if (headers.name === this.instName) {
           delete headers.name;
+        }
+        let newPic;
+        if (this.editElement.picture) {
+          newPic = this.editElement.picture;
+          delete this.editElement.picture;
         }
 
         // TODO: Description kann man nicht setzten --> Axios Error
         const { description } = headers;
         delete headers.description;
 
-        // TODO: Picture abhängig von Issue #83
-
         axios.patch('institutions', { description }, { headers })
           .then(() => {
-            this.load();
-            this.showAlert('Das Ändern der Daten war erfolgreich', 'success');
+            if (newPic) {
+              headers = {
+                idInstitution: this.editElement.id,
+                authToken,
+              };
+              const formData = new FormData();
+              formData.append('file', this.file);
+
+              axios.post('file', formData, { headers })
+                .then(() => {
+                  this.load();
+                  this.showAlert('Das Ändern der Daten war erfolgreich', 'success');
+                })
+                .catch((err) => {
+                  throw Error(err);
+                });
+            }
           })
           .catch((err) => {
             this.showAlert(err.toString(), 'error');
@@ -443,6 +487,11 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
+  }
+
+  .fromField {
+    font-size: 1.13em;
+    color: black
   }
 
   .gradientBackground {
