@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="gradientBackground">
     <v-container>
-      <h4 class="display-1 center">
-        Wähle eine deiner Institutionen aus, um diese zu editieren.
+      <h4
+        class="ma-5 display-1 text-center font-weight-medium white--text"
+      >
+        Deine Institutionen
       </h4>
-      <v-divider />
-    </v-container>
+      <v-divider class="mt-5" />
 
-    <v-container>
       <v-alert
         v-if="alert"
         :type="alertType"
@@ -66,7 +66,7 @@
                 class="companyData"
                 style="border:0;"
               >
-                <h2 class="ma-3">
+                <h2 class="ma-3 ml-4 font-weight-regular">
                   {{ item.name }}
                 </h2>
                 <v-card-actions>
@@ -76,6 +76,13 @@
                     @click="editClick(item)"
                   >
                     Editieren
+                  </v-btn>
+                  <v-btn
+                    class="ma-2"
+                    style="color: black"
+                    :href="item.webpage"
+                  >
+                    Website
                   </v-btn>
                 </v-card-actions>
               </div>
@@ -419,6 +426,8 @@ export default {
     display: flex;
     flex-direction: row;
     margin-bottom: 25px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
   }
 
   .elementImage{
@@ -434,5 +443,10 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
+  }
+
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+    height: 100%;
   }
 </style>
