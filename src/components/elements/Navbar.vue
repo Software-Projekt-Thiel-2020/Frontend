@@ -112,7 +112,7 @@
         text
       >
         <h3
-          v-if="!gotResponse"
+          v-if="!gotResponse || error"
         >
           {{ 0.00 }} ETH
         </h3>
@@ -311,6 +311,19 @@
             </v-list-item-icon>
             <v-list-item-title>Anmelden</v-list-item-title>
           </v-list-item>
+          <router-link
+            v-if="backend_userdata && backend_userdata.group === 'support'"
+            to="/institution"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bank-plus</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Institution erstellen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
           <v-list-item
             v-if="userSession.isUserSignedIn()"
             color="accent"
@@ -413,18 +426,32 @@
     <v-snackbar
       v-model="register_dialog.successful"
       top
+      app
       color="success"
+      :timeout="timeout"
     >
       Registrierung abgeschlossen!
+      <v-btn
+        depressed
+        color="success"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
-
     <v-snackbar
       :value="error"
       top
+      app
       color="error"
-      :timeout="0"
+      :timeout="timeout"
     >
       Konnte Benutzerdaten nicht laden: {{ errorMessage }}
+      <v-btn
+        depressed
+        color="error"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -457,6 +484,7 @@ export default {
       errorMessage: null,
       successful: false,
     },
+    timeout: 10000,
   }),
   created() {
     this.userSession = userSession;
@@ -502,10 +530,10 @@ export default {
     get_user() {
       axios.get(`users?username=${this.user.username}`)
         .then((res) => {
-          if (res.data.length === 2) {
-            this.backend_userdata = false;
-          } else {
+          if (res.data.length > 0) {
             [this.backend_userdata] = res.data;
+          } else {
+            this.backend_userdata = false;
           }
         })
         .catch((err) => {
