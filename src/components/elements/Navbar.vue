@@ -530,10 +530,10 @@ export default {
     get_user() {
       axios.get(`users?username=${this.user.username}`)
         .then((res) => {
-          if (res.data.length === 2) {
-            this.backend_userdata = false;
-          } else {
+          if (res.data.length > 0) {
             [this.backend_userdata] = res.data;
+          } else {
+            this.backend_userdata = false;
           }
         })
         .catch((err) => {
