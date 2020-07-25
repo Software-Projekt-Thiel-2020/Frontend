@@ -1,157 +1,445 @@
 <template>
-  <div>
-    <v-container class="container">
-      <h1>Mein Portfolio</h1>
-    </v-container>
-    <v-container class="container">
-      <v-row>
+  <div id="content">
+    <v-parallax
+      dark
+      :height="400"
+      src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+    >
+      <v-row
+        align="center"
+        justify="center"
+      >
         <v-col
-          id="spenden"
-          class="text-left"
-          cols="6"
+          class="text-center"
         >
-          <h1>Meine Spenden</h1>
-          <div class="results">
-            <div
-              v-for="donation in donations"
-              :key="donation.name"
-              class="project"
-            >
-              <img
-                class="picture"
-                src="../../assets/placeholder.png"
-                alt="placeholder"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2>Firmenname: {{ donation.name }}</h2>
-                <h3>Gespendete Summe: {{ donation.amount }}€</h3>
-                <h3>Datum: {{ donation.date }}</h3>
-                <h4>
-                  Zur Website:
-                  <a :href="donation.website">{{ donation.website }}</a>
-                </h4>
-              </div>
-            </div>
-          </div>
+          <h1 class="display-2 font-weight-thin">
+            Mein Portfolio
+          </h1>
         </v-col>
-
-        <v-col
-          id="gutscheine"
-          class="text-left"
-          cols="6"
-        >
-          <h1>Meine Gutscheine</h1>
-          <div class="results">
-            <div
-              v-for="coupon in coupons"
-              :key="coupon.name"
-              class="project"
+        <v-col>
+          <v-card
+            color="primary"
+            class="wallet"
+            dark
+          >
+            <v-toolbar
+              color="indigo"
+              dark
             >
-              <img
-                class="picture"
-                src="../../assets/placeholder.png"
-                alt="placeholder"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2>Firmenname: {{ coupon.name }}</h2>
-                <h3>Gutscheinwert: {{ coupon.worth }}€ </h3>
-                <h3>Datum: {{ coupon.date }}</h3>
-                <h4>
-                  Zur Website:
-                  <a :href="coupon.website">{{ coupon.website }}</a>
-                </h4>
-                <h4
-                  v-if="coupon.available === false"
-                  class="expired"
+              <v-spacer />
+
+              <v-toolbar-title>
+                <v-icon
+                  class="display-1"
+                  style="color: #ffffff"
                 >
-                  (Gutschein bereits eingelöst)
-                </h4>
+                  mdi-wallet
+                </v-icon>
+                Mein Wallet
+              </v-toolbar-title>
+              <v-spacer />
+            </v-toolbar>
+            <div class="ma-5 pb-1">
+              <h4>
+                Meine persönliche Wallet Adresse:
+                <v-chip>
+                  <span
+                    v-if="!gotResponse"
+                    class="walletAddress"
+                  >
+                    loading....
+                  </span>
+                  <span
+                    v-else
+                    class="walletAddress"
+                  >
+                    {{ user.publickey }}
+                  </span>
+                </v-chip>
+              </h4>
+              <span class="caption font-italic">
+                Guthaben können Sie aufladen, indem Sie Ethereum an ihre Wallet Adresse senden.
+              </span>
+              <v-divider class="my-3" />
+              <div class="text-right">
+                <v-chip
+                  class="px-3 py-6"
+                  color="primary"
+                >
+                  <v-icon class="display-1">
+                    mdi-ethereum
+                  </v-icon>
+                  <h3
+                    v-if="!gotResponse"
+                    class="display-1 font-weight-light"
+                  >
+                    {{ 0 }} ETH
+                  </h3>
+                  <h3
+                    v-else
+                    class="display-1 font-weight-light"
+                  >
+                    {{ user.balance * weiFormula }} ETH
+                  </h3>
+                </v-chip>
               </div>
+              <span class="" />
             </div>
-          </div>
+          </v-card>
         </v-col>
       </v-row>
-    </v-container>
+    </v-parallax>
+    <v-alert
+      v-model="redeemFail"
+      dismissible
+      prominent
+      tile
+      class="text-center"
+      type="error"
+    >
+      Beim Einlösen von '{{ redeemVTitle }}' ist ein Fehler aufgetreten {{ errorMessage }}
+    </v-alert>
+    <v-alert
+      v-model="redeemSucc"
+      dismissible
+      prominent
+      tile
+      class="text-center"
+      type="success"
+    >
+      Gutschein '{{ redeemVTitle }}' erfolgreich eingelöst!
+    </v-alert>
+    <div>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-card
+              color="primary"
+            >
+              <v-toolbar
+                color="primary"
+                dark
+              >
+                <v-spacer />
+
+                <v-toolbar-title>
+                  <v-icon
+                    class="display-1"
+                    style="color: white"
+                  >
+                    mdi-wallet-giftcard
+                  </v-icon>
+                  Meine Gutscheine
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
+              <v-tabs
+                v-model="tab"
+                fixed-tabs
+                background-color="primary"
+                slider-color="secondary"
+                dark
+                @change="voucherPage = 1"
+              >
+                <v-tab>
+                  <v-chip
+                    color="secondary"
+                    class="v-chip--clickable"
+                  >
+                    <v-avatar
+                      v-if="gotResponse"
+                      left
+                      color="primary"
+                    >
+                      {{ getVouchers(false).length }}
+                    </v-avatar>
+                    <v-avatar
+                      v-else
+                      left
+                      color="primary"
+                    >
+                      0
+                    </v-avatar>
+                    Gültig
+                  </v-chip>
+                </v-tab>
+                <v-tab>
+                  <v-chip
+                    color="secondary"
+                    class="v-chip--clickable"
+                  >
+                    <v-avatar
+                      v-if="gotResponse"
+                      left
+                      color="primary"
+                    >
+                      {{ getVouchers(true).length }}
+                    </v-avatar>
+                    <v-avatar
+                      v-else
+                      left
+                      color="primary"
+                    >
+                      0
+                    </v-avatar>
+                    Eingelöst
+                  </v-chip>
+                </v-tab>
+              </v-tabs>
+              <v-card-text
+                v-if="vErrMsg.length !== 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  {{ vErrMsg }}
+                </h1>
+              </v-card-text>
+              <v-row
+                v-else
+                class="ma-2"
+              >
+                <v-card-text
+                  v-if="tabVouchers.length === 0"
+                  class="text-center"
+                >
+                  <h1 class="my-10 noEntryText">
+                    Keine Gutscheine vorhanden
+                  </h1>
+                </v-card-text>
+                <v-col
+                  v-for="voucher in tabVouchers.slice((voucherPage*4)-4,voucherPage*4)"
+                  v-else
+                  :key="voucher.id"
+                  cols="12"
+                >
+                  <v-card
+                    :color="voucher.used ? '#dddddd' : 'white'"
+                  >
+                    <v-card-title>{{ voucher.titel }}</v-card-title>
+                    <v-card-subtitle class="overline">
+                      {{ voucher.titel }}
+                    </v-card-subtitle>
+                    <v-card-text>{{ voucher.description }}</v-card-text>
+                    <v-card-actions>
+                      <v-btn
+                        v-if="!voucher.used"
+                        color="success"
+                        @click="redeemVoucher(voucher)"
+                      >
+                        Einlösen
+                      </v-btn>
+                      <v-btn
+                        v-if="voucher.used"
+                        disabled
+                        outlined
+                      >
+                        Eingelöst
+                      </v-btn>
+                      <v-spacer />
+                      <h3 class="pricetag font-weight-light">
+                        {{ voucher.price }} ETH
+                      </h3>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+              <div class="text-center">
+                <v-pagination
+                  v-model="voucherPage"
+                  :length="Math.ceil(tabVouchers.length/4)"
+                  :total-visible="7"
+                  light
+                  color="secondary"
+                />
+              </div>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card
+              color="primary"
+              dark
+            >
+              <v-toolbar
+                color="primary"
+                dark
+              >
+                <v-spacer />
+                <v-toolbar-title>
+                  <v-icon
+                    class="display-1"
+                    style="color: white"
+                  >
+                    mdi-heart
+                  </v-icon>
+                  Meine Spenden
+                </v-toolbar-title>
+                <v-spacer />
+              </v-toolbar>
+              <v-card-text
+                v-if="dErrMsg.length !== 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  {{ dErrMsg }}
+                </h1>
+              </v-card-text>
+              <v-card-text
+                v-else-if="donations === null || donations === undefined"
+                class="text-center"
+              >
+                <h1 class="my-10 noEntryText">
+                  Keine Spenden getätigt
+                </h1>
+              </v-card-text>
+              <v-row
+                v-else
+                class="ma-2"
+              >
+                <v-col
+                  v-for="donation in donations"
+                  :key="donation.id"
+                  cols="12"
+                >
+                  <v-card>
+                    <v-card-title>{{ donation.projectname }}</v-card-title>
+                    <v-card-subtitle class="overline">
+                      {{ donation.projectname }}
+                    </v-card-subtitle>
+                    <v-card-text>{{ donation.projectname }}</v-card-text>
+                    <v-card-actions>
+                      <v-spacer />
+                      <h3 class="pricetag font-weight-light">
+                        {{ donation.amount }} ETH
+                      </h3>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import { userSession } from '../../userSession';
+
 export default {
   name: 'Historie',
   data: () => ({
-    donations: [
-      {
-        name: 'Edeka',
-        website: 'https://www.edeka.de/',
-        amount: 15,
-        date: '05.07.1945',
-      },
-      {
-        name: 'ALDI',
-        website: 'https://www.google.com/',
-        amount: 50,
-        date: '29.03.2007',
-      },
-      {
-        name: 'LIDL',
-        website: 'https://www.google.com/',
-        amount: 30,
-        date: '17.05.1999',
-      },
-    ],
-    coupons: [
-      {
-        name: 'REWE',
-        website: 'https://www.google.com/',
-        available: true,
-        worth: 10,
-        date: '27.12.0003',
-      },
-      {
-        name: 'Penny',
-        website: 'https://www.google.com/',
-        available: false,
-        worth: 20,
-        date: '01.01.1050',
-      },
-    ],
+    weiFormula: 1000000000000000000,
+    tab: null,
+    donations: null,
+    vouchers: null,
+    errorMessage: '',
+    vErrMsg: '',
+    dErrMsg: '',
+    gotResponse: false,
+    user: null,
+    redeemVTitle: null,
+    redeemFail: false,
+    redeemSucc: false,
+    voucherPage: 1,
+    donationPage: 1,
   }),
+  computed: {
+    tabVouchers() {
+      return this.getVouchers(this.tab);
+    },
+  },
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      axios.get(`users?username=${window.user.username}`)
+        .then((res) => {
+          if (res.data.length === 0) {
+            this.errorMessage = 'Could not fetch data';
+          } else {
+            [this.user] = res.data;
+            this.donations = this.loadDonations();
+            this.vouchers = this.loadVouchers();
+          }
+        }).catch((err) => {
+          this.errorMessage = err.toString();
+        }).finally(() => {
+          this.gotResponse = true;
+        });
+    },
+    getVouchers(used) {
+      if (this.vouchers === null || this.vouchers === undefined) {
+        return [];
+      }
+      if (used) {
+        return this.vouchers.filter((voucher) => voucher.used);
+      }
+      return this.vouchers.filter((voucher) => !voucher.used);
+    },
+    loadVouchers() {
+      axios.get(`vouchers/user?idUser=${this.user.id}`)
+        .then((res) => {
+          if (res.data.length !== 0) {
+            this.vouchers = res.data;
+          }
+        }).catch((err) => {
+          this.vErrMsg = err.toString();
+        });
+    },
+    loadDonations() {
+      axios.get(`donations?iduser=${this.user.id}`)
+        .then((res) => {
+          if (res.data.length !== 0) {
+            this.donations = res.data;
+          }
+        }).catch((err) => {
+          this.dErrMsg = err.toString();
+        });
+    },
+    redeemVoucher(voucher) {
+      const head = {
+        authToken: userSession.loadUserData().authResponseToken,
+        id: voucher.id,
+      };
+      axios.delete('vouchers/user', { headers: head, data: {} })
+        .then(() => {
+          this.redeemSucc = true;
+        }).catch((err) => {
+          this.errorMessage = err.toString();
+          this.redeemFail = true;
+        }).finally(() => {
+          this.redeemVTitle = voucher.titel;
+          this.loadData();
+          window.scrollTo(0, 0);
+        });
+    },
+  },
 };
 </script>
 
 <style scoped>
-.results {
-  display: flex;
-  flex-direction: column;
-}
+  #content{
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    min-height: 100%;
+  }
 
-.project {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 25px;
-  border: 1px solid black;
-}
+  .pricetag {
+      font-size: 1.7rem;
+  }
 
-.companyData {
-  margin-left: 15px;
-  flex-basis:55%;
-}
+  .walletAddress {
+    font-family: Courier;
+  }
 
-.picture {
-  height: 200px;
-}
+  .noEntryText{
+    color: rgba(255,255,255,0.7);
+  }
 
-.expired {
-  color: #f95235;
-}
-
-.container {
-  margin-left:25px;
-}
+  .wallet {
+    max-width: 500px;
+  }
 </style>
