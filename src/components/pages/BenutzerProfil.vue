@@ -119,8 +119,25 @@
           class="link"
         >
           <v-btn>
-            <h1 style="text-align:center">
+            <h1
+              class="display-1 font-weight-regular"
+              style="text-align:center"
+            >
               Meine Spenden und Gutscheine
+            </h1>
+          </v-btn>
+        </router-link>
+        <router-link
+          to="/InstitutionEditieren"
+          tag="span"
+          class="link"
+        >
+          <v-btn class="mt-5">
+            <h1
+              class="display-1 font-weight-regular"
+              style="text-align:center"
+            >
+              Meine Institutionen
             </h1>
           </v-btn>
         </router-link>

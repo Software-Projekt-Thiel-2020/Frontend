@@ -185,6 +185,18 @@
               </v-list-item-title>
             </router-link>
           </v-list-item>
+          <v-list-item>
+            <router-link
+              to="/InstitutionEditieren"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-bank
+                </v-icon>Meine Institutionen
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
           <v-list-item v-if="backend_userdata && backend_userdata.group === 'support'">
             <router-link
               to="/institution"
