@@ -69,7 +69,9 @@
                 <h2 class="ma-3 ml-4 font-weight-regular">
                   {{ item.name }}
                 </h2>
-                <v-card-actions>
+                <v-card-actions
+                  class="mb-0"
+                >
                   <v-btn
                     class="ma-2"
                     style="color: black"
@@ -107,10 +109,10 @@
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
-                        Institutionsname:
+                        Name:
                       </h4>
                     </v-col>
                     <v-col>
@@ -127,7 +129,7 @@
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
                         Bild:
@@ -139,22 +141,28 @@
                         :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
                       >
                     </v-col>
+                  </v-row>
+                  <v-row>
                     <v-col
-                      cols="3"
-                    >
+                      class="mt-5"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
+                    />
+                    <v-col cols="3">
                       <v-file-input
                         v-model="editElement.picture"
-                        prepend-icon="mdi-camera"
+                        prepend-icon=""
+                        prepend-inner-icon="mdi-camera"
                         clearable
                         label="Bild hochladen"
                         accept="image/*"
+                        class=""
                       />
                     </v-col>
                   </v-row>
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
                         Website:
@@ -173,7 +181,7 @@
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
                         Beschreibung:
@@ -187,7 +195,7 @@
                         counter
                         no-resize
                         outlined
-                        :rules="notEmpty"
+                        :rules="textRule"
                         required
                         class="inputField"
                         height="120"
@@ -198,7 +206,7 @@
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
                         Adresse:
@@ -217,7 +225,7 @@
                   <v-row gutters>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
                         Koordinaten:
@@ -225,14 +233,14 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      cols="2"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
                         :zoom="zoom"
                         :center="center"
                         :options="mapOptions"
-                        style="height: 300px; width: 500px; position:relative; z-index: 0"
+                        style="height: 300px; width: 100%; position:relative; z-index: 0"
                         @click="setMarkerPos"
                       >
                         <l-tile-layer
@@ -244,6 +252,10 @@
                     </v-col>
                   </v-row>
                   <v-row gutters>
+                    <v-col
+                      class="mt-5"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
+                    />
                     <v-col>
                       <v-text-field
                         v-model="editElement.longitude"
@@ -340,6 +352,11 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
+    textRule: [
+      (v) => !!v || 'Feld muss augefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -348,6 +365,10 @@ export default {
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
+    },
+    err: {
+      picErr: 0,
+      normErr: 0,
     },
   }),
   mounted() {
@@ -380,7 +401,7 @@ export default {
           this.editElement.name = inst.name;
           this.editElement.picturePath = inst.picturePath;
           this.editElement.webpage = inst.webpage;
-          this.editElement.description = inst.description;
+          this.editElement.description = window.atob(inst.description);
           this.editElement.address = inst.address;
           this.editElement.longitude = inst.longitude;
           this.editElement.latitude = inst.latitude;
@@ -399,9 +420,9 @@ export default {
       }
       this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
     },
-    changeInst() {
+    async changeInst() {
       if (userSession.isUserSignedIn()) {
-        let headers = this.editElement;
+        const headers = this.editElement;
         const authToken = userSession.loadUserData().authResponseToken;
         headers.authToken = authToken;
 
@@ -409,41 +430,56 @@ export default {
         if (headers.name === this.instName) {
           delete headers.name;
         }
-        let newPic;
+
+        let newPic = null;
         if (this.editElement.picture) {
           newPic = this.editElement.picture;
-          delete this.editElement.picture;
         }
+        delete this.editElement.picture;
 
-        // TODO: Description kann man nicht setzten --> Axios Error
-        const { description } = headers;
-        delete headers.description;
+        headers.description = window.btoa(this.editElement.description);
 
-        axios.patch('institutions', { description }, { headers })
-          .then(() => {
-            if (newPic) {
-              headers = {
-                idInstitution: this.editElement.id,
-                authToken,
-              };
-              const formData = new FormData();
-              formData.append('file', this.file);
-
-              axios.post('file', formData, { headers })
-                .then(() => {
-                  this.load();
-                  this.showAlert('Das Ändern der Daten war erfolgreich', 'success');
-                })
-                .catch((err) => {
-                  throw Error(err);
-                });
-            }
-          })
+        axios.patch('institutions', null, { headers })
           .catch((err) => {
-            this.showAlert(err.toString(), 'error');
-          }).finally(() => {
+            console.log(err);
+            this.err.normErr = 1;
+          }).finally(async () => {
+            if (newPic !== null) {
+              this.postPic(authToken, newPic)
+                .then(() => {
+                  this.sentStauts();
+                });
+            } else {
+              this.sentStauts();
+            }
+
+            this.load();
             this.overlay = false;
           });
+      }
+    },
+    async postPic(authToken, pic) {
+      const headers = {
+        idInstitution: this.editElement.id,
+        authToken,
+      };
+      const formData = new FormData();
+      formData.append('file', pic);
+
+      await axios.post('file', formData, { headers })
+        .catch(() => {
+          this.err.picErr = 1;
+        });
+    },
+    sentStauts() {
+      if (this.err.normErr === 1) {
+        this.showAlert('Das Ändern war nicht erfolgreich', 'error');
+      }
+      if (this.err.picErr === 1) {
+        this.showAlert('Das Ändern des Bilds war nicht erfolgreich', 'warning');
+      }
+      if (this.err.normErr === 0 && this.err.picErr === 0) {
+        this.showAlert('Das Ändern war erfolgreich', 'success');
       }
     },
     closeOverlay() {
