@@ -8,6 +8,30 @@
         Spendenseite
       </h1>
     </div>
+    <v-dialog
+            v-model="dialog"
+            max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">Use Google's location service?</v-card-title>
+
+        <v-card-text>
+          Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+                  color="green darken-1"
+                  text
+                  @click="dialog = false"
+          >
+            Okidoke
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-container v-if="project">
       <v-row>
         <v-col>
@@ -22,7 +46,7 @@
             <v-card-text>
               <div class="mb-4">
                 <h3>Adresse</h3>
-                {{ project.street }}<br>
+                {{ project }}<br>
                 {{ project.zip }} {{ project.city }}
               </div>
               <v-card
@@ -38,7 +62,7 @@
                       <h4 class="headline">
                         Gesammelt
                       </h4>
-                      <h1 class="display-2 font-weight-thin">
+                      <h1 class="display-1 font-weight-thin">
                         {{ (milestone.currentVotes/milestone.requiredVotes).toFixed(2) }} Stimmen
                       </h1>
                     </v-col>
@@ -46,7 +70,7 @@
                       <h4 class="headline">
                         Ziel
                       </h4>
-                      <h1 class="display-2 font-weight-thin">
+                      <h1 class="display-1 font-weight-thin">
                         {{ milestone.requiredVotes }} Stimmen
                       </h1>
                     </v-col>
@@ -109,6 +133,7 @@ export default {
     eurToEth: 0,
     donationValue: 0,
     goalPercentage: 0,
+    dialog: true,
   }),
   computed: {
     getDonationETHValue() {
@@ -137,12 +162,11 @@ export default {
         authToken: this.userData.authResponseToken,
         idmilestone: 1,
         amount: (this.donationValue * this.exrate),
-        voteEnabled: true,
-        etherAccountKey: 'test',
+        voteEnabled: 1,
 
       };
       this.userData = window.userSession.loadUserData();
-      axios.post('http://84.118.2.15/api/donations', {}, { headers })
+      axios.post('donations', {}, { headers })
         .then(() => {
         })
         .catch((err) => {
@@ -180,6 +204,31 @@ export default {
         .finally(() => {
           this.gotResponse = true;
         });
+    },
+    start() {
+      this.$confetti.start();
+    },
+
+    stop() {
+      this.$confetti.stop();
+    },
+
+    love() {
+      this.$confetti.update({
+        particles: [
+          {
+            type: 'heart',
+          },
+          {
+            type: 'circle',
+          },
+        ],
+        defaultColors: [
+          'red',
+          'pink',
+          '#ba0000',
+        ],
+      });
     },
   },
 };

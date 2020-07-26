@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import VueConfetti from 'vue-confetti';
 import VueCurrencyInput from 'vue-currency-input';
 import VueRouter from 'vue-router';
 import axios from 'axios';
@@ -21,7 +22,7 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(VueCurrencyInput);
-
+Vue.use(VueConfetti);
 window.blockstack = require('blockstack');
 
 const routes = [
