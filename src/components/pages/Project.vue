@@ -5,31 +5,69 @@
         :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
         class="font-weight-thin white--text"
       >
-        Spendenseite
+        {{ project.name }}
       </h1>
+      <h4 class="font-weight-thin white--text">
+        Spendenseite
+      </h4>
     </div>
+    <v-alert type="error" v-if="errorMessage" tile>
+      Fehler: {{errorMessage}}
+    </v-alert>
     <v-dialog
-            v-model="dialog"
-            max-width="290"
+            v-model="loading"
+            hide-overlay
+            persistent
+            width="300"
     >
-      <v-card>
-        <v-card-title class="headline">Use Google's location service?</v-card-title>
-
+      <v-card
+              color="primary"
+              dark
+      >
         <v-card-text>
-          Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
+          Anfrage wird bearbeitet...
+          <v-progress-linear
+                  indeterminate
+                  color="white"
+                  class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="dialog"
+      :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
+    >
+      <v-card class="text-center py-10">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+        <div class="donation_title">
+          <v-icon
+            class="mr-2 display-2"
+            color="red"
+          >
+            mdi-cards-heart
+          </v-icon>
+          Deine Spende wurde verschickt!
+          <v-icon
+            class="ml-2 display-2"
+            color="red"
+          >
+            mdi-cards-heart
+          </v-icon>
+        </div>
+        <v-card-text class="title">
+          Dein Betrag in Höhe von <b>{{ getDonationETHValue }} ETH</b> wurde gespendet.
         </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
 
-          <v-btn
-                  color="green darken-1"
-                  text
-                  @click="dialog = false"
-          >
-            Okidoke
-          </v-btn>
-        </v-card-actions>
+        <v-btn
+          class="title"
+          color="green darken-1"
+          outlined
+          @click="closeDialog"
+        >
+          OK
+        </v-btn>
       </v-card>
     </v-dialog>
     <v-container v-if="project">
@@ -37,72 +75,34 @@
         <v-col>
           <v-card
             v-if="project"
-            class="projectBox"
-            elevation="4"
+            elevation="7"
+            class="py-6 text-center projectBox"
           >
-            <v-card-title class="font-weight-light display-1">
-              {{ project.name }}
-            </v-card-title>
             <v-card-text>
-              <div class="mb-4">
-                <h3>Adresse</h3>
-                {{ project }}<br>
-                {{ project.zip }} {{ project.city }}
-              </div>
-              <v-card
-                elevation="7"
-                class="py-6 text-center"
-              >
-                <div
-                        v-for="milestone in project.milestones"
-                        v-bind:key="milestone.id">
-                  <v-row
-                  >
-                    <v-col>
-                      <h4 class="headline">
-                        Gesammelt
-                      </h4>
-                      <h1 class="display-1 font-weight-thin">
-                        {{ (milestone.currentVotes/milestone.requiredVotes).toFixed(2) }} Stimmen
-                      </h1>
-                    </v-col>
-                    <v-col>
-                      <h4 class="headline">
-                        Ziel
-                      </h4>
-                      <h1 class="display-1 font-weight-thin">
-                        {{ milestone.requiredVotes }} Stimmen
-                      </h1>
-                    </v-col>
-                  </v-row>
-                  <h2>{{ (milestone.currentVotes/milestone.requiredVotes).toFixed(1)}}%</h2>
-                  <v-progress-linear
-                          color="secondary"
-                          height="15"
-                          :value="(milestone.currentVotes/milestone.requiredVotes)"
-                          striped
-                  />
-
-                </div>
-                <br>
-                <hr>
-                <currency-input
-                  v-model="donationValue"
-                  class="mt-3 headline"
-                />
-                <br>
-                <h1 class="display-1">
-                  {{ (getDonationETHValue) }} ETH
-                </h1>
-                <br>
-                <v-btn
-                  class="mt-2 btn-hover color-9"
-                  dark
-                  @click="donate()"
-                >
-                  Betrag Spenden
-                </v-btn>
-              </v-card>
+              <v-row>
+                <v-col />
+                <v-col>
+                  <v-card class="pb-8">
+                    <br>
+                    <currency-input
+                      v-model="donationValue"
+                      class="mt-3 headline"
+                    />
+                    <br>
+                    <h1 class="display-1">
+                      {{ (getDonationETHValue) }} ETH
+                    </h1>
+                    <br>
+                    <v-btn
+                      class="mt-2 btn-hover color-9"
+                      dark
+                      @click="donate()"
+                    >
+                      Betrag Spenden
+                    </v-btn>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-card-text>
             <v-card-actions>
               <a :href="project.homepage">
@@ -111,9 +111,63 @@
             </v-card-actions>
           </v-card>
         </v-col>
-        <v-col>
-          <v-card>
-            <v-img :src="project.image" />
+        <v-col cols="4">
+          <v-card
+            v-if="project"
+            elevation="7"
+            class="text-center"
+          >
+            <v-system-bar
+              color="secondary"
+              height="40px"
+            >
+              <v-card-text
+                class="headline font-weight-thin"
+                style="color: white"
+              >
+                Meilensteine
+              </v-card-text>
+            </v-system-bar>
+            <div>
+              <div
+                v-for="milestone in project.milestones"
+                :key="milestone.id"
+              >
+                <v-row>
+                  <v-col>
+                    <h4 class="title">
+                      Gesammelt
+                    </h4>
+                    <h1 class="title font-weight-light">
+                      {{ (milestone.totalDonated/weiFormula) }} ETH
+                    </h1>
+                  </v-col>
+                  <v-col>
+                    <h4 class="title">
+                      Ziel
+                    </h4>
+                    <h1 class="title font-weight-light">
+                      {{ milestone.goal/weiFormula }} ETH
+                    </h1>
+                  </v-col>
+                  <v-col>
+                    <h4 class="title">
+                      Votes
+                    </h4>
+                    <h1 class="title font-weight-light">
+                      {{ milestone.currentVotes }} von {{milestone.requiredVotes}} Stimmen
+                    </h1>
+                  </v-col>
+                </v-row>
+                <h3>{{ (milestone.totalDonated/milestone.goal).toFixed(1) }}%</h3>
+                <v-progress-linear
+                  color="secondary"
+                  height="15"
+                  :value="(milestone.totalDonated/milestone.goal)"
+                  striped
+                />
+              </div>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -133,7 +187,10 @@ export default {
     eurToEth: 0,
     donationValue: 0,
     goalPercentage: 0,
-    dialog: true,
+    dialog: false,
+    weiFormula: 1000000000000000000,
+    errorMessage: null,
+    loading: false,
   }),
   computed: {
     getDonationETHValue() {
@@ -157,26 +214,36 @@ export default {
   },
   methods: {
     donate() {
-      console.log('test');
+      const donationAmount = this.getDonationETHValue * this.weiFormula;
       const headers = {
         authToken: this.userData.authResponseToken,
         idmilestone: 1,
-        amount: (this.donationValue * this.exrate),
+        amount: donationAmount,
         voteEnabled: 1,
-
       };
       this.userData = window.userSession.loadUserData();
+      this.loading = true;
       axios.post('donations', {}, { headers })
         .then(() => {
+          this.openDialog();
         })
         .catch((err) => {
           this.errorMessage = err.toString();
         })
         .finally(() => {
-          this.gotResponse = true;
+          this.loading = false;
         });
     },
+    openDialog() {
+      this.dialog = true;
+      this.$confetti.start();
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.$confetti.stop();
+    },
     szaboToEuro() {
+      this.loading = true;
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
           this.exrate = (res.data.ETH * 1000000000000000000);
@@ -187,12 +254,13 @@ export default {
           this.errorMessage = err.toString();
         })
         .finally(() => {
-          this.gotResponse = true;
+          this.loading = false;
         });
     },
     loadProject() {
       let url = 'projects/';
       url += this.projectid;
+      this.loading = true;
       axios.get(url)
         .then((res) => {
           console.log(res.data);
@@ -202,33 +270,8 @@ export default {
           this.errorMessage = err.toString();
         })
         .finally(() => {
-          this.gotResponse = true;
+          this.loading = false;
         });
-    },
-    start() {
-      this.$confetti.start();
-    },
-
-    stop() {
-      this.$confetti.stop();
-    },
-
-    love() {
-      this.$confetti.update({
-        particles: [
-          {
-            type: 'heart',
-          },
-          {
-            type: 'circle',
-          },
-        ],
-        defaultColors: [
-          'red',
-          'pink',
-          '#ba0000',
-        ],
-      });
     },
   },
 };
@@ -246,10 +289,8 @@ export default {
     background-color: rgb(255, 255, 255);
   }
 
-  .projectBox {
-    padding: 20px;
+  .projectBox{
     background-color: rgba(255, 255, 255, 0.8);
-
   }
 
   .goalBox {
@@ -267,6 +308,10 @@ export default {
     border-radius: 50px;
   }
 
+  .donation_title{
+    font-size: 2rem;
+    vertical-align: text-bottom;
+  }
 
   .btn-hover {
     background-size: 300% 100%;
@@ -283,5 +328,56 @@ export default {
   .btn-hover.color-9 {
     background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
     box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
+  }
+
+  .checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #7ac142;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+
+  .checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    margin: 0px auto;
+    border-top-left-radius: 50% !important;
+    border-top-right-radius: 50% !important;
+    box-shadow: inset 0px 0px 0px #7ac142;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+  }
+
+  .checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  @keyframes stroke {
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes scale {
+    0%, 100% {
+      transform: none;
+    }
+    50% {
+      transform: scale3d(1.1, 1.1, 1);
+    }
+  }
+  @keyframes fill {
+    100% {
+      box-shadow: inset 0px 0px 0px 30px #7ac142;
+    }
   }
 </style>
