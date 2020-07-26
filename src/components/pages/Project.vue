@@ -7,9 +7,15 @@
       >
         {{ project.name }}
       </h1>
-      <h4 class="font-weight-thin white--text">
-        Spendenseite
-      </h4>
+      <a
+        class=""
+        :href="project.homepage"
+      >
+        <v-btn
+          outlined
+          color="white"
+        >Webseite besuchen</v-btn>
+      </a>
     </div>
     <v-alert
       v-if="errorMessage"
@@ -89,106 +95,97 @@
       </v-card>
     </v-dialog>
     <v-container v-if="project">
-      <v-row>
-        <v-col>
-          <v-card
-            v-if="project"
-            elevation="7"
-            class="py-6 text-center projectBox"
+      <v-card
+        v-if="project"
+        elevation="7"
+        class="py-6 text-center projectBox"
+      >
+        <v-card-text>
+          <v-row>
+            <v-col />
+            <v-col>
+              <v-card class="pb-8">
+                <br>
+                <currency-input
+                  v-model="donationValue"
+                  class="mt-3 headline"
+                />
+                <br>
+                <h1 class="display-1">
+                  {{ (getDonationETHValue) }} ETH
+                </h1>
+                <br>
+                <v-btn
+                  class="mt-2 btn-hover color-9"
+                  dark
+                  @click="donate()"
+                >
+                  Betrag Spenden
+                </v-btn>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+      <v-col cols="4">
+        <v-card
+          v-if="project"
+          elevation="7"
+          class="text-center"
+        >
+          <v-system-bar
+            color="secondary"
+            height="40px"
           >
-            <v-card-text>
+            <v-card-text
+              class="headline font-weight-thin"
+              style="color: white"
+            >
+              Meilensteine
+            </v-card-text>
+          </v-system-bar>
+          <div>
+            <div
+              v-for="milestone in project.milestones"
+              :key="milestone.id"
+            >
               <v-row>
-                <v-col />
                 <v-col>
-                  <v-card class="pb-8">
-                    <br>
-                    <currency-input
-                      v-model="donationValue"
-                      class="mt-3 headline"
-                    />
-                    <br>
-                    <h1 class="display-1">
-                      {{ (getDonationETHValue) }} ETH
-                    </h1>
-                    <br>
-                    <v-btn
-                      class="mt-2 btn-hover color-9"
-                      dark
-                      @click="donate()"
-                    >
-                      Betrag Spenden
-                    </v-btn>
-                  </v-card>
+                  <h4 class="title">
+                    Gesammelt
+                  </h4>
+                  <h1 class="title font-weight-light">
+                    {{ (milestone.totalDonated/weiFormula) }} ETH
+                  </h1>
+                </v-col>
+                <v-col>
+                  <h4 class="title">
+                    Ziel
+                  </h4>
+                  <h1 class="title font-weight-light">
+                    {{ milestone.goal/weiFormula }} ETH
+                  </h1>
+                </v-col>
+                <v-col>
+                  <h4 class="title">
+                    Votes
+                  </h4>
+                  <h1 class="title font-weight-light">
+                    {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
+                  </h1>
                 </v-col>
               </v-row>
-            </v-card-text>
-            <v-card-actions>
-              <a :href="project.homepage">
-                <v-btn outlined>Webseite besuchen</v-btn>
-              </a>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-card
-            v-if="project"
-            elevation="7"
-            class="text-center"
-          >
-            <v-system-bar
-              color="secondary"
-              height="40px"
-            >
-              <v-card-text
-                class="headline font-weight-thin"
-                style="color: white"
-              >
-                Meilensteine
-              </v-card-text>
-            </v-system-bar>
-            <div>
-              <div
-                v-for="milestone in project.milestones"
-                :key="milestone.id"
-              >
-                <v-row>
-                  <v-col>
-                    <h4 class="title">
-                      Gesammelt
-                    </h4>
-                    <h1 class="title font-weight-light">
-                      {{ (milestone.totalDonated/weiFormula) }} ETH
-                    </h1>
-                  </v-col>
-                  <v-col>
-                    <h4 class="title">
-                      Ziel
-                    </h4>
-                    <h1 class="title font-weight-light">
-                      {{ milestone.goal/weiFormula }} ETH
-                    </h1>
-                  </v-col>
-                  <v-col>
-                    <h4 class="title">
-                      Votes
-                    </h4>
-                    <h1 class="title font-weight-light">
-                      {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
-                    </h1>
-                  </v-col>
-                </v-row>
-                <h3>{{ (milestone.totalDonated/milestone.goal).toFixed(1) }}%</h3>
-                <v-progress-linear
-                  color="secondary"
-                  height="15"
-                  :value="(milestone.totalDonated/milestone.goal)"
-                  striped
-                />
-              </div>
+              <h3>{{ (milestone.totalDonated/milestone.goal).toFixed(1) }}%</h3>
+              <v-progress-linear
+                color="secondary"
+                height="15"
+                :value="(milestone.totalDonated/milestone.goal)"
+                striped
+              />
             </div>
-          </v-card>
-        </v-col>
-      </v-row>
+          </div>
+        </v-card>
+      </v-col>
     </v-container>
   </div>
 </template>
@@ -209,6 +206,7 @@ export default {
     weiFormula: 1000000000000000000,
     errorMessage: null,
     loading: false,
+    voteEnabled: true,
   }),
   computed: {
     getDonationETHValue() {
@@ -235,9 +233,9 @@ export default {
       const donationAmount = this.getDonationETHValue * this.weiFormula;
       const headers = {
         authToken: this.userData.authResponseToken,
-        idmilestone: 1,
+        idproject: this.projectid,
         amount: donationAmount,
-        voteEnabled: 1,
+        voteEnabled: this.voteEnabled,
       };
       this.userData = window.userSession.loadUserData();
       this.loading = true;
@@ -305,6 +303,7 @@ export default {
   .gradientBackground {
     background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     background-color: rgb(255, 255, 255);
+    min-height: 100%;
   }
 
   .projectBox{
