@@ -323,6 +323,20 @@
             </v-list-item-icon>
             <v-list-item-title>Anmelden</v-list-item-title>
           </v-list-item>
+
+          <router-link
+            v-if="userSession.isUserSignedIn()"
+            to="/InstitutionEditieren"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bank</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Meine Institutionen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
           <router-link
             v-if="backend_userdata && backend_userdata.group === 'support'"
             to="/institution"

@@ -440,8 +440,7 @@ export default {
         headers.description = window.btoa(this.editElement.description);
 
         axios.patch('institutions', null, { headers })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
             this.err.normErr = 1;
           }).finally(async () => {
             if (newPic !== null) {
