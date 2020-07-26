@@ -105,6 +105,7 @@
                 cols="7"
                 class="mt-2"
               >
+                <!-- TODO: LEAFLET MAP -->
                 <h1 style="height: 300px; width: 100%; position:relative; z-index: 0; background-color: #1ae14f">
                   Leaflet Map
                 </h1>
@@ -192,11 +193,6 @@ export default {
       latitude: '',
       longitude: '',
     },
-    dialog: {
-      successful: false,
-      error: false,
-      errorMessage: '',
-    },
     textRule: [
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
@@ -204,6 +200,15 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
+    err: {
+      picErr: 0,
+      normErr: 0,
+    },
+    dialog: {
+      successful: false,
+      error: false,
+      errorMessage: '',
+    },
   }),
   created() {
     this.userSession = userSession;
