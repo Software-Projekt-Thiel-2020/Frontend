@@ -79,7 +79,7 @@
                     v-else
                     class="display-1 font-weight-light"
                   >
-                    {{ user.balance * weiFormula }} ETH
+                    {{ user.balance / weiFormula }} ETH
                   </h3>
                 </v-chip>
               </div>
