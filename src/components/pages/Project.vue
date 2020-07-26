@@ -11,26 +11,30 @@
         Spendenseite
       </h4>
     </div>
-    <v-alert type="error" v-if="errorMessage" tile>
-      Fehler: {{errorMessage}}
+    <v-alert
+      v-if="errorMessage"
+      type="error"
+      tile
+    >
+      Fehler: {{ errorMessage }}
     </v-alert>
     <v-dialog
-            v-model="loading"
-            hide-overlay
-            persistent
-            width="300"
+      v-model="loading"
+      hide-overlay
+      persistent
+      width="300"
     >
       <v-card
-              color="primary"
-              dark
+        color="primary"
+        dark
       >
         <v-card-text>
           Anfrage wird bearbeitet...
           <v-progress-linear
-                  indeterminate
-                  color="white"
-                  class="mb-0"
-          ></v-progress-linear>
+            indeterminate
+            color="white"
+            class="mb-0"
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -39,7 +43,21 @@
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
     >
       <v-card class="text-center py-10">
-        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+        <svg
+          class="checkmark"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 52 52"
+        ><circle
+          class="checkmark__circle"
+          cx="26"
+          cy="26"
+          r="25"
+          fill="none"
+        /><path
+          class="checkmark__check"
+          fill="none"
+          d="M14.1 27.2l7.1 7.2 16.7-16.8"
+        /></svg>
         <div class="donation_title">
           <v-icon
             class="mr-2 display-2"
@@ -155,7 +173,7 @@
                       Votes
                     </h4>
                     <h1 class="title font-weight-light">
-                      {{ milestone.currentVotes }} von {{milestone.requiredVotes}} Stimmen
+                      {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
                     </h1>
                   </v-col>
                 </v-row>
@@ -195,7 +213,7 @@ export default {
   computed: {
     getDonationETHValue() {
       if (this.donationValue > 0) {
-        return (this.donationValue * this.eurToEth).toFixed(4);
+        return (this.donationValue * this.eurToEth).toFixed(8);
       }
       return null;
     },
