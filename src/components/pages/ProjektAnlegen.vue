@@ -322,7 +322,7 @@ export default {
       title: '',
       website: '',
       idInstitution: null,
-      requiredVotes: null,
+      requiredVotes: 1,
       goal: 1,
       until: 0,
       milestones: [],
