@@ -31,7 +31,7 @@
       <v-col cols="6">
         <v-overflow-btn
           v-model="project.idInstitution"
-          label="Institution (optional)"
+          label="Institution"
           target="#dropdown-institution"
           :items="allInstitutionsSortedNameId"
           item-text="name"
@@ -58,7 +58,6 @@
       <v-col cols="6">
         <v-text-field
           v-model="project.goal"
-          type="number"
           min="1"
           oninput="validity.valid||(value='');"
           label="Spendenziel in Wei"
@@ -118,6 +117,19 @@
     </v-row>
     <v-row>
       <v-col cols="12">
+        <v-textarea
+          v-model="project.description"
+          label="Beschreibung (optional)"
+          clearable
+          counter
+          no-resize
+          outlined
+          height="120"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
         <v-data-table
           :headers="headers"
           :items="project.milestones"
@@ -165,7 +177,6 @@
                           <v-text-field
                             v-model="editedItem.goal"
                             label="Spendenziel in Wei"
-                            type="number"
                             min="1"
                             oninput="validity.valid||(value='');"
                             outlined
@@ -236,6 +247,7 @@
       <v-btn
         outlined
         color="black"
+        class="font-weight-medium"
         @click="calcMainUntil()"
       >
         Spendenprojekt anlegen
@@ -321,6 +333,7 @@ export default {
     project: {
       title: '',
       website: '',
+      description: '',
       idInstitution: null,
       requiredVotes: null,
       goal: 1,
@@ -349,7 +362,7 @@ export default {
       this.dialog.notloggedIn = true;
     }
     this.getTodaysDate();
-    this.getAllInstitutions();
+    this.getUserInstitutions();
   },
   methods: {
     afterDayInput() {
@@ -388,13 +401,14 @@ export default {
     getTodaysDate() {
       this.today = new Date().toJSON().slice(0, 10);
     },
-    getAllInstitutions() {
-      axios.get('/institutions').then((res) => {
-        this.allInstitutions = res.data;
-        for (let i = 0; i < this.allInstitutions.length; i += 1) {
-          this.allInstitutionsSortedNameId.push({ name: this.allInstitutions[i].name, id: this.allInstitutions[i].id });
-        }
-      });
+    getUserInstitutions() {
+      axios.get(`institutions?username=${window.user.username}`)
+        .then((res) => {
+          this.allInstitutions = res.data;
+          for (let i = 0; i < this.allInstitutions.length; i += 1) {
+            this.allInstitutionsSortedNameId.push({ name: this.allInstitutions[i].name, id: this.allInstitutions[i].id });
+          }
+        });
     },
     calcMainUntil() {
       if (this.project.until !== 0) {
@@ -411,13 +425,21 @@ export default {
       const headers = {
         authToken: this.userData.authResponseToken,
         name: this.project.title,
-        website: this.project.website,
         idInstitution: this.project.idInstitution,
         goal: this.project.goal,
-        requiredVotes: this.project.requiredVotes,
         until: this.project.until,
-        milestones: this.project.milestones,
+        // ist required, wird aber nicht verwendet !
+        requiredVotes: 1337,
       };
+      if (this.project.description !== '') {
+        headers.description = window.btoa(this.project.description);
+      }
+      if (this.project.website !== '') {
+        headers.website = this.project.website;
+      }
+      if (this.project.milestones.length !== 0) {
+        headers.milestones = this.project.milestones;
+      }
       axios.post('/projects', {}, { headers })
         .then(() => {
           this.dialog.successful = true;
@@ -432,13 +454,12 @@ export default {
 </script>
 
 <style scoped>
-    .titleHeader {
-        padding-bottom: 15px;
-        padding-top: 10px;
-        backdrop-filter: blur(15px) brightness(0.5);
-    }
-    .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
-    }
+  .titleHeader {
+    padding-bottom: 15px;
+    padding-top: 10px;
+    backdrop-filter: blur(15px) brightness(0.5);
+  }
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+  }
 </style>
