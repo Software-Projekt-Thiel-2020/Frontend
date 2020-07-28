@@ -22,6 +22,7 @@
                   outlined
                   required
                   label="Owner Username*"
+                  background-color="grey lighten-4"
                   :rules="notEmpty"
                 />
               </v-col>
@@ -34,6 +35,7 @@
                   outlined
                   required
                   label="Publickey*"
+                  background-color="grey lighten-4"
                   :rules="notEmpty"
                 />
               </v-col>
@@ -46,6 +48,7 @@
                   outlined
                   required
                   label="Name*"
+                  background-color="grey lighten-4"
                   :rules="notEmpty"
                 />
               </v-col>
@@ -58,6 +61,7 @@
                   prepend-icon=""
                   prepend-inner-icon="mdi-camera"
                   label="Bild hochladen"
+                  background-color="grey lighten-4"
                   accept="image/*"
                   outlined
                 />
@@ -73,8 +77,8 @@
                   outlined
                   :rules="textRule"
                   label="Beschreibung"
-                  height="180"
                   background-color="grey lighten-4"
+                  height="180"
                 />
               </v-col>
             </v-row>
@@ -85,6 +89,7 @@
                   clearable
                   outlined
                   label="Website"
+                  background-color="grey lighten-4"
                 />
               </v-col>
             </v-row>
@@ -96,19 +101,32 @@
                   outlined
                   required
                   label="Adresse*"
+                  background-color="grey lighten-4"
                   :rules="notEmpty"
                 />
               </v-col>
             </v-row>
             <v-row justify="center">
               <v-col
-                cols="7"
+                cols="6"
                 class="mt-2"
               >
-                <!-- TODO: LEAFLET MAP -->
-                <h1 style="height: 300px; width: 100%; position:relative; z-index: 0; background-color: #1ae14f">
-                  Leaflet Map
-                </h1>
+                <l-map
+                  ref="map"
+                  :zoom="zoom"
+                  :center="center"
+                  :options="mapOptions"
+                  style="height: 300px; width: 100%; position:relative; z-index: 0"
+                  @click="setMarkerPos"
+                >
+                  <l-tile-layer
+                    :url="url"
+                    :attribution="attribution"
+                  />
+                  <l-marker
+                    :lat-lng.sync="marker"
+                  />
+                </l-map>
               </v-col>
             </v-row>
             <v-row justify="center">
@@ -116,17 +134,18 @@
                 <v-text-field
                   v-model="coords.longitude"
                   label="Longitude*"
+                  background-color="grey lighten-4"
                   required
-                  rules="notEmpty"
-                  placeholder=""
+                  :rules="numberRule"
                 />
               </v-col>
               <v-col cols="3">
                 <v-text-field
                   v-model="coords.latitude"
                   label="Latitude*"
+                  background-color="grey lighten-4"
                   required
-                  rules="notEmpty"
+                  :rules="numberRule"
                 />
               </v-col>
             </v-row>
@@ -174,10 +193,18 @@
 
 <script>
 import axios from 'axios';
+import { latLng } from 'leaflet';
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { userSession } from '../../userSession';
+import 'leaflet/dist/leaflet.css';
 
 export default {
   name: 'Institution',
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+  },
   data: () => ({
     userSession: null,
     userData: null,
@@ -200,6 +227,10 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
+    numberRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => /^[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     err: {
       picErr: 0,
       normErr: 0,
@@ -209,6 +240,16 @@ export default {
       error: false,
       errorMessage: '',
     },
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    // Set starting point to center Germany
+    center: latLng(51.1642292, 10.4541194),
+    marker: latLng(51.1642292, 10.4541194),
+    zoom: 5,
+    mapOptions: {
+      zoomSnap: 0.5,
+    },
   }),
   created() {
     this.userSession = userSession;
@@ -217,6 +258,9 @@ export default {
     if (userSession.isUserSignedIn()) {
       this.userData = userSession.loadUserData();
     }
+    setTimeout(() => {
+      this.$refs.map.mapObject.invalidateSize();
+    }, 100);
   },
   methods: {
     createInstitution() {
@@ -243,6 +287,11 @@ export default {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
         });
+    },
+    setMarkerPos(event) {
+      this.marker = event.latlng;
+      this.coords.latitude = this.marker.lat;
+      this.coords.longitude = this.marker.lng;
     },
   },
 };
