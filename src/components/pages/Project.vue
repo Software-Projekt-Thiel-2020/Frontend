@@ -101,18 +101,76 @@
         class="py-6 text-center projectBox"
       >
         <v-card-text>
-          <v-row>
-            <v-col />
+          <v-row justify="center">
+            <v-col cols="12" style="max-width: 800px">
+              <v-card
+                      v-if="project"
+                      elevation="7"
+                      class="text-center"
+              >
+                <v-system-bar
+                        color="secondary"
+                        height="40px"
+                >
+                  <v-card-text
+                          class="headline font-weight-thin"
+                          style="color: white"
+                  >
+                    Meilensteine
+                  </v-card-text>
+                </v-system-bar>
+                <div>
+                  <div
+                          v-for="milestone in project.milestones"
+                          :key="milestone.id"
+                  >
+                    <v-row>
+                      <v-col>
+                        <h4 class="title">
+                          Gesammelt
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ showValue(milestone.totalDonated) }}
+                        </h1>
+                      </v-col>
+                      <v-col>
+                        <h4 class="title">
+                          Ziel
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ showValue(milestone.goal) }}
+                        </h1>
+                      </v-col>
+                      <v-col>
+                        <h4 class="title">
+                          Votes
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
+                        </h1>
+                      </v-col>
+                    </v-row>
+                    <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
+                    <v-progress-linear
+                            color="secondary"
+                            height="15"
+                            :value="(milestone.totalDonated/milestone.goal)"
+                            striped
+                    />
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
             <v-col>
-              <v-card class="pb-8">
-                <br>
+              <v-card class="py-8">
+                <h4 class="headline font-weight-light">Jetzt Spenden!</h4>
                 <currency-input
                   v-model="donationValue"
                   class="mt-3 headline"
                 />
                 <br>
                 <h1 class="display-1">
-                  {{ (getDonationETHValue) }} ETH
+                  {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
                 </h1>
                 <br>
                 <v-btn
@@ -127,65 +185,6 @@
           </v-row>
         </v-card-text>
       </v-card>
-      <v-col cols="4">
-        <v-card
-          v-if="project"
-          elevation="7"
-          class="text-center"
-        >
-          <v-system-bar
-            color="secondary"
-            height="40px"
-          >
-            <v-card-text
-              class="headline font-weight-thin"
-              style="color: white"
-            >
-              Meilensteine
-            </v-card-text>
-          </v-system-bar>
-          <div>
-            <div
-                    v-for="milestone in project.milestones"
-                    :key="milestone.id"
-            >
-              <v-row>
-                <v-col>
-                  <h4 class="title">
-                    Gesammelt
-                  </h4>
-                  <h1 class="title font-weight-light">
-                    {{ showValue(milestone.totalDonated) }}
-                  </h1>
-                </v-col>
-                <v-col>
-                  <h4 class="title">
-                    Ziel
-                  </h4>
-                  <h1 class="title font-weight-light">
-                    {{ showValue(milestone.goal) }}
-                  </h1>
-                </v-col>
-                <v-col>
-                  <h4 class="title">
-                    Votes
-                  </h4>
-                  <h1 class="title font-weight-light">
-                    {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
-                  </h1>
-                </v-col>
-              </v-row>
-              <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
-              <v-progress-linear
-                      color="secondary"
-                      height="15"
-                      :value="(milestone.totalDonated/milestone.goal)"
-                      striped
-              />
-            </div>
-          </div>
-        </v-card>
-      </v-col>
     </v-container>
   </div>
 </template>
@@ -235,7 +234,7 @@ export default {
         authToken: this.userData.authResponseToken,
         idproject: this.projectid,
         amount: donationAmount,
-        voteEnabled: this.voteEnabled,
+        voteEnabled: this.voteEnabled ? 1 : 0,
       };
       this.userData = window.userSession.loadUserData();
       this.loading = true;
