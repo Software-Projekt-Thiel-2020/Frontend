@@ -15,8 +15,12 @@ import UeberUns from './components/pages/UeberUns.vue';
 import WarumSpenden from './components/pages/WarumSpenden.vue';
 import BenutzerProfil from './components/pages/BenutzerProfil.vue';
 import Project from './components/pages/Project.vue';
+import ProjektAnlegen from './components/pages/ProjektAnlegen.vue';
+import Institution from './components/pages/Institution.vue';
+import ProjectGutschein from './components/pages/ProjectGutschein.vue';
 
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
+window.apiurl = process.env.VUE_APP_BASE_URL;
 
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -36,10 +40,16 @@ const routes = [
   { path: '/ueberuns', component: UeberUns },
   { path: '/warumspenden', component: WarumSpenden },
   { path: '/profil', component: BenutzerProfil },
+  { path: '/projektanlegen', component: ProjektAnlegen },
+  { path: '/institution', component: Institution },
+  { path: '/projectGutschein/:id', component: ProjectGutschein },
 ];
 
 const router = new VueRouter({
   routes, // short for `routes: routes`
+  scrollBehavior() { // immer auf den Seitenanfang springen
+    return { x: 0, y: 0 };
+  },
 });
 
 new Vue({

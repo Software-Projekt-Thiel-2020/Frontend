@@ -10,16 +10,18 @@
           Was ist Spenderschlender
         </h2>
         <p class="text-left" />
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula eu tempor congue, eros est euismod turpis, id tincidunt sapien risus a quam. Maecenas fermentum consequat mi. Donec fermentum. Pellentesque malesuada nulla a mi. Duis sapien sem, aliquet nec, commodo eget, consequat quis, neque. Aliquam faucibus, elit ut dictum aliquet, felis nisl adipiscing sapien, sed malesuada diam lacus eget erat. Cras mollis scelerisque nunc. Nullam arcu. Aliquam consequat. Curabitur augue lorem, dapibus quis, laoreet et, pretium ac, nisi. Aenean magna nisl, mollis quis, molestie eu, feugiat in, orci. In hac habitasse platea dictumst.
-        <br>
+        Wir wollen Unternehmern und Geschäftsinhabern in besonders schwierigen Zeiten (aktuell das Covid-19-Virus) eine Platform bieten, auf der Sie Spendenprojekte erstellen und Gutscheine für Ihre Artikel und Dienstleistungen verkaufen können, um die immensen Gewinneinbußen auszugleichen.
+        Für Kunden bietet unsere Seite die Möglichkeit Ihrem lieblingsrestaurant mit einer Spende zu helfen, für das Kino um die Ecke schonmal Gutscheine zu kaufen oder einfach eine gute Tat zu leisten. Mit unserem transparenten Konzept können sie sich sicher sein, dass am Ende auch das Geld da ankommt, wo es auch benötigt wird.<br>
+        Unser Partner Blockstacks sorgt für eine sichere Autentifikation und bietet Ihnen gleichzeitig ein zentrales Konto für diverse andere Dienste im Internet.<br>
         <h2>Warum Sie uns vertrauen können</h2>
         <h3>Transparenz</h3>
-        Wir sind sogar fast durchsichtig<br>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        Um ein Maximum an Transparenz zu gewährleisten, verwenden wir eine Blockchain. Mit dieser ist es möglich, jede Transaktion nachzuverfolgen und sowohl den Empfänger als auch den überwiesenen Betrag einzusehen.<br>
+        Ebenfalls können diese sogenannten Blöcke im nachhinein nicht verändert werden, da bei jeder neuen Aktion auf der Blockchain alle vorherigen Transaktionen abgeglichen werden.<br>
+        <a href="https://www.cryptolist.de/was-ist-blockchain">Mehr zum Thema Blockchain (externer Link)</a>
         <h3>Ethereum</h3>
-        Etherum ist toll.<br>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        Ethereum und die damit enthaltene Kryptowährung Ether basiert auf einer sog. Blockchain, ählich wie das bekannteste Beispiel Bitcoin. Im Gegensatz zu Bitcoin bietet Ethereum mehr als nur eine Kryptowährung, denn es können Smart Contracts, dezentrale Anwendungen und Initial Coin Offerings(ICOs), wie bei unserer Seite, verwendet werden.<br>
+        Da eine Blockchain dezentral, also auf verschiedene Orte verteilt ( Gegensatz dazu ein zentraler Server), arbeitet, werden auf jedem teilnehmenden Client alle Daten und Transaktionen gespeichert und ständig aktualisiert.<br>
+        <a href="https://www.cryptolist.de/ethereum">Auch hier verweisen wir gerne zu einer Ausführlichen Erklärung.(externer Link)</a>
       </v-col>
     </v-row>
     <br><br>
@@ -48,17 +50,17 @@
               <span class="font-weight-bold">A:</span>
             </div>
             <v-col class="pa-0 pl-1">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              Das gespendete Geld wird auf einem Konto zusammengeführt und nach erreichen eines zuvor festgelegten Meilensteines und dessen Validierung an den Spendensammler überwiesen.
             </v-col>
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
 
-      <v-expansion-panel>
+      <v-expansion-panel class="qa">
         <v-expansion-panel-header>
           <span class="question">
             <span class="font-weight-bold">Q:</span>
-            Ist das Frontend geil?
+            Wie kann ich ein Spendenprojekt erstellen?
           </span>
         </v-expansion-panel-header>
         <v-divider />
@@ -68,7 +70,27 @@
               <span class="font-weight-bold">A:</span>
             </div>
             <v-col class="pa-0 pl-1">
-              Die Antworten könnten die Bevölkerung verunsichern
+              Zuerst müssen sie sich bei Blockstack registrieren und anschließend bei uns einloggen. Danach erstellen Sie einfach ein neues Spendenprojekt und schon kann es losgehen.
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <v-expansion-panel class="qa">
+        <v-expansion-panel-header>
+          <span class="question">
+            <span class="font-weight-bold">Q:</span>
+            Wie kann ich spenden?
+          </span>
+        </v-expansion-panel-header>
+        <v-divider />
+        <v-expansion-panel-content class="answerBox">
+          <v-row>
+            <div>
+              <span class="font-weight-bold">A:</span>
+            </div>
+            <v-col class="pa-0 pl-1">
+              Zuerst registrierst oder loggst du dich bei uns ein.Wenn du bereits weißt, für wen du spenden möchtest, kannst du ganz einfach danach suchen und dann eine Spende tätigen. Andernfalls kannst du mit den Filteroptionen deine Suche verfeinern und ein passendes Unternehmen oder eine Spendenaktion zu finden.
             </v-col>
           </v-row>
         </v-expansion-panel-content>
@@ -100,7 +122,7 @@ export default {
     }
 
     .answerBox {
-        padding: 0px 0px 0px 13px;
+        padding: 0 0 0 13px;
         font-size: 0.9375rem;
     }
 
