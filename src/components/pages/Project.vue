@@ -146,8 +146,8 @@
           </v-system-bar>
           <div>
             <div
-              v-for="milestone in project.milestones"
-              :key="milestone.id"
+                    v-for="milestone in project.milestones"
+                    :key="milestone.id"
             >
               <v-row>
                 <v-col>
@@ -155,7 +155,7 @@
                     Gesammelt
                   </h4>
                   <h1 class="title font-weight-light">
-                    {{ (milestone.totalDonated/weiFormula) }} ETH
+                    {{ showValue(milestone.totalDonated) }}
                   </h1>
                 </v-col>
                 <v-col>
@@ -163,7 +163,7 @@
                     Ziel
                   </h4>
                   <h1 class="title font-weight-light">
-                    {{ milestone.goal/weiFormula }} ETH
+                    {{ showValue(milestone.goal) }}
                   </h1>
                 </v-col>
                 <v-col>
@@ -175,12 +175,12 @@
                   </h1>
                 </v-col>
               </v-row>
-              <h3>{{ (milestone.totalDonated/milestone.goal).toFixed(1) }}%</h3>
+              <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
               <v-progress-linear
-                color="secondary"
-                height="15"
-                :value="(milestone.totalDonated/milestone.goal)"
-                striped
+                      color="secondary"
+                      height="15"
+                      :value="(milestone.totalDonated/milestone.goal)"
+                      striped
               />
             </div>
           </div>
@@ -288,6 +288,11 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    showValue(value) {
+      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
+      if (value > 10e6) return `${(value / 10e6)} MWEI`;
+      return `${value} WEI`;
     },
   },
 };
