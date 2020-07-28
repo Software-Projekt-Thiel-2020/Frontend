@@ -163,23 +163,30 @@
             </v-col>
             <v-col>
               <v-card class="py-8">
-                <h4 class="headline font-weight-light">Jetzt Spenden!</h4>
-                <currency-input
-                  v-model="donationValue"
-                  class="mt-3 headline"
-                />
-                <br>
-                <h1 class="display-1">
-                  {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
-                </h1>
-                <br>
-                <v-btn
-                  class="mt-2 btn-hover color-9"
-                  dark
-                  @click="donate()"
-                >
-                  Betrag Spenden
-                </v-btn>
+                <div>
+                  <h4 class="headline font-weight-light">Jetzt Spenden!</h4>
+                  <currency-input
+                    v-model="donationValue"
+                    class="mt-3 headline"
+                  />
+                  <br>
+                  <h1 class="display-1">
+                    {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
+                  </h1>
+                  <v-checkbox
+                          style="display:inline-flex"
+                  v-model="voteEnabled"
+                  class="text-center align-center"
+                  label="Für Meilenstein abstimmen"></v-checkbox>
+                  <br>
+                  <v-btn
+                    class="btn-hover color-9"
+                    dark
+                    @click="donate()"
+                  >
+                    Betrag Spenden
+                  </v-btn>
+                </div>
               </v-card>
             </v-col>
           </v-row>
