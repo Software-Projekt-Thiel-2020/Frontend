@@ -21,6 +21,7 @@
       </v-col>
       <v-col cols="6">
         <v-text-field
+          v-model="project.website"
           label="Link zur Website (optional)"
           outlined
           clearable
@@ -425,11 +426,17 @@ export default {
       });
     },
     save() {
+      const dateArray = this.editedItem.until.split(('-'), 3);
+      // durch 1000 weil von ms auf sekunden umgerechnet wird
+      const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
+
       if (this.editedIndex > -1) {
         Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
       } else {
         this.project.milestones.push(this.editedItem);
       }
+
+      this.project.milestones[this.project.milestones.length - 1].until = date;
       this.close();
     },
     getTodaysDate() {
@@ -472,7 +479,8 @@ export default {
         headers.website = this.project.website;
       }
       if (this.project.milestones.length !== 0) {
-        headers.milestones = this.project.milestones;
+        headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
+        headers.milestones = JSON.stringify(headers.milestones);
       }
       axios.post('/projects', {}, { headers })
         .then(() => {
