@@ -102,27 +102,30 @@
       >
         <v-card-text>
           <v-row justify="center">
-            <v-col cols="12" style="max-width: 800px">
+            <v-col
+              cols="12"
+              style="max-width: 800px"
+            >
               <v-card
-                      v-if="project"
-                      elevation="7"
-                      class="text-center"
+                v-if="project"
+                elevation="7"
+                class="text-center"
               >
                 <v-system-bar
-                        color="secondary"
-                        height="40px"
+                  color="secondary"
+                  height="40px"
                 >
                   <v-card-text
-                          class="headline font-weight-thin"
-                          style="color: white"
+                    class="headline font-weight-thin"
+                    style="color: white"
                   >
                     Meilensteine
                   </v-card-text>
                 </v-system-bar>
                 <div>
                   <div
-                          v-for="milestone in project.milestones"
-                          :key="milestone.id"
+                    v-for="milestone in project.milestones"
+                    :key="milestone.id"
                   >
                     <v-row>
                       <v-col>
@@ -152,10 +155,10 @@
                     </v-row>
                     <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
                     <v-progress-linear
-                            color="secondary"
-                            height="15"
-                            :value="(milestone.totalDonated/milestone.goal)"
-                            striped
+                      color="secondary"
+                      height="15"
+                      :value="(milestone.totalDonated/milestone.goal)"
+                      striped
                     />
                   </div>
                 </div>
@@ -164,7 +167,9 @@
             <v-col>
               <v-card class="py-8">
                 <div>
-                  <h4 class="headline font-weight-light">Jetzt Spenden!</h4>
+                  <h4 class="headline font-weight-light">
+                    Jetzt Spenden!
+                  </h4>
                   <currency-input
                     v-model="donationValue"
                     class="mt-3 headline"
@@ -174,10 +179,11 @@
                     {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
                   </h1>
                   <v-checkbox
-                          style="display:inline-flex"
-                  v-model="voteEnabled"
-                  class="text-center align-center"
-                  label="Für Meilenstein abstimmen"></v-checkbox>
+                    v-model="voteEnabled"
+                    style="display:inline-flex"
+                    class="text-center align-center"
+                    label="Für Meilenstein abstimmen"
+                  />
                   <br>
                   <v-btn
                     class="btn-hover color-9"
