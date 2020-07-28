@@ -301,7 +301,8 @@
                   cols="12"
                 >
                   <v-card light>
-                    <v-card-title>{{ donation.projectname }}
+                    <v-card-title>
+                      {{ donation.projectname }}
                       <v-spacer />
                       <h3 class="pricetag font-weight-light">
                         {{ donation.amount / weiFormula }} ETH
@@ -312,11 +313,11 @@
               </v-row>
               <div class="text-center">
                 <v-pagination
-                        v-model="donationPage"
-                        :length="Math.ceil(donations.length/6)"
-                        :total-visible="7"
-                        light
-                        color="secondary"
+                  v-model="donationPage"
+                  :length="Math.ceil(donations.length/6)"
+                  :total-visible="7"
+                  light
+                  color="secondary"
                 />
               </div>
             </v-card>
