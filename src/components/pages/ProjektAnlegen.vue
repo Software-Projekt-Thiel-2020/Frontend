@@ -440,7 +440,10 @@ export default {
         .then((res) => {
           this.allInstitutions = res.data;
           for (let i = 0; i < this.allInstitutions.length; i += 1) {
-            this.allInstitutionsSortedNameId.push({ name: this.allInstitutions[i].name, id: this.allInstitutions[i].id });
+            this.allInstitutionsSortedNameId.push({
+              name: this.allInstitutions[i].name,
+              id: this.allInstitutions[i].id,
+            });
           }
         });
     },
@@ -452,34 +455,34 @@ export default {
         this.createSpendenProjekt();
       }
     },
-  },
-  createSpendenProjekt() {
-    const headers = {
-      authToken: this.userData.authResponseToken,
-      name: this.project.title,
-      idInstitution: this.project.idInstitution,
-      goal: this.project.goal,
-      until: this.project.until,
-      // ist required, wird aber nicht verwendet !
-      requiredVotes: 1337,
-    };
-    if (this.project.description !== '') {
-      headers.description = window.btoa(this.project.description);
-    }
-    if (this.project.website !== '') {
-      headers.website = this.project.website;
-    }
-    if (this.project.milestones.length !== 0) {
-      headers.milestones = this.project.milestones;
-    }
-    axios.post('/projects', {}, { headers })
-      .then(() => {
-        this.dialog.successful = true;
-      })
-      .catch((err) => {
-        this.dialog.errorMessage = err.toString();
-        this.dialog.error = true;
-      });
+    createSpendenProjekt() {
+      const headers = {
+        authToken: this.userData.authResponseToken,
+        name: this.project.title,
+        idInstitution: this.project.idInstitution,
+        goal: this.project.goal,
+        until: this.project.until,
+        // ist required, wird aber nicht verwendet !
+        requiredVotes: 1337,
+      };
+      if (this.project.description !== '') {
+        headers.description = window.btoa(this.project.description);
+      }
+      if (this.project.website !== '') {
+        headers.website = this.project.website;
+      }
+      if (this.project.milestones.length !== 0) {
+        headers.milestones = this.project.milestones;
+      }
+      axios.post('/projects', {}, { headers })
+        .then(() => {
+          this.dialog.successful = true;
+        })
+        .catch((err) => {
+          this.dialog.errorMessage = err.toString();
+          this.dialog.error = true;
+        });
+    },
   },
 };
 </script>
