@@ -12,7 +12,7 @@
       <router-link
         to="/"
         tag="span"
-        class="hidden-sm-and-down"
+        class="hidden-md-and-down"
       >
         <v-btn
           class="d-flex align-center text-none"
@@ -29,8 +29,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Home</span>
           <v-icon>mdi-home</v-icon>
@@ -44,8 +45,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Spenden</span>
           <v-icon>mdi-gift-outline</v-icon>
@@ -59,8 +61,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Gutscheine</span>
           <v-icon>mdi-wallet-outline</v-icon>
@@ -74,8 +77,9 @@
       >
         <v-btn
           target="_blank"
-          color="secondary"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Über uns</span>
           <v-icon>mdi-information-outline</v-icon>
@@ -93,21 +97,42 @@
         <v-btn
           v-if="userSession.isUserSignedIn()"
           target="_blank"
-          color="accent"
-          class="ma-2"
+          color="primary"
+          elevation="0"
+          class="ma-0"
         >
           <span class="mr-2">Mein Portfolio</span>
           <v-icon>mdi-wallet</v-icon>
         </v-btn>
       </router-link>
 
+      <v-btn
+        v-if="userSession.isUserSignedIn()"
+        class="d-flex align-center text-none ma-0"
+        text
+      >
+        <h3
+          v-if="!gotResponse || error"
+        >
+          {{ 0.00 }} ETH
+        </h3>
+        <h3
+          v-else
+        >
+          {{ (backend_userdata.balance / (1000000000000000000)).toFixed(2) }} ETH
+        </h3>
+        <v-icon class="display-1">
+          mdi-ethereum
+        </v-icon>
+      </v-btn>
 
       <v-btn
         v-if="!userSession.isUserSignedIn()"
-        class="ma-2 hidden-sm-and-down"
+        class="ma-0 hidden-sm-and-down"
         target="_blank"
         rounded
-        color="accent"
+        color="primary"
+        elevation="0"
         @click="signIn"
       >
         <span class="mr-2">Anmelden mit Blockstack</span>
@@ -116,7 +141,6 @@
           src="../../assets/blockstack.svg"
         >
       </v-btn>
-
 
       <v-menu
         v-if="userSession.isUserSignedIn()"
@@ -158,6 +182,30 @@
                 <v-icon class="mr-1">
                   mdi-wrench
                 </v-icon>Mein Profil
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item>
+            <router-link
+              to="/InstitutionEditieren"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-bank
+                </v-icon>Meine Institutionen
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item v-if="backend_userdata && backend_userdata.group === 'support'">
+            <router-link
+              to="/institution"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-bank-plus
+                </v-icon>Institution erstellen
               </v-list-item-title>
             </router-link>
           </v-list-item>
@@ -275,6 +323,33 @@
             </v-list-item-icon>
             <v-list-item-title>Anmelden</v-list-item-title>
           </v-list-item>
+
+          <router-link
+            v-if="userSession.isUserSignedIn()"
+            to="/InstitutionEditieren"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bank</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Meine Institutionen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
+          <router-link
+            v-if="backend_userdata && backend_userdata.group === 'support'"
+            to="/institution"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-bank-plus</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Institution erstellen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
           <v-list-item
             v-if="userSession.isUserSignedIn()"
             color="accent"
@@ -377,18 +452,32 @@
     <v-snackbar
       v-model="register_dialog.successful"
       top
+      app
       color="success"
+      :timeout="timeout"
     >
       Registrierung abgeschlossen!
+      <v-btn
+        depressed
+        color="success"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
-
     <v-snackbar
       :value="error"
       top
+      app
       color="error"
-      :timeout="0"
+      :timeout="timeout"
     >
       Konnte Benutzerdaten nicht laden: {{ errorMessage }}
+      <v-btn
+        depressed
+        color="error"
+      >
+        Schließen
+      </v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -421,6 +510,7 @@ export default {
       errorMessage: null,
       successful: false,
     },
+    timeout: 10000,
   }),
   created() {
     this.userSession = userSession;
@@ -466,10 +556,10 @@ export default {
     get_user() {
       axios.get(`users?username=${this.user.username}`)
         .then((res) => {
-          if (res.data.length === 2) {
-            this.backend_userdata = false;
-          } else {
+          if (res.data.length > 0) {
             [this.backend_userdata] = res.data;
+          } else {
+            this.backend_userdata = false;
           }
         })
         .catch((err) => {
