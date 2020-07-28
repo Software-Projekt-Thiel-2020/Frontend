@@ -79,7 +79,7 @@
                     v-else
                     class="display-1 font-weight-light"
                   >
-                    {{ user.balance * weiFormula }} ETH
+                    {{ user.balance / weiFormula }} ETH
                   </h3>
                 </v-chip>
               </div>
@@ -296,25 +296,30 @@
                 class="ma-2"
               >
                 <v-col
-                  v-for="donation in donations"
+                  v-for="donation in donations.slice((donationPage*6)-6,donationPage*6)"
                   :key="donation.id"
                   cols="12"
                 >
-                  <v-card>
-                    <v-card-title>{{ donation.projectname }}</v-card-title>
-                    <v-card-subtitle class="overline">
+                  <v-card light>
+                    <v-card-title>
                       {{ donation.projectname }}
-                    </v-card-subtitle>
-                    <v-card-text>{{ donation.projectname }}</v-card-text>
-                    <v-card-actions>
                       <v-spacer />
                       <h3 class="pricetag font-weight-light">
-                        {{ donation.amount }} ETH
+                        {{ donation.amount / weiFormula }} ETH
                       </h3>
-                    </v-card-actions>
+                    </v-card-title>
                   </v-card>
                 </v-col>
               </v-row>
+              <div class="text-center">
+                <v-pagination
+                  v-model="donationPage"
+                  :length="Math.ceil(donations.length/6)"
+                  :total-visible="7"
+                  light
+                  color="secondary"
+                />
+              </div>
             </v-card>
           </v-col>
         </v-row>
