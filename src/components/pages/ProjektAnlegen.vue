@@ -275,6 +275,29 @@
     >
       Loggen Sie sich ein, um ein Spendenprojekt erstellen zu können
     </v-snackbar>
+    <v-snackbar
+      v-model="dialog3.timeMissing"
+      bottom
+      right
+      color="error"
+    >
+      Geben Sie ein Enddatum ein.
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialog3.titleMissing"
+      bottom
+      left
+      color="error"
+    >
+      Geben Sie dem Projekt einen Namen.
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialog3.goalMissing"
+      bottom
+      color="error"
+    >
+      Geben Sie ein Spendenziel an.
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -295,6 +318,11 @@ export default {
       errorMessage: '',
     },
     dialog2: false,
+    dialog3: {
+      timeMissing: true,
+      titleMissing: true,
+      goalMissing: false,
+    },
     headers: [
       {
         text: 'Meilensteinname',
@@ -331,7 +359,7 @@ export default {
     allInstitutions: [],
     allInstitutionsSortedNameId: [],
     project: {
-      title: '',
+      title: null,
       website: '',
       description: '',
       idInstitution: null,
@@ -365,6 +393,12 @@ export default {
     this.getUserInstitutions();
   },
   methods: {
+    calcUntil() {
+      const dateArray = this.date.split(('-'), 3);
+      const timeArray = this.time.split((':'), 2);
+      this.project.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10),
+        parseInt(timeArray[0], 10), parseInt(timeArray[1], 10));
+    },
     afterDayInput() {
       this.dateMenu = false;
       this.blockTime = false;
@@ -411,44 +445,41 @@ export default {
         });
     },
     calcMainUntil() {
-      if (this.project.until !== 0) {
+      this.dialog3.timeMissing = this.project.until === 0;
+      this.dialog3.titleMissing = this.project.title === null;
+      this.dialog3.goalMissing = this.project.goal <= 0;
+      if (this.dialog3.titleMissing === false && this.dialog3.timeMissing === false && this.dialog3.goalMissing === false) {
         this.createSpendenProjekt();
       }
     },
-    calcUntil() {
-      const dateArray = this.date.split(('-'), 3);
-      const timeArray = this.time.split((':'), 2);
-      this.project.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10),
-        parseInt(timeArray[0], 10), parseInt(timeArray[1], 10));
-    },
-    createSpendenProjekt() {
-      const headers = {
-        authToken: this.userData.authResponseToken,
-        name: this.project.title,
-        idInstitution: this.project.idInstitution,
-        goal: this.project.goal,
-        until: this.project.until,
-        // ist required, wird aber nicht verwendet !
-        requiredVotes: 1337,
-      };
-      if (this.project.description !== '') {
-        headers.description = window.btoa(this.project.description);
-      }
-      if (this.project.website !== '') {
-        headers.website = this.project.website;
-      }
-      if (this.project.milestones.length !== 0) {
-        headers.milestones = this.project.milestones;
-      }
-      axios.post('/projects', {}, { headers })
-        .then(() => {
-          this.dialog.successful = true;
-        })
-        .catch((err) => {
-          this.dialog.errorMessage = err.toString();
-          this.dialog.error = true;
-        });
-    },
+  },
+  createSpendenProjekt() {
+    const headers = {
+      authToken: this.userData.authResponseToken,
+      name: this.project.title,
+      idInstitution: this.project.idInstitution,
+      goal: this.project.goal,
+      until: this.project.until,
+      // ist required, wird aber nicht verwendet !
+      requiredVotes: 1337,
+    };
+    if (this.project.description !== '') {
+      headers.description = window.btoa(this.project.description);
+    }
+    if (this.project.website !== '') {
+      headers.website = this.project.website;
+    }
+    if (this.project.milestones.length !== 0) {
+      headers.milestones = this.project.milestones;
+    }
+    axios.post('/projects', {}, { headers })
+      .then(() => {
+        this.dialog.successful = true;
+      })
+      .catch((err) => {
+        this.dialog.errorMessage = err.toString();
+        this.dialog.error = true;
+      });
   },
 };
 </script>
