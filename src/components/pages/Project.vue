@@ -235,7 +235,6 @@ export default {
   mounted() {
     if (window.userSession.isUserSignedIn()) {
       this.userData = window.userSession.loadUserData();
-      console.log(this.userData);
     }
     this.szaboToEuro();
     this.loadProject();
@@ -276,7 +275,6 @@ export default {
         .then((res) => {
           this.exrate = (res.data.ETH * 1000000000000000000);
           this.eurToEth = res.data.ETH;
-          console.log(this.exrate);
         })
         .catch((err) => {
           this.errorMessage = err.toString();
@@ -291,7 +289,6 @@ export default {
       this.loading = true;
       axios.get(url)
         .then((res) => {
-          console.log(res.data);
           this.project = res.data;
         })
         .catch((err) => {
