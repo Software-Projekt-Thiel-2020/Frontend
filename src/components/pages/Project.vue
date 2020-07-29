@@ -167,6 +167,10 @@
             <v-col>
               <v-card class="py-8">
                 <div>
+                  <img
+                          class="projectImage"
+                          :src="project.picturePath ? apiurl+'/file/'+project.picturePath : '../../assets/placeholder.png'"
+                  >
                   <h4 class="headline font-weight-light">
                     Jetzt Spenden!
                   </h4>
@@ -219,6 +223,7 @@ export default {
     errorMessage: null,
     loading: false,
     voteEnabled: true,
+    apiurl: window.apiurl,
   }),
   computed: {
     getDonationETHValue() {
@@ -322,6 +327,11 @@ export default {
 
   .projectBox{
     background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .projectImage{
+    max-height: 200px;
+    max-width: 200px;
   }
 
   .goalBox {
