@@ -4,174 +4,183 @@
       <h1>Institution erstellen</h1>
     </v-container>
     <v-container>
-      <v-card
-        elevation="5"
-        shaped
-        class="pt-3"
-        outlned
+      <v-row
+        justify="center"
       >
-        <v-form
-          v-model="form"
+        <v-col
+          :cols="sizeCard"
         >
-          <v-card-text>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="username"
-                  clearable
-                  outlined
-                  required
-                  label="Owner Username*"
-                  background-color="grey lighten-4"
-                  :rules="notEmpty"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="publickey"
-                  clearable
-                  outlined
-                  required
-                  label="Publickey*"
-                  background-color="grey lighten-4"
-                  :rules="notEmpty"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="name"
-                  clearable
-                  outlined
-                  required
-                  label="Name*"
-                  background-color="grey lighten-4"
-                  :rules="notEmpty"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-file-input
-                  v-model="picture"
-                  clearable
-                  prepend-icon=""
-                  prepend-inner-icon="mdi-camera"
-                  label="Bild hochladen"
-                  background-color="grey lighten-4"
-                  accept="image/*"
-                  outlined
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-textarea
-                  v-model="description"
-                  clearable
-                  counter
-                  no-resize
-                  outlined
-                  :rules="textRule"
-                  label="Beschreibung"
-                  background-color="grey lighten-4"
-                  height="180"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="website"
-                  clearable
-                  outlined
-                  label="Website"
-                  background-color="grey lighten-4"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="address"
-                  clearable
-                  outlined
-                  required
-                  label="Adresse*"
-                  background-color="grey lighten-4"
-                  :rules="notEmpty"
-                />
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col
-                cols="6"
-                class="mt-2"
-              >
-                <l-map
-                  ref="map"
-                  :zoom="zoom"
-                  :center="center"
-                  :options="mapOptions"
-                  style="height: 300px; width: 100%; position:relative; z-index: 0"
-                  @click="setMarkerPos"
-                >
-                  <l-tile-layer
-                    :url="url"
-                    :attribution="attribution"
-                  />
-                  <l-marker
-                    :lat-lng.sync="marker"
-                  />
-                </l-map>
-              </v-col>
-            </v-row>
-            <v-row justify="center">
-              <v-col cols="3">
-                <v-text-field
-                  v-model="coords.longitude"
-                  label="Longitude*"
-                  background-color="grey lighten-4"
-                  required
-                  :rules="numberRule"
-                />
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="coords.latitude"
-                  label="Latitude*"
-                  background-color="grey lighten-4"
-                  required
-                  :rules="numberRule"
-                />
-              </v-col>
-            </v-row>
-            <p class="text-center font-weight-light">
-              Mit * markierte Felder müssen ausgefüllt werden
-            </p>
-          </v-card-text>
-          <v-card-actions>
-            <v-row
-              class="pb-3"
-              justify="center"
+          <v-card
+            elevation="5"
+            shaped
+            class="pt-3 pb-3"
+            outlned
+          >
+            <v-form
+              v-model="form"
             >
-              <v-col cols="4">
-                <v-btn
-                  :disabled="!form"
-                  type="submit"
-                  block
-                  @click="createInstitution"
+              <v-card-text>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="username"
+                      clearable
+                      outlined
+                      required
+                      label="Owner Username*"
+                      background-color="grey lighten-4"
+                      :rules="notEmpty"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="publickey"
+                      clearable
+                      outlined
+                      required
+                      label="Publickey*"
+                      background-color="grey lighten-4"
+                      :rules="notEmpty"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="name"
+                      clearable
+                      outlined
+                      required
+                      label="Name*"
+                      background-color="grey lighten-4"
+                      :rules="notEmpty"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-file-input
+                      v-model="picture"
+                      clearable
+                      prepend-icon=""
+                      prepend-inner-icon="mdi-camera"
+                      label="Bild hochladen"
+                      background-color="grey lighten-4"
+                      accept="image/*"
+                      outlined
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-textarea
+                      v-model="description"
+                      clearable
+                      counter
+                      no-resize
+                      outlined
+                      :rules="textRule"
+                      label="Beschreibung"
+                      background-color="grey lighten-4"
+                      height="180"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="website"
+                      clearable
+                      outlined
+                      label="Website"
+                      background-color="grey lighten-4"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="address"
+                      clearable
+                      outlined
+                      required
+                      label="Adresse*"
+                      background-color="grey lighten-4"
+                      :rules="notEmpty"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col
+                    :cols="sizeField"
+                    class="mt-2"
+                  >
+                    <l-map
+                      ref="map"
+                      :zoom="zoom"
+                      :center="center"
+                      :options="mapOptions"
+                      style="height: 300px; width: 100%; position:relative; z-index: 0"
+                      @click="setMarkerPos"
+                    >
+                      <l-tile-layer
+                        :url="url"
+                        :attribution="attribution"
+                      />
+                      <l-marker
+                        :lat-lng.sync="marker"
+                      />
+                    </l-map>
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField/2">
+                    <v-text-field
+                      v-model="coords.longitude"
+                      label="Longitude*"
+                      background-color="grey lighten-4"
+                      required
+                      :rules="numberRule"
+                      @change="updateMap(null, coords.longitude)"
+                    />
+                  </v-col>
+                  <v-col :cols="sizeField/2">
+                    <v-text-field
+                      v-model="coords.latitude"
+                      label="Latitude*"
+                      background-color="grey lighten-4"
+                      required
+                      :rules="numberRule"
+                      @change="updateMap(coords.latitude, null)"
+                    />
+                  </v-col>
+                </v-row>
+                <p class="text-center font-weight-light">
+                  Mit * markierte Felder müssen ausgefüllt werden
+                </p>
+              </v-card-text>
+              <v-card-actions>
+                <v-row
+                  class="pb-3"
+                  justify="center"
                 >
-                  Institution erstellen
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card-actions>
-        </v-form>
-      </v-card>
+                  <v-btn
+                    x-large
+                    class="pl-12 pr-12"
+                    :disabled="!form"
+                    color="success"
+                    @click="createInstitution"
+                  >
+                    Institution erstellen
+                  </v-btn>
+                </v-row>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
     <v-snackbar
       v-model="dialog.successful"
@@ -249,8 +258,24 @@ export default {
     zoom: 5,
     mapOptions: {
       zoomSnap: 0.5,
+      minZoom: 1,
     },
   }),
+  computed: {
+    sizeCard() {
+      return this.$vuetify.breakpoint.xlOnly ? 9 : 12;
+    },
+    sizeField() {
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 12;
+        case 'sm': return 11;
+        case 'md': return 10;
+        case 'lg': return 9;
+        case 'xl': return 8;
+        default: return 10;
+      }
+    },
+  },
   created() {
     this.userSession = userSession;
   },
@@ -292,6 +317,17 @@ export default {
       this.marker = event.latlng;
       this.coords.latitude = this.marker.lat;
       this.coords.longitude = this.marker.lng;
+    },
+    updateMap(lat, long) {
+      let newCoords;
+      if (lat !== null) {
+        newCoords = latLng(lat, this.marker.lng);
+      }
+      if (long !== null) {
+        newCoords = latLng(this.marker.lat, long);
+      }
+      this.marker = newCoords;
+      this.center = newCoords;
     },
   },
 };
