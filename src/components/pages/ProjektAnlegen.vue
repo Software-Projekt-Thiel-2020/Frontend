@@ -10,287 +10,292 @@
         </h1>
       </div>
     </div>
-    <v-row>
-      <v-col cols="6">
-        <v-text-field
-          v-model="project.title"
-          label="Projektname"
-          outlined
-          clearable
-          :rules="notEmpty"
-        />
-      </v-col>
-      <v-col cols="6">
-        <v-text-field
-          v-model="project.website"
-          label="Link zur Website (optional)"
-          outlined
-          clearable
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="6">
-        <v-overflow-btn
-          v-model="project.idInstitution"
-          label="Institution"
-          target="#dropdown-institution"
-          :items="allInstitutionsSortedNameId"
-          item-text="name"
-          item-value="id"
-          auto-select-first
-          outlined
-          clearable
-          :rules="notEmpty"
-        />
-      </v-col>
-      <v-col>
-        <router-link
-          to="/institution"
-          tag="span"
-        >
-          <v-btn
-            style="text-transform: none"
+    <v-form
+      v-model="form"
+    >
+      <v-row>
+        <v-col cols="6">
+          <v-text-field
+            v-model="project.title"
+            label="Projektname"
+            outlined
+            clearable
+            :rules="notEmpty"
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-text-field
+            v-model="project.website"
+            label="Link zur Website (optional)"
+            outlined
+            clearable
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <v-overflow-btn
+            v-model="project.idInstitution"
+            label="Institution"
+            target="#dropdown-institution"
+            :items="allInstitutionsSortedNameId"
+            item-text="name"
+            item-value="id"
+            auto-select-first
+            outlined
+            clearable
+            :rules="notEmpty"
+          />
+        </v-col>
+        <v-col>
+          <router-link
+            to="/institution"
+            tag="span"
           >
-            neue Institution erstellen
-          </v-btn>
-        </router-link>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="6">
-        <v-text-field
-          v-model="project.goal"
-          min="1"
-          oninput="validity.valid||(value='');"
-          label="Spendenziel in Wei"
-          outlined
-          clearable
-          :rules="notEmpty"
-        />
-      </v-col>
-      <v-col cols="3">
-        <v-menu
-          v-model="dateMenu"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-          :rules="notEmpty"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
+            <v-btn
+              style="text-transform: none"
+            >
+              neue Institution erstellen
+            </v-btn>
+          </router-link>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <v-text-field
+            v-model="project.goal"
+            min="1"
+            oninput="validity.valid||(value='');"
+            label="Spendenziel in Wei"
+            outlined
+            clearable
+            :rules="notEmpty"
+          />
+        </v-col>
+        <v-col cols="3">
+          <v-menu
+            v-model="dateMenu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                :rules="notEmpty"
+                label="Projektende eingeben"
+                readonly
+                clearable
+                v-bind="attrs"
+                v-on="on"
+              />
+            </template>
+            <v-date-picker
               v-model="date"
-              label="Projektende eingeben"
-              readonly
-              clearable
-              v-bind="attrs"
-              v-on="on"
+              :min="today"
+              @input="afterDayInput"
             />
-          </template>
-          <v-date-picker
-            v-model="date"
-            :min="today"
-            @input="afterDayInput"
-          />
-        </v-menu>
-      </v-col>
-      <v-col cols="3">
-        <v-menu
-          v-model="timeMenu"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-          :rules="notEmpty"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
+          </v-menu>
+        </v-col>
+        <v-col cols="3">
+          <v-menu
+            v-model="timeMenu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="time"
+                :disabled="blockTime"
+                :rules="notEmpty"
+                label="Uhrzeit eingeben (GMT)"
+                readonly
+                clearable
+                v-bind="attrs"
+                v-on="on"
+              />
+            </template>
+            <v-time-picker
               v-model="time"
-              :disabled="blockTime"
-              label="Uhrzeit eingeben (GMT)"
-              readonly
-              clearable
-              v-bind="attrs"
-              v-on="on"
+              format="24hr"
+              @input="afterTimeInput"
             />
-          </template>
-          <v-time-picker
-            v-model="time"
-            format="24hr"
-            @input="afterTimeInput"
+          </v-menu>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-textarea
+            v-model="project.description"
+            label="Beschreibung (optional)"
+            clearable
+            counter
+            no-resize
+            outlined
+            height="120"
+            :rules="textRule"
           />
-        </v-menu>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-textarea
-          v-model="project.description"
-          label="Beschreibung (optional)"
-          clearable
-          counter
-          no-resize
-          outlined
-          height="120"
-          :rules="textRule"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="7">
-        <l-map
-          ref="map"
-          :zoom="zoom"
-          :center="center"
-          :options="mapOptions"
-          style="height: 300px; width: 100%; position:relative; z-index: 0"
-          @click="setMarkerPos"
-        >
-          <l-tile-layer
-            :url="url"
-            :attribution="attribution"
-          />
-          <l-marker :lat-lng="marker" />
-        </l-map>
-      </v-col>
-      <v-col>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="project.latitude"
-              label="Latitude (optional)"
-              outlined
-              @change="updateMap(project.latitude, null)"
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="7">
+          <l-map
+            ref="map"
+            :zoom="zoom"
+            :center="center"
+            :options="mapOptions"
+            style="height: 300px; width: 100%; position:relative; z-index: 0"
+            @click="setMarkerPos"
+          >
+            <l-tile-layer
+              :url="url"
+              :attribution="attribution"
             />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="project.longitude"
-              label="Longitude (optional)"
-              outlined
-              @change="updateMap(null, project.longitude)"
-            />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-data-table
-          :headers="headers"
-          :items="milestonesDate"
-          sort-by="calories"
-        >
-          <template v-slot:top>
-            <v-toolbar
-              flat
-              color="white"
-            >
-              <v-toolbar-title>Weitere Meilensteine</v-toolbar-title>
-              <v-spacer />
-              <v-dialog
-                v-model="dialog2"
-                max-width="400"
+            <l-marker :lat-lng="marker" />
+          </l-map>
+        </v-col>
+        <v-col>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="project.latitude"
+                label="Latitude (optional)"
+                outlined
+                @change="updateMap(project.latitude, null)"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="project.longitude"
+                label="Longitude (optional)"
+                outlined
+                @change="updateMap(null, project.longitude)"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-data-table
+            :headers="headers"
+            :items="milestonesDate"
+            sort-by="calories"
+          >
+            <template v-slot:top>
+              <v-toolbar
+                flat
+                color="white"
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    :disabled="blockAdditionalMilestones"
-                    color="primary"
-                    dark
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    Neues Item
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="headline">{{ formTitle }}</span>
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="editedItem.name"
-                            label="Meilensteinname"
-                            outlined
-                            clearable
-                          />
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="editedItem.goal"
-                            label="Spendenziel in Wei"
-                            min="1"
-                            outlined
-                            clearable
-                            :rules="weiRule"
-                          />
-                        </v-col>
-                        <v-col>
-                          <v-date-picker
-                            v-model="editedItem.until"
-                            :min="today"
-                            :max="date"
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
+                <v-toolbar-title>Weitere Meilensteine</v-toolbar-title>
+                <v-spacer />
+                <v-dialog
+                  v-model="dialog2"
+                  max-width="400"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      :disabled="blockAdditionalMilestones"
+                      color="primary"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Neues Item
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="headline">{{ formTitle }}</span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-text-field
+                              v-model="editedItem.name"
+                              label="Meilensteinname"
+                              outlined
+                              clearable
+                            />
+                          </v-col>
+                          <v-col cols="12">
+                            <v-text-field
+                              v-model="editedItem.goal"
+                              label="Spendenziel in Wei"
+                              min="1"
+                              outlined
+                              clearable
+                              :rules="weiRule"
+                            />
+                          </v-col>
+                          <v-col>
+                            <v-date-picker
+                              v-model="editedItem.until"
+                              :min="today"
+                              :max="date"
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
 
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="close"
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      :disabled="editedItem.name === '' || editedItem.goal === '' || editedItem.until === null"
-                      color="blue darken-1"
-                      text
-                      @click="save"
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-            </v-toolbar>
-          </template>
-          <template v-slot:item.actions="{ item }">
-            <v-icon
-              small
-              @click="editItem(item)"
-            >
-              mdi-pencil
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteItem(item)"
-            >
-              mdi-delete
-            </v-icon>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-btn
-        outlined
-        color="black"
-        class="font-weight-medium"
-        @click="calcMainUntil()"
-      >
-        Spendenprojekt anlegen
-      </v-btn>
-    </v-row>
+                    <v-card-actions>
+                      <v-spacer />
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="close"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        :disabled="editedItem.name === '' || editedItem.goal === '' || editedItem.until === null"
+                        color="blue darken-1"
+                        text
+                        @click="save"
+                      >
+                        Save
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon
+                small
+                @click="editItem(item)"
+              >
+                mdi-pencil
+              </v-icon>
+              <v-icon
+                small
+                @click="deleteItem(item)"
+              >
+                mdi-delete
+              </v-icon>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-btn
+          :disabled="!form"
+          color="success"
+          class="font-weight-medium ma-2"
+          elevation="2"
+          @click="calcMainUntil()"
+        >
+          Spendenprojekt anlegen
+        </v-btn>
+      </v-row>
+    </v-form>
     <v-snackbar
       v-model="dialog.successful"
       bottom
@@ -330,6 +335,7 @@ export default {
     LMarker,
   },
   data: () => ({
+    form: false,
     milestonesDate: [],
     textRule: [
       // eslint-disable-next-line no-control-regex
