@@ -17,6 +17,7 @@
           label="Projektname"
           outlined
           clearable
+          :rules="notEmpty"
         />
       </v-col>
       <v-col cols="6">
@@ -40,6 +41,7 @@
           auto-select-first
           outlined
           clearable
+          :rules="notEmpty"
         />
       </v-col>
       <v-col>
@@ -64,6 +66,7 @@
           label="Spendenziel in Wei"
           outlined
           clearable
+          :rules="notEmpty"
         />
       </v-col>
       <v-col cols="3">
@@ -73,12 +76,14 @@
           transition="scale-transition"
           offset-y
           min-width="290px"
+          :rules="notEmpty"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
               v-model="date"
               label="Projektende eingeben"
               readonly
+              clearable
               v-bind="attrs"
               v-on="on"
             />
@@ -97,6 +102,7 @@
           transition="scale-transition"
           offset-y
           min-width="290px"
+          :rules="notEmpty"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -104,6 +110,7 @@
               :disabled="blockTime"
               label="Uhrzeit eingeben (GMT)"
               readonly
+              clearable
               v-bind="attrs"
               v-on="on"
             />
@@ -126,7 +133,48 @@
           no-resize
           outlined
           height="120"
+          :rules="textRule"
         />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="7">
+        <l-map
+          ref="map"
+          :zoom="zoom"
+          :center="center"
+          :options="mapOptions"
+          style="height: 300px; width: 100%; position:relative; z-index: 0"
+          @click="setMarkerPos"
+        >
+          <l-tile-layer
+            :url="url"
+            :attribution="attribution"
+          />
+          <l-marker :lat-lng="marker" />
+        </l-map>
+      </v-col>
+      <v-col>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="project.latitude"
+              label="Latitude (optional)"
+              outlined
+              @change="updateMap(project.latitude, null)"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="project.longitude"
+              label="Longitude (optional)"
+              outlined
+              @change="updateMap(null, project.longitude)"
+            />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
@@ -276,40 +324,35 @@
     >
       Loggen Sie sich ein, um ein Spendenprojekt erstellen zu können
     </v-snackbar>
-    <v-snackbar
-      v-model="dialog3.timeMissing"
-      bottom
-      right
-      color="error"
-    >
-      Geben Sie ein Enddatum ein.
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialog3.titleMissing"
-      bottom
-      left
-      color="error"
-    >
-      Geben Sie dem Projekt einen Namen.
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialog3.goalMissing"
-      bottom
-      color="error"
-    >
-      Geben Sie ein Spendenziel an.
-    </v-snackbar>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios';
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import { latLng } from 'leaflet';
 import { userSession } from '../../userSession';
-
+import 'leaflet/dist/leaflet.css';
 
 export default {
   name: 'ProjektAnlegen',
+  components: {
+    LMap,
+    LTileLayer,
+    LMarker,
+  },
   data: () => ({
+    textRule: [
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
+    notEmpty: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+    ],
+    weiRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => /^[0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
+    ],
     blockTime: true,
     blockAdditionalMilestones: true,
     dialog: {
@@ -368,6 +411,19 @@ export default {
       goal: 1,
       until: 0,
       milestones: [],
+      longitude: '',
+      latitude: '',
+    },
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution:
+            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    // Set starting point to center Germany
+    center: latLng(51.1642292, 10.4541194),
+    marker: latLng(51.1642292, 10.4541194),
+    zoom: 5,
+    mapOptions: {
+      zoomSnap: 0.5,
+      minZoom: 1,
     },
   }),
   computed: {
@@ -392,8 +448,25 @@ export default {
     }
     this.getTodaysDate();
     this.getUserInstitutions();
+    this.$refs.map.mapObject.invalidateSize();
   },
   methods: {
+    updateMap(lat, long) {
+      let newCoords;
+      if (lat !== null) {
+        newCoords = latLng(lat, this.marker.lng);
+      }
+      if (long !== null) {
+        newCoords = latLng(this.marker.lat, long);
+      }
+      this.marker = newCoords;
+      this.center = newCoords;
+    },
+    setMarkerPos(event) {
+      this.marker = event.latlng;
+      this.project.latitude = this.marker.lat;
+      this.project.longitude = this.marker.lng;
+    },
     calcUntil() {
       const dateArray = this.date.split(('-'), 3);
       const timeArray = this.time.split((':'), 2);
@@ -481,6 +554,12 @@ export default {
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
         headers.milestones = JSON.stringify(headers.milestones);
+      }
+      if (this.project.latitude !== '') {
+        headers.latitude = this.project.latitude;
+      }
+      if (this.project.longitude !== '') {
+        headers.longitude = this.project.longitude;
       }
       axios.post('/projects', {}, { headers })
         .then(() => {
