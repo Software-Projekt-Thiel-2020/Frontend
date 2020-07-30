@@ -181,7 +181,7 @@
       <v-col cols="12">
         <v-data-table
           :headers="headers"
-          :items="project.milestones"
+          :items="milestonesDate"
           sort-by="calories"
         >
           <template v-slot:top>
@@ -219,7 +219,6 @@
                             label="Meilensteinname"
                             outlined
                             clearable
-                            autofocus
                           />
                         </v-col>
                         <v-col cols="12">
@@ -227,20 +226,9 @@
                             v-model="editedItem.goal"
                             label="Spendenziel in Wei"
                             min="1"
-                            oninput="validity.valid||(value='');"
                             outlined
                             clearable
-                          />
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="editedItem.requiredVotes"
-                            label="Benötigte Stimmen"
-                            type="number"
-                            min="1"
-                            oninput="validity.valid||(value='');"
-                            outlined
-                            clearable
+                            :rules="weiRule"
                           />
                         </v-col>
                         <v-col>
@@ -264,6 +252,7 @@
                       Cancel
                     </v-btn>
                     <v-btn
+                      :disabled="editedItem.name === '' || editedItem.goal === '' || editedItem.until === null"
                       color="blue darken-1"
                       text
                       @click="save"
@@ -309,10 +298,9 @@
     >
       Spendenprojekt erstellt!
     </v-snackbar>
-
     <v-snackbar
       v-model="dialog.error"
-      bottom
+      top
       color="error"
     >
       Spendenprojekt konnte nicht erstellt werden: {{ dialog.errorMessage }}
@@ -342,6 +330,7 @@ export default {
     LMarker,
   },
   data: () => ({
+    milestonesDate: [],
     textRule: [
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
@@ -375,20 +364,19 @@ export default {
         value: 'name',
       },
       { text: 'Spendenziel', value: 'goal' },
-      { text: 'benötigte Stimmen', value: 'requiredVotes' },
       { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     editedIndex: -1,
     editedItem: {
       name: '',
-      goal: 1,
+      goal: '',
       requiredVotes: 1,
       until: null,
     },
     defaultItem: {
       name: '',
-      goal: 1,
+      goal: '',
       requiredVotes: 1,
       until: null,
     },
@@ -446,9 +434,9 @@ export default {
     } else {
       this.dialog.notloggedIn = true;
     }
+    this.$refs.map.mapObject.invalidateSize();
     this.getTodaysDate();
     this.getUserInstitutions();
-    this.$refs.map.mapObject.invalidateSize();
   },
   methods: {
     updateMap(lat, long) {
@@ -508,6 +496,11 @@ export default {
       } else {
         this.project.milestones.push(this.editedItem);
       }
+
+      // Für die User Anzeige des Datums
+      const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
+      cpy.until = new Date(cpy.until).toLocaleDateString();
+      this.milestonesDate.push(cpy);
 
       this.project.milestones[this.project.milestones.length - 1].until = date;
       this.close();
