@@ -58,7 +58,6 @@
               class="institution"
               elevation="5"
             >
-              <p>{{item}}</p>
               <img
                 class="elementImage"
                 v-if="item.picturePath"
