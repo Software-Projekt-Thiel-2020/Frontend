@@ -1,43 +1,45 @@
 <template>
   <div class="gradientBackground">
     <v-dialog
-            v-model="dialog"
-            v-if="boughtVoucher "
-            :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
+      v-if="boughtVoucher "
+      v-model="dialog"
+      :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
     >
       <v-card class="text-center py-10">
         <svg
-                class="checkmark"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 52 52"
+          class="checkmark"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 52 52"
         ><circle
-                class="checkmark__circle"
-                cx="26"
-                cy="26"
-                r="25"
-                fill="none"
+          class="checkmark__circle"
+          cx="26"
+          cy="26"
+          r="25"
+          fill="none"
         /><path
-                class="checkmark__check"
-                fill="none"
-                d="M14.1 27.2l7.1 7.2 16.7-16.8"
+          class="checkmark__check"
+          fill="none"
+          d="M14.1 27.2l7.1 7.2 16.7-16.8"
         /></svg>
         <div class="donation_title">
           <v-icon
-                  class="mr-2 display-2"
-                  color="red"
+            class="mr-2 display-2"
+            color="red"
           >
             mdi-cards-heart
           </v-icon>
           Gutschein erworben!
           <v-icon
-                  class="ml-2 display-2"
-                  color="red"
+            class="ml-2 display-2"
+            color="red"
           >
             mdi-cards-heart
           </v-icon>
         </div>
         <v-card-text class="title">
-          <v-card color="primary" dark
+          <v-card
+            color="primary"
+            dark
           >
             <v-card-title>{{ boughtVoucher.title }}</v-card-title>
             <v-card-subtitle class="overline text-left">
@@ -55,10 +57,10 @@
 
 
         <v-btn
-                class="title"
-                color="green darken-1"
-                outlined
-                @click="closeDialog"
+          class="title"
+          color="green darken-1"
+          outlined
+          @click="closeDialog"
         >
           OK
         </v-btn>
