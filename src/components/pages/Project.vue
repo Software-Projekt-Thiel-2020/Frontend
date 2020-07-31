@@ -171,8 +171,14 @@
               <v-card class="py-8">
                 <div>
                   <img
+                    v-if="project.picturePath"
                     class="projectImage"
-                    :src="project.picturePath ? apiurl+'/file/'+project.picturePath : '../../assets/placeholder.png'"
+                    :src="apiurl+'/file/'+project.picturePath"
+                  >
+                  <img
+                    v-else
+                    class="projectImage"
+                    src="../../assets/placeholder.png"
                   >
                   <h4 class="headline font-weight-light">
                     Jetzt Spenden!
