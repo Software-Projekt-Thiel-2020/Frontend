@@ -27,6 +27,7 @@
           <v-text-field
             v-model="project.website"
             label="Link zur Website (optional)"
+            :rules="websiteRule"
             outlined
             clearable
           />
@@ -130,7 +131,7 @@
         <v-col cols="12">
           <v-textarea
             v-model="project.description"
-            label="Beschreibung (optional)"
+            label="Beschreibung"
             clearable
             counter
             no-resize
@@ -339,7 +340,7 @@ export default {
     milestonesDate: [],
     textRule: [
       // eslint-disable-next-line no-control-regex
-      (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+      (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -347,6 +348,9 @@ export default {
     weiRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
       (v) => /^[0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
+    ],
+    websiteRule: [
+      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     blockTime: true,
     blockAdditionalMilestones: true,
@@ -541,12 +545,10 @@ export default {
         idInstitution: this.project.idInstitution,
         goal: this.project.goal,
         until: this.project.until,
+        description: window.btoa(this.project.description),
         // ist required, wird aber nicht verwendet !
         requiredVotes: 1337,
       };
-      if (this.project.description !== '') {
-        headers.description = window.btoa(this.project.description);
-      }
       if (this.project.website !== '') {
         headers.website = this.project.website;
       }
