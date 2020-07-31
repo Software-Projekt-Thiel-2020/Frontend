@@ -58,9 +58,16 @@
               class="institution"
               elevation="5"
             >
+              <p>{{item}}</p>
               <img
                 class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                v-if="item.picturePath"
+                :src="item.picturePath"
+              >
+              <img
+                v-else
+                class="elementImage"
+                src="../../assets/placeholder.png"
               >
               <div
                 class="companyData"
