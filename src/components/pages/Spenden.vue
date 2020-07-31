@@ -239,6 +239,7 @@ export default {
       this.latitude = -1;
       this.radius = 10;
       this.errorMessage = '';
+      this.gotResponse = false;
       this.load();
     },
     loadProjects() {
@@ -260,11 +261,19 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
+      } else {
+        this.gotResponse = true;
+        this.loading = false;
       }
     },
     suchen() {
       this.errorMessage = '';
+      this.gotResponse = false;
+      this.loading = true;
       if (this.searchPlace && this.searchCode) {
         let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
         if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
@@ -286,6 +295,9 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
       } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
         this.loadProjects();
