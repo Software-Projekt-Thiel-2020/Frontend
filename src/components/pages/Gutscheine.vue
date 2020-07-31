@@ -92,17 +92,28 @@
     </v-container>
     <v-container>
       <h2>Ergebnisse:</h2>
+      <v-layout
+        v-if="loading==true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
       <div v-if="!gotResponse">
         <v-skeleton-loader>
           <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
            da Anzahl an gefundenen Institutionen beim Laden
             nicht herauszufinden ist -->
-          v-for="index in 7"
-          :key="index"
-          class="my-10"
-          type="list-item-avatar"
-          tile
-          />
+          <!-- v-for="index in 7"
+                  :key="index"
+                  class="my-10"
+                  type="list-item-avatar"
+                  tile
+                  /> -->
         </v-skeleton-loader>
       </div>
       <v-alert
@@ -164,6 +175,7 @@ import axios from 'axios';
 export default {
   name: 'Gutscheine',
   data: () => ({
+    loading: false,
     items: [],
     gotResponse: false,
     errorMessage: '',
@@ -193,6 +205,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get('institutions?has_vouchers=1')
         .then((res) => {
           this.items = res.data;
@@ -203,6 +216,7 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     getOwnLocation() {
