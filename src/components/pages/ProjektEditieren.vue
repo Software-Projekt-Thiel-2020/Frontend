@@ -36,7 +36,7 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="!gotResponse || items.length === 0">
+      <div v-if="!gotResponse || userProjects.length === 0">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
@@ -50,7 +50,7 @@
       <div v-else-if="gotResponse">
         <v-row>
           <v-col
-            v-for="item in items"
+            v-for="item in userProjects"
             :key="item.id"
             class="ma-4"
           >
@@ -75,7 +75,7 @@
                   <v-btn
                     class="ma-2"
                     style="color: black"
-                    @click="editClick(item)"
+                    @click="editClick(item.id)"
                   >
                     Editieren
                   </v-btn>
@@ -98,8 +98,8 @@
           persistent
         >
           <v-card>
-            <v-card-title class="text-center">
-              Projekt bearbeiten
+            <v-card-title class="text-center overflow-hidden">
+              Projekt {{ editElement.name }} bearbeiten
             </v-card-title>
             <v-card-text>
               <v-container>
@@ -239,17 +239,59 @@
                     </v-col>
                   </v-row>
                   <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Meilensteine:
-                      </h4>
+                    <v-col>
+                      <v-btn
+                        color="primary"
+                        dark
+                        @click="milestoneDialog = true"
+                      >
+                        Meilenstein hinzufügen
+                      </v-btn>
                     </v-col>
+                  </v-row>
+                  <v-dialog
+                    v-model="milestoneDialog"
+                  >
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline"> Neuer Meilenstein</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
+                              v-model="newMile.name"
+                              label="Meilensteinname"
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
+                              v-model="newMile.goal"
+                              label="Spendenziel in Wei"
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-date-picker
+                              v-model="newMile.date"
+                              :min="today"
+                              :max="editElement.until"
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+                      <v-card-actions />
+                    </v-card>
+                  </v-dialog>
+                  <v-row gutters>
                     <v-col>
                       <v-data-table
                         :headers="tableHeaders"
+                        :items="allMilestones"
+                        sort-by="until"
                       />
                     </v-col>
                   </v-row>
@@ -304,21 +346,11 @@ export default {
     LMarker,
   },
   data: () => ({
-    items: [],
+    userProjects: [],
     gotResponse: false,
     apiurl: window.apiurl,
     overlay: false,
-    editElement: {
-      id: null,
-      authToken: null,
-      name: null,
-      picturePath: null,
-      picture: null,
-      webpage: null,
-      description: null,
-      longitude: null,
-      latitude: null,
-    },
+    editElement: null,
     alert: false,
     alertType: null,
     userFeedback: '',
@@ -334,6 +366,14 @@ export default {
       { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
+    newMilestones: [],
+    newMile: {
+      name: '',
+      goal: '',
+      date: '',
+    },
+    today: null,
+    milestoneDialog: false,
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
@@ -343,7 +383,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -359,54 +399,91 @@ export default {
       normErr: 0,
     },
   }),
+  computed: {
+    allMilestones() {
+      return [...this.editElement.milestones, ...this.newMilestones].map((milestone) => {
+        const mCopy = milestone;
+        // until * 100, weil ms auf s umgerechnet wird
+        mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
+        return mCopy;
+      });
+    },
+  },
   mounted() {
     this.load();
+    this.getTodaysDate();
   },
   methods: {
     load() {
       setTimeout(() => {
         axios.get(`projects?username=${window.user.username}`)
           .then((res) => {
-            this.items = res.data;
+            if (res.data.length > 0) {
+              this.userProjects = res.data;
+            }
           })
           .catch((err) => {
             this.showAlert(err.toString(), 'error');
           })
           .finally(() => {
             this.gotResponse = true;
-            this.resultList = this.items;
+            this.resultList = this.userProjects;
           });
       }, 400);
+    },
+    getTodaysDate() {
+      this.today = new Date().toLocaleDateString();
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
     },
-    editClick(inst) {
-      if (inst !== null && inst !== undefined) {
-        if (typeof inst === 'object' && Object.keys(inst).length > 0) {
-          this.editElement.id = inst.id;
-          this.editElement.authToken = inst.authToken;
-          this.editElement.name = inst.name;
-          this.editElement.picturePath = inst.picturePath;
-          this.editElement.webpage = inst.webpage;
-          this.editElement.description = window.atob(inst.description);
-          this.editElement.longitude = inst.longitude;
-          this.editElement.latitude = inst.latitude;
-
-
-          const coords = latLng(this.editElement.latitude, this.editElement.longitude);
-          this.center = coords;
-          this.marker = coords;
-          this.overlay = true;
-          setTimeout(() => {
-            this.$refs.map.mapObject.invalidateSize();
-          }, 100);
-          return;
-        }
+    editClick(itemId) {
+      let projectId = -1;
+      try {
+        projectId = parseInt(itemId, 10);
+      } catch (e) {
+        // TODO: Print err Message
+        console.log(e);
+        return;
       }
-      this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
+
+      /*
+        this.editElement.id = inst.id;
+        this.editElement.authToken = inst.authToken;
+        this.editElement.name = inst.name;
+        this.editElement.picturePath = inst.picturePath;
+        this.editElement.webpage = inst.webpage;
+        this.editElement.description = window.atob(inst.description);
+        this.editElement.longitude = inst.longitude;
+        this.editElement.latitude = inst.latitude;
+        */
+      if (Number.isInteger(projectId) && projectId > 0) {
+        axios.get(`projects/${projectId}`)
+          .then((res) => {
+            this.editElement = res.data;
+            this.editElement.description = window.atob(res.data.description);
+            this.editElement.authToken = userSession.getAuthResponseToken();
+          })
+          .catch((err) => {
+            console.log(err);
+            // ToDo: print err Message
+          })
+          .finally(() => {
+            const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            this.center = coords;
+            this.marker = coords;
+            this.overlay = true;
+            setTimeout(() => {
+              this.$refs.map.mapObject.invalidateSize();
+            }, 100);
+          });
+      }
+
+
+      // return;
+      // this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
     },
     async changeProject() {
       if (userSession.isUserSignedIn()) {
