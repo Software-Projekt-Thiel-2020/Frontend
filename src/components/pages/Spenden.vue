@@ -140,8 +140,14 @@
               elevation="5"
             >
               <img
+                v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                :src="apiurl+'/file/'+item.picturePath"
+              >
+              <img
+                v-else
+                class="elementImage"
+                src="../../assets/placeholder.png"
               >
               <div
                 class="companyData"
