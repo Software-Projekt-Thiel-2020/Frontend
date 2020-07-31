@@ -61,20 +61,6 @@
                 </v-row>
                 <v-row justify="center">
                   <v-col :cols="sizeField">
-                    <v-file-input
-                      v-model="picture"
-                      clearable
-                      prepend-icon=""
-                      prepend-inner-icon="mdi-camera"
-                      label="Bild hochladen"
-                      background-color="grey lighten-4"
-                      accept="image/*"
-                      outlined
-                    />
-                  </v-col>
-                </v-row>
-                <v-row justify="center">
-                  <v-col :cols="sizeField">
                     <v-textarea
                       v-model="description"
                       clearable
@@ -136,7 +122,7 @@
                   </v-col>
                 </v-row>
                 <v-row justify="center">
-                  <v-col :cols="sizeField/2">
+                  <v-col :cols="Math.floor(sizeField/2)">
                     <v-text-field
                       v-model="coords.longitude"
                       label="Longitude*"
@@ -146,7 +132,7 @@
                       @change="updateMap(null, coords.longitude)"
                     />
                   </v-col>
-                  <v-col :cols="sizeField/2">
+                  <v-col :cols="Math.floor(sizeField/2)">
                     <v-text-field
                       v-model="coords.latitude"
                       label="Latitude*"
@@ -186,6 +172,7 @@
       v-model="dialog.successful"
       top
       color="success"
+      :timeout="10000"
     >
       Institution erstellt!
     </v-snackbar>
@@ -194,6 +181,7 @@
       v-model="dialog.error"
       top
       color="error"
+      :timeout="10000"
     >
       Institution konnte nicht erstellt werden: {{ dialog.errorMessage }}
     </v-snackbar>
@@ -221,7 +209,6 @@ export default {
     username: '',
     publickey: '',
     name: '',
-    picture: null,
     description: '',
     website: '',
     address: '',
@@ -240,10 +227,6 @@ export default {
       (v) => !!v || 'Feld muss ausgefüllt werden',
       (v) => /^[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
-    err: {
-      picErr: 0,
-      normErr: 0,
-    },
     dialog: {
       successful: false,
       error: false,
@@ -307,6 +290,7 @@ export default {
       axios.post('institutions', { }, { headers })
         .then(() => {
           this.dialog.successful = true;
+          // window.open('./home', '_self');
         })
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
@@ -319,15 +303,19 @@ export default {
       this.coords.longitude = this.marker.lng;
     },
     updateMap(lat, long) {
-      let newCoords;
-      if (lat !== null) {
-        newCoords = latLng(lat, this.marker.lng);
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
       }
-      if (long !== null) {
-        newCoords = latLng(this.marker.lat, long);
-      }
-      this.marker = newCoords;
-      this.center = newCoords;
     },
   },
 };
