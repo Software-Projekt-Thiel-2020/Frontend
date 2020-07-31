@@ -80,6 +80,7 @@
                       v-model="website"
                       clearable
                       outlined
+                      :rules="websiteRule"
                       label="Website"
                       background-color="grey lighten-4"
                     />
@@ -226,6 +227,9 @@ export default {
     numberRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
       (v) => /^[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    websiteRule: [
+      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     dialog: {
       successful: false,
