@@ -45,6 +45,7 @@
             auto-select-first
             outlined
             clearable
+            :rules="notEmpty"
           />
         </v-col>
         <v-col>
