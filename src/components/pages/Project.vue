@@ -167,6 +167,10 @@
             <v-col>
               <v-card class="py-8">
                 <div>
+                  <img
+                    class="projectImage"
+                    :src="project.picturePath ? apiurl+'/file/'+project.picturePath : '../../assets/placeholder.png'"
+                  >
                   <h4 class="headline font-weight-light">
                     Jetzt Spenden!
                   </h4>
@@ -219,6 +223,7 @@ export default {
     errorMessage: null,
     loading: false,
     voteEnabled: true,
+    apiurl: window.apiurl,
   }),
   computed: {
     getDonationETHValue() {
@@ -235,6 +240,7 @@ export default {
   mounted() {
     if (window.userSession.isUserSignedIn()) {
       this.userData = window.userSession.loadUserData();
+      // console.log(this.userData);
     }
     this.szaboToEuro();
     this.loadProject();
@@ -275,6 +281,7 @@ export default {
         .then((res) => {
           this.exrate = (res.data.ETH * 1000000000000000000);
           this.eurToEth = res.data.ETH;
+          // console.log(this.exrate);
         })
         .catch((err) => {
           this.errorMessage = err.toString();
@@ -289,6 +296,7 @@ export default {
       this.loading = true;
       axios.get(url)
         .then((res) => {
+          // console.log(res.data);
           this.project = res.data;
         })
         .catch((err) => {
@@ -322,6 +330,11 @@ export default {
 
   .projectBox{
     background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .projectImage{
+    max-height: 200px;
+    max-width: 200px;
   }
 
   .goalBox {
