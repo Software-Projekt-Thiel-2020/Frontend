@@ -52,6 +52,7 @@
                 class="mt-1"
                 :color="locationButton"
                 label="Mich finden"
+                :loading="loadLocation"
                 @click="getOwnLocation"
               >
                 <v-icon>mdi-crosshairs-gps</v-icon>
@@ -175,6 +176,7 @@ import axios from 'axios';
 export default {
   name: 'Spenden',
   data: () => ({
+    loadLocation: false,
     loading: false,
     items: [],
     gotResponse: false,
@@ -224,12 +226,15 @@ export default {
         this.errorMessage = 'Geolocation ist nicht verfügbar';
         return;
       }
+      this.loadLocation = true;
       navigator.geolocation.getCurrentPosition((pos) => {
         this.location = pos;
         this.longitude = pos.coords.longitude;
         this.latitude = pos.coords.latitude;
+        this.loadLocation = false;
       }, (err) => {
         this.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
+        this.loadLocation = false;
       });
     },
     reset() {
