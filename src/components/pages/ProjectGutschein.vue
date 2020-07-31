@@ -47,7 +47,14 @@
                 size="250"
                 tile
               >
-                <v-img :src="image" />
+                <img
+                  v-if="project[0].picturePath"
+                  :src="apiurl+'/file/'+project[0].picturePath"
+                >
+                <img
+                  v-else
+                  src="../../assets/placeholder.png"
+                >
               </v-avatar>
             </div>
           </v-card>
@@ -194,6 +201,7 @@ import { userSession } from '../../userSession';
 export default {
   name: 'ProjectGutschein',
   data: () => ({
+    apiurl: window.apiurl,
     userSession: null,
     userData: null,
     institutionId: null,
