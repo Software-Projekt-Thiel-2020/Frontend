@@ -36,7 +36,7 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="!gotResponse || items.length === 0">
+      <div v-if="(items.length === 0 && gotResponse)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"

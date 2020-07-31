@@ -77,7 +77,7 @@
                 <v-row justify="center">
                   <v-col :cols="sizeField">
                     <v-text-field
-                      v-model="website"
+                      v-model="webpage"
                       clearable
                       outlined
                       :rules="websiteRule"
@@ -211,7 +211,7 @@ export default {
     publickey: '',
     name: '',
     description: '',
-    website: '',
+    webpage: '',
     address: '',
     coords: {
       latitude: '',
@@ -288,8 +288,8 @@ export default {
       if (this.description !== '') {
         headers.description = window.btoa(this.description);
       }
-      if (this.website !== '') {
-        headers.website = this.website;
+      if (this.webpage !== '') {
+        headers.webpage = this.webpage;
       }
       axios.post('institutions', { }, { headers })
         .then(() => {
