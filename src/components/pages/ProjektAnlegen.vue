@@ -45,7 +45,6 @@
             auto-select-first
             outlined
             clearable
-            :rules="notEmpty"
           />
         </v-col>
         <v-col>
@@ -70,7 +69,7 @@
             label="Spendenziel in Wei"
             outlined
             clearable
-            :rules="notEmpty"
+            :rules="weiRule"
           />
         </v-col>
         <v-col cols="3">
@@ -131,7 +130,7 @@
         <v-col cols="12">
           <v-textarea
             v-model="project.description"
-            label="Beschreibung"
+            label="Beschreibung (optional)"
             clearable
             counter
             no-resize
@@ -347,7 +346,7 @@ export default {
     ],
     weiRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
-      (v) => /^[0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
+      (v) => /^[1-9][0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
