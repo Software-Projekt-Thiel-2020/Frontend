@@ -127,6 +127,8 @@
             </h1>
           </v-btn>
         </router-link>
+      </div>
+      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
         <router-link
           to="/InstitutionEditieren"
           tag="span"
