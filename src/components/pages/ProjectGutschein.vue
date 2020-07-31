@@ -1,5 +1,71 @@
 <template>
   <div class="gradientBackground">
+    <v-dialog
+      v-if="boughtVoucher "
+      v-model="dialog"
+      :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
+    >
+      <v-card class="text-center py-10">
+        <svg
+          class="checkmark"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 52 52"
+        ><circle
+          class="checkmark__circle"
+          cx="26"
+          cy="26"
+          r="25"
+          fill="none"
+        /><path
+          class="checkmark__check"
+          fill="none"
+          d="M14.1 27.2l7.1 7.2 16.7-16.8"
+        /></svg>
+        <div class="donation_title">
+          <v-icon
+            class="mr-2 display-2"
+            color="red"
+          >
+            mdi-cards-heart
+          </v-icon>
+          Gutschein erworben!
+          <v-icon
+            class="ml-2 display-2"
+            color="red"
+          >
+            mdi-cards-heart
+          </v-icon>
+        </div>
+        <v-card-text class="title">
+          <v-card
+            color="primary"
+            dark
+          >
+            <v-card-title>{{ boughtVoucher.title }}</v-card-title>
+            <v-card-subtitle class="overline text-left">
+              {{ boughtVoucher.subject }}
+            </v-card-subtitle>
+            <v-card-actions>
+              Gültigkeit: {{ boughtVoucher.validTime / 60 / 60 / 24 / 365 }} Jahre
+              <v-spacer />
+              <h3 class="pricetag font-weight-light">
+                {{ showValue(boughtVoucher.price) }}
+              </h3>
+            </v-card-actions>
+          </v-card>
+        </v-card-text>
+
+
+        <v-btn
+          class="title"
+          color="green darken-1"
+          outlined
+          @click="closeDialog"
+        >
+          OK
+        </v-btn>
+      </v-card>
+    </v-dialog>
     <v-container>
       <v-row>
         <v-col>
@@ -112,7 +178,7 @@
                 class="mt-2 btn-hover color-9"
                 dark
                 :loading="loading && indexClicked == voucher.id"
-                @click="buyVoucher(voucher.id)"
+                @click="buyVoucher(voucher)"
               >
                 Gutschein kaufen
               </v-btn>
@@ -183,6 +249,7 @@ export default {
     userSession: null,
     userData: null,
     institutionId: null,
+    dialog: false,
     project: [{
       name: '',
       webpage: '',
@@ -213,6 +280,7 @@ export default {
     ethToEur: 0,
     loading: false,
     indexClicked: null,
+    boughtVoucher: null,
   }),
   created() {
     this.userSession = userSession;
@@ -270,19 +338,20 @@ export default {
           this.dialogEth.error = true;
         });
     },
-    buyVoucher(id) {
+    buyVoucher(voucher) {
       if (this.userData == null) {
         this.notLoggedin = true;
       } else {
         const headers = {
-          idVoucher: id,
+          idVoucher: voucher.id,
           authToken: this.userData.authResponseToken,
         };
         this.loading = true;
-        this.indexClicked = id;
+        this.indexClicked = voucher.id;
         axios.post('vouchers/user', { }, { headers })
           .then(() => {
-            this.dialogBuyVoucher.successfull = true;
+            this.boughtVoucher = voucher;
+            this.openDialog();
           })
           .catch((err) => {
             this.dialogBuyVoucher.errorMessage = err.toString();
@@ -291,6 +360,19 @@ export default {
             this.loading = false;
           });
       }
+    },
+    showValue(value) {
+      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
+      if (value > 10e6) return `${(value / 10e6)} MWEI`;
+      return `${value} WEI`;
+    },
+    openDialog() {
+      this.dialog = true;
+      this.$confetti.start();
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.$confetti.stop();
     },
   },
 };
@@ -363,5 +445,58 @@ export default {
 
     .institutionName {
       font-size: 20px;
+    }
+    .checkmark__circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #7ac142;
+      fill: none;
+      animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    .checkmark {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 2;
+      stroke: #fff;
+      stroke-miterlimit: 10;
+      margin: 0px auto;
+      border-top-left-radius: 50% !important;
+      border-top-right-radius: 50% !important;
+      box-shadow: inset 0px 0px 0px #7ac142;
+      animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    }
+    .checkmark__check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+
+    @keyframes stroke {
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+    @keyframes scale {
+      0%, 100% {
+        transform: none;
+      }
+      50% {
+        transform: scale3d(1.1, 1.1, 1);
+      }
+    }
+    @keyframes fill {
+      100% {
+        box-shadow: inset 0px 0px 0px 30px #7ac142;
+      }
+    }
+
+    .donation_title{
+      font-size: 2rem;
+      vertical-align: text-bottom;
     }
 </style>
