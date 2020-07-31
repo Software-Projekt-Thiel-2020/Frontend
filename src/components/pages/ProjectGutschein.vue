@@ -7,7 +7,21 @@
             class="projectBox"
             elevation="4"
           >
-            <div class="d-flex flex-no-wrap justify-space-between">
+            <v-layout
+              v-if="loadingProject == true"
+              justify-center
+            >
+              <v-progress-circular
+                :size="50"
+                :width="7"
+                color="green"
+                indeterminate
+              />
+            </v-layout>
+            <div
+              v-else
+              class="d-flex flex-no-wrap justify-space-between"
+            >
               <div>
                 <v-card-title class="font-weight-light display-1">
                   Infos über den Betrieb
@@ -191,6 +205,7 @@ export default {
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
     loadingVouchers: true,
+    loadingProject: true,
     dialogVoucher: {
       errorMessage: '',
       error: false,
@@ -243,6 +258,8 @@ export default {
         .catch((err) => {
           this.dialogProject.errorMessage = err.toString();
           this.dialogProject.error = true;
+        }).finally(() => {
+          this.loadingProject = false;
         });
     },
     loadVouchers() {
