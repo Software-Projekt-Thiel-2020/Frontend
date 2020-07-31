@@ -1,6 +1,9 @@
 <template>
   <div class="gradientBackground">
-    <div class="titleHeader text-center">
+    <div
+      v-if="project"
+      class="titleHeader text-center"
+    >
       <h1
         :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
         class="font-weight-thin white--text"
