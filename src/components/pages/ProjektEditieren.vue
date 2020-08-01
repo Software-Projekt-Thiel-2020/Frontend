@@ -36,7 +36,7 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="!gotResponse || userProjects.length === 0">
+      <div v-if="(gotResponse && userProjects.length === 0)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
@@ -239,60 +239,107 @@
                     </v-col>
                   </v-row>
                   <v-row gutters>
-                    <v-col>
-                      <v-btn
-                        color="primary"
-                        dark
-                        @click="milestoneDialog = true"
-                      >
-                        Meilenstein hinzufügen
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                  <v-dialog
-                    v-model="milestoneDialog"
-                  >
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline"> Neuer Meilenstein</span>
-                      </v-card-title>
-                      <v-card-text>
-                        <v-row>
-                          <v-col>
-                            <v-text-field
-                              v-model="newMile.name"
-                              label="Meilensteinname"
-                            />
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col>
-                            <v-text-field
-                              v-model="newMile.goal"
-                              label="Spendenziel in Wei"
-                            />
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col>
-                            <v-date-picker
-                              v-model="newMile.date"
-                              :min="today"
-                              :max="editElement.until"
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
-                      <v-card-actions />
-                    </v-card>
-                  </v-dialog>
-                  <v-row gutters>
-                    <v-col>
+                    <v-col cols="12">
                       <v-data-table
                         :headers="tableHeaders"
                         :items="allMilestones"
                         sort-by="until"
-                      />
+                        class="elevation-2"
+                      >
+                        <template v-slot:top>
+                          <v-toolbar flat>
+                            <v-toolbar-title>Meilensteine</v-toolbar-title>
+                            <v-spacer />
+                            <v-btn
+                              color="primary"
+                              dark
+                              @click="milestoneDialog = true"
+                            >
+                              Meilenstein hinzufügen
+                            </v-btn>
+                            <v-dialog
+                              v-model="milestoneDialog"
+                              max-width="400"
+                            >
+                              <v-card>
+                                <v-card-title>
+                                  <span class="headline"> Neuer Meilenstein</span>
+                                </v-card-title>
+                                <v-card-text>
+                                  <v-row justify="center">
+                                    <v-col>
+                                      <v-text-field
+                                        v-model="newMile.name"
+                                        label="Meilensteinname"
+                                        outlined
+                                        clearable
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row justify="center">
+                                    <v-col>
+                                      <v-text-field
+                                        v-model="newMile.goal"
+                                        label="Spendenziel in Wei"
+                                        min="1"
+                                        outlined
+                                        clearable
+                                        :rules="weiRule"
+                                      />
+                                    </v-col>
+                                  </v-row>
+                                  <v-row>
+                                    <v-col align="center">
+                                      <v-date-picker
+                                        v-model="newMile.until"
+                                        :min="today"
+                                        :max="editElement.until"
+                                      />
+                                      <!-- WATREN AUF API! until noch nicht mitgeliefert -->
+                                    </v-col>
+                                  </v-row>
+                                </v-card-text>
+                                <v-card-actions>
+                                  <v-spacer />
+                                  <v-btn
+                                    color="blue darken-1"
+                                    text
+                                    @click="closeDialog"
+                                  >
+                                    Cancel
+                                  </v-btn>
+                                  <v-btn
+                                    :disabled="newMile.name === '' || newMile.goal === '' || newMile.until === null"
+                                    color="blue darken-1"
+                                    text
+                                    @click="saveMilestone"
+                                  >
+                                    Save
+                                  </v-btn>
+                                </v-card-actions>
+                              </v-card>
+                            </v-dialog>
+                          </v-toolbar>
+                        </template>
+                        <template v-slot:item.actions="{ item }">
+                          <div
+                            v-if="isNewMilestone(item)"
+                          >
+                            <v-icon
+                              small
+                              @click="editMilestone(item)"
+                            >
+                              mdi-pencil
+                            </v-icon>
+                            <v-icon
+                              small
+                              @click="deleteMilestone(item)"
+                            >
+                              mdi-delete
+                            </v-icon>
+                          </div>
+                        </template>
+                      </v-data-table>
                     </v-col>
                   </v-row>
                 </v-form>
@@ -370,7 +417,7 @@ export default {
     newMile: {
       name: '',
       goal: '',
-      date: '',
+      until: '',
     },
     today: null,
     milestoneDialog: false,
@@ -384,6 +431,10 @@ export default {
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+    ],
+    weiRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => /^[1-9][0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -402,7 +453,8 @@ export default {
   computed: {
     allMilestones() {
       return [...this.editElement.milestones, ...this.newMilestones].map((milestone) => {
-        const mCopy = milestone;
+        const mCopy = JSON.parse(JSON.stringify(milestone));
+        mCopy.newIndex = this.newMilestones.indexOf(milestone);
         // until * 100, weil ms auf s umgerechnet wird
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
@@ -432,7 +484,52 @@ export default {
       }, 400);
     },
     getTodaysDate() {
-      this.today = new Date().toLocaleDateString();
+      this.today = new Date().toISOString().substring(0, 10);
+    },
+    closeDialog() {
+      this.newMile.name = '';
+      this.newMile.goal = '';
+      this.newMile.until = null;
+
+      this.milestoneDialog = false;
+    },
+    isNewMilestone(item) {
+      try {
+        return item.newIndex > -1;
+      } catch (e) {
+        // Just dont show edit options
+        return 0;
+      }
+    },
+    deleteMilestone(milestone) {
+      try {
+        if (milestone.newIndex > -1) {
+          this.newMilestones.splice(milestone.newIndex, 1);
+        }
+      } catch (e) {
+        // Do nothing (or print err msg)
+      }
+    },
+    editMilestone(milestone) {
+      this.newMile = milestone;
+      // in this case "5.9.2020" -> "5-9-2020" -> 2020-9-5
+      let newTime = JSON.parse(JSON.stringify(this.newMile));
+      newTime = newTime.until.split('.').reverse().join('-');
+      this.newMile.until = new Date(newTime).toISOString().substring(0, 10);
+      this.milestoneDialog = true;
+    },
+    saveMilestone() {
+      const dateStone = JSON.parse(JSON.stringify(this.newMile));
+      const dateArray = dateStone.until.split('-', 3);
+      // until / 1000 --> s auf ms umrechnen
+      dateStone.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
+      this.newMilestones.push(dateStone);
+
+      this.newMile.name = '';
+      this.newMile.goal = '';
+      this.newMile.until = null;
+
+      this.milestoneDialog = false;
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
@@ -444,33 +541,16 @@ export default {
       try {
         projectId = parseInt(itemId, 10);
       } catch (e) {
-        // TODO: Print err Message
-        console.log(e);
         return;
       }
 
-      /*
-        this.editElement.id = inst.id;
-        this.editElement.authToken = inst.authToken;
-        this.editElement.name = inst.name;
-        this.editElement.picturePath = inst.picturePath;
-        this.editElement.webpage = inst.webpage;
-        this.editElement.description = window.atob(inst.description);
-        this.editElement.longitude = inst.longitude;
-        this.editElement.latitude = inst.latitude;
-        */
       if (Number.isInteger(projectId) && projectId > 0) {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
             this.editElement.description = window.atob(res.data.description);
             this.editElement.authToken = userSession.getAuthResponseToken();
-          })
-          .catch((err) => {
-            console.log(err);
-            // ToDo: print err Message
-          })
-          .finally(() => {
+
             const coords = latLng(this.editElement.latitude, this.editElement.longitude);
             this.center = coords;
             this.marker = coords;
@@ -478,12 +558,11 @@ export default {
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
             }, 100);
+          })
+          .catch((err) => {
+            this.showAlert(`Das Projekt konnte nicht geladen werden: ${err.toString()}`, 'error');
           });
       }
-
-
-      // return;
-      // this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
     },
     async changeProject() {
       if (userSession.isUserSignedIn()) {
