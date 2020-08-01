@@ -284,7 +284,7 @@
                 </h1>
               </v-card-text>
               <v-card-text
-                v-else-if="donations === null || donations === undefined"
+                v-else-if="donations === null || donations === undefined || donations.length === 0"
                 class="text-center"
               >
                 <h1 class="my-10 noEntryText">
@@ -337,14 +337,14 @@ export default {
   data: () => ({
     weiFormula: 1000000000000000000,
     tab: null,
-    donations: null,
-    vouchers: null,
+    donations: [],
+    vouchers: [],
     errorMessage: '',
     vErrMsg: '',
     dErrMsg: '',
     gotResponse: false,
     user: null,
-    redeemVTitle: null,
+    redeemVTitle: '',
     redeemFail: false,
     redeemSucc: false,
     voucherPage: 1,
@@ -366,8 +366,8 @@ export default {
             this.errorMessage = 'Could not fetch data';
           } else {
             [this.user] = res.data;
-            this.donations = this.loadDonations();
-            this.vouchers = this.loadVouchers();
+            this.loadDonations();
+            this.loadVouchers();
           }
         }).catch((err) => {
           this.errorMessage = err.toString();
@@ -397,8 +397,11 @@ export default {
     loadDonations() {
       axios.get(`donations?iduser=${this.user.id}`)
         .then((res) => {
+          // TODO was wenn Server nicht erreichbar
           if (res.data.length !== 0) {
             this.donations = res.data;
+          } else {
+            this.donations = [];
           }
         }).catch((err) => {
           this.dErrMsg = err.toString();
