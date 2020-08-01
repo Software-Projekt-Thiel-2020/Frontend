@@ -397,7 +397,6 @@ export default {
     loadDonations() {
       axios.get(`donations?iduser=${this.user.id}`)
         .then((res) => {
-          // TODO was wenn Server nicht erreichbar
           if (res.data.length !== 0) {
             this.donations = res.data;
           } else {
