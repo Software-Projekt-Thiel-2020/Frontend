@@ -131,7 +131,7 @@
         <v-col cols="12">
           <v-textarea
             v-model="project.description"
-            label="Beschreibung (optional)"
+            label="Beschreibung"
             clearable
             counter
             no-resize
@@ -222,6 +222,7 @@
                               label="Meilensteinname"
                               outlined
                               clearable
+                              :rules="textRule"
                             />
                           </v-col>
                           <v-col cols="12">
@@ -482,12 +483,13 @@ export default {
     editItem(item) {
       this.editedIndex = this.project.milestones.indexOf(item);
       this.editedItem = { ...item };
+      this.deleteItem(item);
       this.dialog2 = true;
     },
     deleteItem(item) {
       const index = this.project.milestones.indexOf(item);
-      const displayIndex = this.milestonesDate.indexOf(item);
       this.project.milestones.splice(index, 1);
+      const displayIndex = this.milestonesDate.indexOf(item);
       this.milestonesDate.splice(displayIndex, 1);
     },
     close() {
@@ -501,7 +503,6 @@ export default {
       const dateArray = this.editedItem.until.split(('-'), 3);
       // durch 1000 weil von ms auf sekunden umgerechnet wird
       const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
-
       if (this.editedIndex > -1) {
         Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
       } else {
