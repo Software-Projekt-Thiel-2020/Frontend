@@ -127,10 +127,15 @@
               class="project"
               elevation="5"
             >
-              <img
-                class="elementImage"
+              <v-img
                 :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
-              >
+                alt="/assets/placeholder.png"
+                max-width="150px"
+                max-height="150px"
+                min-width="150px"
+                min-height="150px"
+                class="elementImage"
+              />
               <div
                 class="companyData"
                 style="border:0;"
