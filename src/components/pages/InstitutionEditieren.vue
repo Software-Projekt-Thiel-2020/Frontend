@@ -59,8 +59,8 @@
               elevation="5"
             >
               <img
-                class="elementImage"
                 v-if="item.picturePath"
+                class="elementImage"
                 :src="item.picturePath"
               >
               <img
