@@ -416,8 +416,8 @@ export default {
     newMilestones: [],
     newMile: {
       name: '',
-      goal: '',
-      until: '',
+      goal: null,
+      until: null,
     },
     today: null,
     milestoneDialog: false,
@@ -433,8 +433,8 @@ export default {
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     weiRule: [
-      (v) => !!v || 'Feld muss ausgefüllt werden',
-      (v) => /^[1-9][0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
+      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      (v) => (/^[1-9][0-9]*$/s.test(v) || v === null) || 'Bitte nur ganze Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -488,7 +488,7 @@ export default {
     },
     closeDialog() {
       this.newMile.name = '';
-      this.newMile.goal = '';
+      this.newMile.goal = null;
       this.newMile.until = null;
 
       this.milestoneDialog = false;
