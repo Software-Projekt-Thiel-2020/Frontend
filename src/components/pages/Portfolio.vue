@@ -366,8 +366,8 @@ export default {
             this.errorMessage = 'Could not fetch data';
           } else {
             [this.user] = res.data;
-            this.donations = this.loadDonations();
-            this.vouchers = this.loadVouchers();
+            this.loadDonations();
+            this.loadVouchers();
           }
         }).catch((err) => {
           this.errorMessage = err.toString();
