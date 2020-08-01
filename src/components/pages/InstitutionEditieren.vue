@@ -36,7 +36,7 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="!gotResponse || items.length === 0">
+      <div v-if="(items.length === 0 && gotResponse)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
@@ -59,8 +59,14 @@
               elevation="5"
             >
               <img
+                v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                :src="item.picturePath"
+              >
+              <img
+                v-else
+                class="elementImage"
+                src="../../assets/placeholder.png"
               >
               <div
                 class="companyData"
