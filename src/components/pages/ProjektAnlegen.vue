@@ -186,7 +186,6 @@
           <v-data-table
             :headers="headers"
             :items="milestonesDate"
-            sort-by="calories"
           >
             <template v-slot:top>
               <v-toolbar
@@ -207,7 +206,7 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      Neues Item
+                      Neuer Meilenstein
                     </v-btn>
                   </template>
                   <v-card>
@@ -487,7 +486,9 @@ export default {
     },
     deleteItem(item) {
       const index = this.project.milestones.indexOf(item);
+      const displayIndex = this.milestonesDate.indexOf(item);
       this.project.milestones.splice(index, 1);
+      this.milestonesDate.splice(displayIndex, 1);
     },
     close() {
       this.dialog2 = false;
