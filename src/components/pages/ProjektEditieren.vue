@@ -240,6 +240,9 @@
                   </v-row>
                   <v-row gutters>
                     <v-col cols="12">
+                      <p class="mr-1">
+                        Es können nur Meilensteine mit höherem Ziel hinzugeüft werden!
+                      </p>
                       <v-data-table
                         :headers="tableHeaders"
                         :items="allMilestones"
@@ -421,6 +424,7 @@ export default {
     },
     today: null,
     milestoneDialog: false,
+    minWei: 1,
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
@@ -431,10 +435,6 @@ export default {
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
-    ],
-    weiRule: [
-      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
-      (v) => (/^[1-9][0-9]*$/s.test(v) || v === null) || 'Bitte nur ganze Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -459,6 +459,27 @@ export default {
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
       });
+    },
+    weiRule() {
+      /* weiRule: [
+        (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+        (v) => (/^[1-9][0-9]*$/s.test(v) || v === null) || 'Bitte nur ganze Zahlen eingeben',
+        (v) => (v === null) || `Ziel muss über ${this.minWei} liegen`,
+      ], */
+      return [
+        (v) => {
+          if (!!v || v === null) {
+            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
+              if (v > this.minWei || v === null) {
+                return true;
+              }
+              return `Ziel muss über ${this.minWei} liegen`;
+            }
+            return 'Bitte nur ganze Zahlen eingeben';
+          }
+          return 'Feld muss ausgefüllt werden';
+        },
+      ];
     },
   },
   mounted() {
@@ -524,11 +545,7 @@ export default {
       dateStone.until = new Date(dateStone.until).getTime() / 1000;
       this.newMilestones.push(dateStone);
 
-      this.newMile.name = '';
-      this.newMile.goal = '';
-      this.newMile.until = null;
-
-      this.milestoneDialog = false;
+      this.closeDialog();
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
@@ -549,6 +566,7 @@ export default {
             this.editElement = res.data;
             this.editElement.description = window.atob(res.data.description);
             this.editElement.authToken = userSession.getAuthResponseToken();
+            this.editElement.picture = null;
 
             const coords = latLng(this.editElement.latitude, this.editElement.longitude);
             this.center = coords;
@@ -557,6 +575,13 @@ export default {
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
             }, 100);
+
+            // Set min WEI amount for new milestones
+            this.editElement.milestones.forEach((mile) => {
+              if (mile.goal > this.minWei) {
+                this.minWei = mile.goal;
+              }
+            });
           })
           .catch((err) => {
             this.showAlert(`Das Projekt konnte nicht geladen werden: ${err.toString()}`, 'error');
@@ -565,27 +590,26 @@ export default {
     },
     async changeProject() {
       if (userSession.isUserSignedIn()) {
-        const headers = this.editElement;
         const authToken = userSession.loadUserData().authResponseToken;
-        headers.authToken = authToken;
-
-        delete headers.name;
-        delete headers.picturePath;
-
-        let newPic = null;
-        if (this.editElement.picture) {
-          newPic = this.editElement.picture;
+        const headers = {
+          id: this.editElement.id,
+          authToken,
+        };
+        if (this.editElement.webpage) headers.webpage = this.editElement.webpage;
+        if (this.editElement.description) headers.description = window.btoa(this.editElement.description);
+        if (this.editElement.latitude) headers.latitude = this.editElement.latitude;
+        if (this.editElement.longitude) headers.longitude = this.editElement.longitude;
+        if (this.newMilestones.length > 0) {
+          headers.milestones = this.newMilestones.sort((a, b) => a.goal - b.goal);
+          headers.milestones = JSON.stringify(headers.milestones);
         }
-        delete this.editElement.picture;
-
-        headers.description = window.btoa(this.editElement.description);
 
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
           }).finally(async () => {
-            if (newPic !== null) {
-              this.postPic(authToken, newPic)
+            if (this.editElement.picture !== null) {
+              this.postPic(authToken, this.editElement.picture)
                 .then(() => {
                   this.sentStauts();
                 });
