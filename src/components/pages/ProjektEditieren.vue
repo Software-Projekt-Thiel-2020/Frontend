@@ -520,9 +520,8 @@ export default {
     },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
-      const dateArray = dateStone.until.split('-', 3);
       // until / 1000 --> s auf ms umrechnen
-      dateStone.until = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
+      dateStone.until = new Date(dateStone.until).getTime() / 1000;
       this.newMilestones.push(dateStone);
 
       this.newMile.name = '';
