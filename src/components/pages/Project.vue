@@ -228,6 +228,19 @@
                       Institution: {{ institution[0].name }}
                     </p>
                   </v-card-text>
+                  <router-link
+                    :to="'/projectGutschein/'+institution[0].id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      outlined
+                      color="grey"
+                      class="websiteButton"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                   <a
                     class=""
                     :href="'//'+institution[0].webpage"
