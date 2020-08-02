@@ -87,6 +87,14 @@
                       Adresse: {{ project[0].address }}
                     </p>
                   </div>
+                  <div
+                    v-if="project[0].description"
+                    class="mb-4"
+                  >
+                    <p>
+                      Beschreibung: {{ project[0].description }}
+                    </p>
+                  </div>
                 </v-card-text>
                 <v-card-actions>
                   <a :href="'//'+project[0].webpage">
