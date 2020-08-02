@@ -63,7 +63,7 @@
                   <h4>
                     Gültigkeit:
                   </h4>
-                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahre
+                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
                 </v-col>
               </v-row>
               <v-row>
