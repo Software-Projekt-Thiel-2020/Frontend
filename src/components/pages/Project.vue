@@ -230,7 +230,7 @@
                   </v-card-text>
                   <a
                     class=""
-                    :href="institution[0].webpage"
+                    :href="'//'+institution[0].webpage"
                   >
                     <v-btn
                       outlined
