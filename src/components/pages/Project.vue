@@ -176,6 +176,8 @@
                   </h4>
                   <currency-input
                     v-model="donationValue"
+                    :allow-negative="false"
+                    :auto-decimal-mode="true"
                     class="mt-3 headline"
                     @change="compareInput"
                   />
