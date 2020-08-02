@@ -525,20 +525,19 @@ export default {
     },
     save() {
       const dateArray = this.editedItem.until.split(('-'), 3);
+      dateArray[1] -= 1;
       // durch 1000 weil von ms auf sekunden umgerechnet wird
       const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
       if (this.editedIndex > -1) {
+        this.project.milestones[this.project.milestones.length - 1].until = date;
         Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
       } else {
         this.project.milestones.push(this.editedItem);
       }
-
       // Für die User Anzeige des Datums
       const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
       cpy.until = new Date(cpy.until).toLocaleDateString();
       this.milestonesDate.push(cpy);
-
-      this.project.milestones[this.project.milestones.length - 1].until = date;
       this.close();
     },
     getTodaysDate() {
