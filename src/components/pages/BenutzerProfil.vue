@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ma-5"
+    class="pa-5 gradientBackground"
   >
     <v-container>
       <div>
@@ -72,37 +72,39 @@
               </v-col>
             </v-row>
           </v-form>
-          <v-btn
-            color="error"
-            class="mr-4 mt-4"
-            @click="reset"
-          >
-            Änderungen zurücksetzten
-          </v-btn>
-          <v-btn
-            :disabled="(!valid || !vForm)"
-            color="success"
-            class="mt-4"
-            @click="submit"
-          >
-            Änderungen bestätigen
-          </v-btn>
-          <v-snackbar
-            v-model="snackbar"
-            multi-line
-            :color="snackbarType"
-            centered
-            :timeout="0"
-          >
-            {{ userFeedback }}
+          <v-row class="ml-0">
             <v-btn
-              color="white"
-              text
-              @click="snackbar = false"
+              color="error"
+              class="mr-4 mt-4"
+              @click="reset"
             >
-              Close
+              Zurücksetzten
             </v-btn>
-          </v-snackbar>
+            <v-btn
+              :disabled="(!valid || !vForm)"
+              color="success"
+              class="mt-4"
+              @click="submit"
+            >
+              Bestätigen
+            </v-btn>
+            <v-snackbar
+              v-model="snackbar"
+              multi-line
+              :color="snackbarType"
+              centered
+              :timeout="0"
+            >
+              {{ userFeedback }}
+              <v-btn
+                color="white"
+                text
+                @click="snackbar = false"
+              >
+                Close
+              </v-btn>
+            </v-snackbar>
+          </v-row>
         </v-col>
       </v-row>
       <v-alert
@@ -118,13 +120,11 @@
           tag="span"
           class="link"
         >
-          <v-btn>
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Spenden und Gutscheine
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Spenden/Gutscheine
           </v-btn>
         </router-link>
         <router-link
@@ -132,13 +132,11 @@
           tag="span"
           class="link"
         >
-          <v-btn class="mt-5">
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Institutionen
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Institutionen
           </v-btn>
         </router-link>
       </div>
@@ -148,7 +146,7 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'BenutzerProfil',
@@ -260,11 +258,10 @@ export default {
 </script>
 
 <style scoped>
-
-    .inputField ::placeholder{
-        color: black!important;
-        opacity: 1;
-    }
+  .inputField ::placeholder{
+    color: black!important;
+    opacity: 1;
+  }
 
   .pageBox{
     position:relative;
@@ -272,7 +269,13 @@ export default {
   }
 
   .linkToDonate {
-      width: 100%;
-      bottom: 40px;
+    width: 100%;
+    bottom: 40px;
+  }
+
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(230, 255, 242), rgb(200, 245, 255));
+    height: 100%;
+    width: 100%;
   }
 </style>
