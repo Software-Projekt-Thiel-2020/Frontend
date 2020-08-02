@@ -212,6 +212,13 @@
         </v-card-text>
       </v-card>
     </v-container>
+    <v-snackbar
+      v-model="notLoggedin"
+      top
+      color="error"
+    >
+      Bitte melden Sie sich an
+    </v-snackbar>
   </div>
 </template>
 
@@ -233,6 +240,7 @@ export default {
     loading: false,
     voteEnabled: true,
     apiurl: window.apiurl,
+    notLoggedin: false,
   }),
   computed: {
     getDonationETHValue() {
@@ -256,25 +264,29 @@ export default {
   },
   methods: {
     donate() {
-      const donationAmount = this.getDonationETHValue * this.weiFormula;
-      const headers = {
-        authToken: this.userData.authResponseToken,
-        idproject: this.projectid,
-        amount: donationAmount,
-        voteEnabled: this.voteEnabled ? 1 : 0,
-      };
-      this.userData = window.userSession.loadUserData();
-      this.loading = true;
-      axios.post('donations', {}, { headers })
-        .then(() => {
-          this.openDialog();
-        })
-        .catch((err) => {
-          this.errorMessage = err.toString();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      if (this.userData == null) {
+        this.notLoggedin = true;
+      } else {
+        const donationAmount = this.getDonationETHValue * this.weiFormula;
+        const headers = {
+          authToken: this.userData.authResponseToken,
+          idproject: this.projectid,
+          amount: donationAmount,
+          voteEnabled: this.voteEnabled ? 1 : 0,
+        };
+        this.userData = window.userSession.loadUserData();
+        this.loading = true;
+        axios.post('donations', {}, { headers })
+          .then(() => {
+            this.openDialog();
+          })
+          .catch((err) => {
+            this.errorMessage = err.toString();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     openDialog() {
       this.dialog = true;
