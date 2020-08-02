@@ -12,7 +12,7 @@
       </h1>
       <a
         class=""
-        :href="project.homepage"
+        :href="'//'+project.webpage"
       >
         <v-btn
           outlined

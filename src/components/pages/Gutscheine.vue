@@ -148,7 +148,7 @@
                 </h2>
                 <h4 class="ma-3">
                   Zur Website:
-                  <a :href="item.webpage">{{ item.webpage }}</a>
+                  <a :href="'//'+item.webpage">{{ item.webpage }}</a>
                 </h4>
               </div>
               <v-card-actions>
