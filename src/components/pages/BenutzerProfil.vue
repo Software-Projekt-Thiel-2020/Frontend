@@ -94,6 +94,7 @@
             :disabled="(!valid || !vForm)"
             color="success"
             class="mt-4"
+            :loading="processingChanges"
             @click="submit"
           >
             Änderungen bestätigen
@@ -168,6 +169,7 @@ export default {
 
   data: () => ({
     loading: true,
+    processingChanges: false,
     item: {
       username: 'username',
       firstname: 'firstname',
@@ -246,7 +248,7 @@ export default {
         } else {
           headers.email = this.item.email;
         }
-
+        this.processingChanges = true;
         axios.put('users', {}, { headers })
           .then(() => {
             this.snackSucc();
@@ -256,6 +258,8 @@ export default {
           .catch((err) => {
             this.snackErr();
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.processingChanges = false;
           });
       }
     },
