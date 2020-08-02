@@ -124,7 +124,7 @@
         </v-col>
       </v-row>
       <v-layout
-        v-if="loadingVouchers == true"
+        v-if="loadingVouchers === true"
         justify-center
       >
         <v-progress-circular
@@ -185,7 +185,7 @@
                 :id="voucher.id"
                 class="mt-2 btn-hover color-9"
                 dark
-                :loading="loading && indexClicked == voucher.id"
+                :loading="loading && indexClicked === voucher.id"
                 @click="buyVoucher(voucher)"
               >
                 Gutschein kaufen
@@ -193,7 +193,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="vouchers.length==0">
+        <v-row v-if="vouchers.length === 0">
           <v-col class="noVouchers">
             <h3>
               Keine Gutscheine vorhanden
@@ -249,7 +249,7 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'ProjectGutschein',
@@ -315,6 +315,7 @@ export default {
       axios.get(url)
         .then((res) => {
           this.project = res.data;
+          this.project.description = window.atob(res.data.description);
         })
         .catch((err) => {
           this.dialogProject.errorMessage = err.toString();
@@ -394,8 +395,7 @@ export default {
     }
 
     .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
+      background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     }
 
     .projectBox {
