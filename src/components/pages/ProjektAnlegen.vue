@@ -251,7 +251,7 @@
                       <v-btn
                         color="blue darken-1"
                         text
-                        @click="close"
+                        @click="cancel"
                       >
                         Cancel
                       </v-btn>
@@ -374,6 +374,12 @@ export default {
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     editedIndex: -1,
+    preEditedItem: {
+      name: '',
+      goal: null,
+      requiredVotes: 1,
+      until: null,
+    },
     editedItem: {
       name: '',
       goal: null,
@@ -486,6 +492,7 @@ export default {
     editItem(item) {
       this.editedIndex = this.project.milestones.indexOf(item);
       this.editedItem = { ...item };
+      this.preEditedItem = { ...item };
       this.deleteItem(item);
       this.dialog2 = true;
     },
@@ -495,10 +502,15 @@ export default {
       const displayIndex = this.milestonesDate.indexOf(item);
       this.milestonesDate.splice(displayIndex, 1);
     },
+    cancel() {
+      this.editedItem = { ...this.preEditedItem };
+      this.save();
+    },
     close() {
       this.dialog2 = false;
       this.$nextTick(() => {
         this.editedItem = { ...this.defaultItem };
+        this.preEditedItem = { ...this.defaultItem };
         this.editedIndex = -1;
       });
     },
