@@ -116,7 +116,7 @@
             class="mt-5"
             style="color: black"
           >
-            Meine Institution
+            Meine Institutionen
           </v-btn>
         </router-link>
       </v-layout>
@@ -501,9 +501,9 @@ export default {
         headers.priceVoucher = this.newPrice;
       }
       if (this.newAvailable) {
-        headers.availableVoucher = true;
+        headers.availableVoucher = 1;
       } else {
-        headers.availableVoucher = false;
+        headers.availableVoucher = 0;
       }
 
       axios.patch(url, {}, { headers }).then(() => {
