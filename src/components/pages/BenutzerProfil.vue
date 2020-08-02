@@ -219,12 +219,18 @@ export default {
         };
         if (this.newFirstname) {
           headers.firstname = this.newFirstname;
+        } else {
+          headers.firstname = this.item.firstname;
         }
         if (this.newLastname) {
           headers.lastname = this.newLastname;
+        } else {
+          headers.lastname = this.item.lastname;
         }
         if (this.newEmail) {
           headers.email = this.newEmail;
+        } else {
+          headers.email = this.item.email;
         }
 
         axios.put('users', {}, { headers })
