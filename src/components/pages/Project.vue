@@ -20,13 +20,6 @@
         >Webseite besuchen</v-btn>
       </a>
     </div>
-    <v-alert
-      v-if="errorMessage"
-      type="error"
-      tile
-    >
-      Fehler: {{ errorMessage }}
-    </v-alert>
     <v-dialog
       v-model="loading"
       hide-overlay
@@ -219,6 +212,13 @@
     >
       Bitte melden Sie sich an
     </v-snackbar>
+    <v-snackbar
+      v-model="error"
+      top
+      color="error"
+    >
+      Spende konnte nicht getätigt werden: {{ errorMessage }}
+    </v-snackbar>
   </div>
 </template>
 
@@ -237,6 +237,7 @@ export default {
     dialog: false,
     weiFormula: 1000000000000000000,
     errorMessage: null,
+    error: false,
     loading: false,
     voteEnabled: true,
     apiurl: window.apiurl,
@@ -281,6 +282,7 @@ export default {
             this.openDialog();
           })
           .catch((err) => {
+            this.error = true;
             this.errorMessage = err.toString();
           })
           .finally(() => {
