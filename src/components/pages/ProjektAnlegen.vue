@@ -345,10 +345,6 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
-    weiRule: [
-      (v) => !!v || 'Feld muss ausgefüllt werden',
-      (v) => /^[1-9][0-9]*$/s.test(v) || 'Bitte nur ganze Zahlen eingeben',
-    ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
@@ -380,13 +376,13 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: '',
-      goal: '',
+      goal: null,
       requiredVotes: 1,
       until: null,
     },
     defaultItem: {
       name: '',
-      goal: '',
+      goal: null,
       requiredVotes: 1,
       until: null,
     },
@@ -414,7 +410,7 @@ export default {
     },
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
-            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     // Set starting point to center Germany
     center: latLng(51.1642292, 10.4541194),
     marker: latLng(51.1642292, 10.4541194),
@@ -427,6 +423,19 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'Neuer Meilenstein' : 'Meilenstein bearbeiten';
+    },
+    weiRule() {
+      return [
+        (v) => {
+          if (!!v || v === null) {
+            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
+              return true;
+            }
+            return 'Bitte nur ganze Zahlen eingeben';
+          }
+          return 'Feld muss ausgefüllt werden';
+        },
+      ];
     },
   },
   created() {
@@ -540,7 +549,8 @@ export default {
         name: this.project.title,
         idInstitution: this.project.idInstitution,
         goal: this.project.goal,
-        until: this.project.until,
+        // until / 1000 --> Umrechnen von ms auf s
+        until: this.project.until / 1000,
         description: window.btoa(this.project.description),
         // ist required, wird aber nicht verwendet !
         requiredVotes: 1337,
@@ -572,12 +582,12 @@ export default {
 </script>
 
 <style scoped>
-  .titleHeader {
-    padding-bottom: 15px;
-    padding-top: 10px;
-    backdrop-filter: blur(15px) brightness(0.5);
-  }
-  .gradientBackground {
-    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-  }
+.titleHeader {
+  padding-bottom: 15px;
+  padding-top: 10px;
+  backdrop-filter: blur(15px) brightness(0.5);
+}
+.gradientBackground {
+  background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+}
 </style>
