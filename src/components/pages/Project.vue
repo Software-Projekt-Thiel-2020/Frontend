@@ -177,6 +177,7 @@
                   <currency-input
                     v-model="donationValue"
                     class="mt-3 headline"
+                    @change="compareInput"
                   />
                   <br>
                   <h1 class="display-1">
@@ -184,6 +185,7 @@
                   </h1>
                   <v-checkbox
                     v-model="voteEnabled"
+                    :disabled="voteDisabled"
                     style="display:inline-flex"
                     class="text-center align-center"
                     label="Für Meilenstein abstimmen"
@@ -222,7 +224,8 @@ export default {
     weiFormula: 1000000000000000000,
     errorMessage: null,
     loading: false,
-    voteEnabled: true,
+    voteEnabled: false,
+    voteDisabled: true,
     apiurl: window.apiurl,
   }),
   computed: {
@@ -310,6 +313,16 @@ export default {
       if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
       if (value > 10e6) return `${(value / 10e6)} MWEI`;
       return `${value} WEI`;
+    },
+    compareInput() {
+      const EthVal = this.donationValue * this.eurToEth;
+      if (EthVal >= 0.01) {
+        this.voteEnabled = true;
+        this.voteDisabled = false;
+      } else {
+        this.voteEnabled = false;
+        this.voteDisabled = true;
+      }
     },
   },
 };
