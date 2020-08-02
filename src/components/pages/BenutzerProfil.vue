@@ -14,7 +14,18 @@
           ({{ item.username }})
         </p>
       </div>
-      <v-row v-if="!errorMessage">
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
+      <v-row v-if="!errorMessage && loading == false">
         <v-col
           sm="6"
           class="text-left pageBox"
@@ -106,7 +117,7 @@
         </v-col>
       </v-row>
       <v-alert
-        v-else
+        v-else-if="errorMessage"
         type="error"
         class="ma-10"
       >
@@ -156,6 +167,7 @@ export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    loading: true,
     item: {
       username: 'username',
       firstname: 'firstname',
@@ -188,6 +200,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.loading = true;
       axios.get(`users?username=${window.user.username}`)
         .then((res) => {
           if (res.data.length === 0) {
@@ -204,6 +217,7 @@ export default {
         })
         .finally(() => {
           this.gotResponse = true;
+          this.loading = false;
         });
     },
     reset() {
