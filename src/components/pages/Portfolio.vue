@@ -217,7 +217,7 @@
                   >
                     <v-card-title>{{ voucher.titel }}</v-card-title>
                     <v-card-subtitle class="overline">
-                      {{voucher.bought}}
+                      {{ voucher.bought }}
                     </v-card-subtitle>
                     <v-card-text>{{ voucher.description }}</v-card-text>
                     <v-card-actions>
@@ -300,7 +300,10 @@
                   :key="donation.id"
                   cols="12"
                 >
-                  <v-card color="white" light>
+                  <v-card
+                    color="white"
+                    light
+                  >
                     <v-card-title>
                       {{ donation.projectname }}
                       <v-spacer />
@@ -309,7 +312,7 @@
                       </h3>
                     </v-card-title>
                     <v-card-subtitle class="overline lightgrey">
-                      {{donation.timeofdonation}}
+                      {{ donation.timeofdonation }}
                     </v-card-subtitle>
                   </v-card>
                 </v-col>
