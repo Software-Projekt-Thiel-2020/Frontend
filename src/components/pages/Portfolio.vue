@@ -236,6 +236,7 @@
                       <v-btn
                         v-if="!voucher.used"
                         color="success"
+                        :loading="reedemingVoucher"
                         @click="redeemVoucher(voucher)"
                       >
                         Einlösen
@@ -377,6 +378,7 @@ export default {
     donationPage: 1,
     loadingVouchers: true,
     loadingDonations: true,
+    reedemingVoucher: false,
   }),
   computed: {
     tabVouchers() {
@@ -445,6 +447,7 @@ export default {
         authToken: userSession.loadUserData().authResponseToken,
         id: voucher.id,
       };
+      this.reedemingVoucher = true;
       axios.delete('vouchers/user', { headers: head, data: {} })
         .then(() => {
           this.redeemSucc = true;
@@ -452,6 +455,7 @@ export default {
           this.errorMessage = err.toString();
           this.redeemFail = true;
         }).finally(() => {
+          this.reedemingVoucher = false;
           this.redeemVTitle = voucher.titel;
           this.loadData();
           window.scrollTo(0, 0);
