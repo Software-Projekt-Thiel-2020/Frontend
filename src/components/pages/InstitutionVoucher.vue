@@ -254,18 +254,6 @@
           <v-row>
             <v-col cols="3" />
             <v-col cols="6">
-              <v-checkbox
-                v-model="newVoucher.available"
-                style="display:inline-flex"
-                class="text-center align-center"
-                label="Verfügbarkeit"
-              />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
               <v-text-field
                 v-model="newVoucher.validTime"
                 type="number"
@@ -398,7 +386,6 @@ export default {
       title: '',
       subject: '',
       validTime: null,
-      available: true,
     },
     dialogAddVoucher: {
       errorMessage: '',
@@ -481,7 +468,6 @@ export default {
       this.newVoucher.title = '';
       this.newVoucher.subject = '';
       this.newVoucher.validTime = null;
-      this.newVoucher.available = true;
       this.newVoucher.price = null;
     },
     changeVoucher() {
