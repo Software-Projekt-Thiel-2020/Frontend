@@ -204,6 +204,49 @@
                   </v-btn>
                 </div>
               </v-card>
+              <v-card
+                v-if="project"
+                class="institution"
+              >
+                <v-layout
+                  v-if="loadingInstitution == true"
+                  justify-center
+                >
+                  <v-progress-circular
+                    :size="30"
+                    :width="7"
+                    color="green"
+                    indeterminate
+                  />
+                </v-layout>
+                <div
+                  v-if="institution"
+                >
+                  <v-card-text>
+                    <h1> Weitere Infos: </h1>
+                    <p class="institutionInfos">
+                      Institution: {{ institution[0].name }}
+                    </p>
+                  </v-card-text>
+                  <a
+                    class=""
+                    :href="institution[0].webpage"
+                  >
+                    <v-btn
+                      outlined
+                      color="grey"
+                      class="websiteButton"
+                    >Webseite besuchen</v-btn>
+                  </a>
+                </div>
+                <v-alert
+                  v-if="institutionDialog.error"
+                  type="error"
+                  tile
+                >
+                  Insititution konnte nicht geladen werden: {{ institutionDialog.errorMessage }}
+                </v-alert>
+              </v-card>
             </v-col>
           </v-row>
         </v-card-text>
@@ -230,6 +273,12 @@ export default {
     loading: false,
     voteEnabled: true,
     apiurl: window.apiurl,
+    institutionDialog: {
+      errorMessage: '',
+      error: false,
+    },
+    loadingInstitution: false,
+    institution: undefined,
   }),
   computed: {
     getDonationETHValue() {
@@ -304,6 +353,7 @@ export default {
         .then((res) => {
           // console.log(res.data);
           this.project = res.data;
+          this.loadInstitution();
         })
         .catch((err) => {
           this.errorMessage = err.toString();
@@ -311,6 +361,23 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    loadInstitution() {
+      if (this.project) {
+        let url = 'institutions?id=';
+        url += this.project.idinstitution;
+        this.loadingInstitution = true;
+        axios.get(url)
+          .then((res) => {
+            this.institution = res.data;
+          })
+          .catch((err) => {
+            this.institutionDialog.errorMessage = err.toString();
+            this.institutionDialog.error = true;
+          }).finally(() => {
+            this.loadingInstitution = false;
+          });
+      }
     },
     showValue(value) {
       if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
@@ -416,6 +483,20 @@ export default {
     font-size: 17px;
     text-align: center;
     margin-top: 5px;
+  }
+
+  .institution {
+    margin-top: 25px;
+    color: #737773;
+  }
+
+  .institutionInfos {
+    margin-top: 10px;
+    font-size: 17px;
+  }
+
+  .websiteButton {
+    margin-bottom:10px;
   }
 
   @keyframes stroke {
