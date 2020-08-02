@@ -118,46 +118,50 @@
         </div>
       </v-alert>
       <div v-else-if="gotResponse">
-        <v-row>
-          <v-col
-            v-for="item in resultList"
-            :key="item.name"
-          >
-            <v-card
-              class="project"
-              elevation="5"
-            >
-              <v-img
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
-                alt="/assets/placeholder.png"
-                max-width="150px"
-                max-height="150px"
-                min-width="150px"
-                min-height="150px"
-                class="elementImage"
-              />
-              <div
-                class="companyData"
-                style="border:0;"
+        <template>
+          <v-row >
+              <v-col
+                      v-for="item in resultList"
+                      :key="item.name"
+              cols="12"
+                      sm="4"
               >
-                <h2 class="ma-3">
-                  {{ item.name }}
-                </h2>
-                <h4 class="ma-3">
-                  Zur Website:
-                  <a :href="item.webpage">{{ item.webpage }}</a>
-                </h4>
-              </div>
-              <v-card-actions>
-                <router-link :to="'project/'+item.id">
-                  <v-btn class="spendenButton">
-                    Spenden
-                  </v-btn>
-                </router-link>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
+                <v-card
+                        class="project"
+                        elevation="5"
+                >
+                  <v-img
+                          :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                          alt="/assets/placeholder.png"
+                          max-width="150px"
+                          max-height="150px"
+                          min-width="150px"
+                          min-height="150px"
+                          class="elementImage"
+                  />
+                  <div
+                          class="companyData"
+                          style="border:0;"
+                  >
+                    <h2 class="ma-3">
+                      {{ item.name }}
+                    </h2>
+                    <h4 class="ma-3">
+                      Zur Website:
+                      <a :href="item.webpage">{{ item.webpage }}</a>
+                    </h4>
+                  </div>
+                  <v-card-actions>
+                    <router-link :to="'project/'+item.id">
+                      <v-btn class="spendenButton">
+                        Spenden
+                      </v-btn>
+                    </router-link>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+        </template>
       </div>
     </v-container>
   </div>
