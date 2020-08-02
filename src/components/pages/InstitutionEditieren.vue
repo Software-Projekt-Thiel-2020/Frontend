@@ -36,6 +36,18 @@
           </v-col>
         </v-row>
       </v-alert>
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+          class="loadingCircle"
+        />
+      </v-layout>
       <div v-if="(items.length === 0 && gotResponse)">
         <v-card
           class="pa-10 ma-7"
@@ -376,12 +388,14 @@ export default {
       picErr: 0,
       normErr: 0,
     },
+    loading: true,
   }),
   mounted() {
     this.load();
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get(`institutions?username=${window.user.username}`)
         .then((res) => {
           this.items = res.data;
@@ -392,6 +406,7 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     setMarkerPos(event) {
@@ -538,5 +553,9 @@ export default {
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
+  }
+
+  .loadingCircle {
+    margin-top: 50px;
   }
 </style>
