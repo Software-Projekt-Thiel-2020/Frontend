@@ -35,6 +35,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
+// eslint-disable-next-line no-underscore-dangle
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  // eslint-disable-next-line global-require
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  // eslint-disable-next-line global-require
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  // eslint-disable-next-line global-require
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
 window.apiurl = process.env.VUE_APP_BASE_URL;
 
