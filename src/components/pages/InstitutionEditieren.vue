@@ -155,8 +155,14 @@
                     </v-col>
                     <v-col cols="3">
                       <img
+                        v-if="editElement.picturePath"
                         class="elementImage"
-                        :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
+                        :src="apiurl+'/file/'+editElement.picturePath"
+                      >
+                      <img
+                        v-else
+                        class="elementImage"
+                        src="../../assets/placeholder.png"
                       >
                     </v-col>
                   </v-row>
