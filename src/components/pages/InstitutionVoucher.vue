@@ -24,6 +24,7 @@
           :width="7"
           color="green"
           indeterminate
+          class="loadingCircle"
         />
       </v-layout>
       <div v-else>
@@ -102,23 +103,23 @@
             </h3>
           </v-col>
         </v-row>
-        <v-layout
-          justify-center
-        >
-          <router-link
-            to="/InstitutionEditieren"
-            tag="span"
-            class="link"
-          >
-            <v-btn
-              class="mt-5"
-              style="color: black"
-            >
-              Meine Institution
-            </v-btn>
-          </router-link>
-        </v-layout>
       </div>
+      <v-layout
+        justify-center
+      >
+        <router-link
+          to="/InstitutionEditieren"
+          tag="span"
+          class="link"
+        >
+          <v-btn
+            class="mt-5"
+            style="color: black"
+          >
+            Meine Institution
+          </v-btn>
+        </router-link>
+      </v-layout>
       <v-container />
     </v-container>
     <v-dialog
@@ -574,5 +575,10 @@ export default {
       right: 10px;
       width: 10px;
       height: 10px;
+  }
+
+    .loadingCircle {
+    margin-top: 50px;
+    margin-bottom: 50px;
   }
 </style>
