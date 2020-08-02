@@ -250,7 +250,7 @@
                       </v-btn>
                       <v-spacer />
                       <h3 class="pricetag font-weight-light">
-                        {{ voucher.price }} ETH
+                        {{ voucher.price / weiFormula }} ETH
                       </h3>
                     </v-card-actions>
                   </v-card>
