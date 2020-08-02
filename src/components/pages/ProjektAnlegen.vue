@@ -504,7 +504,16 @@ export default {
     },
     cancel() {
       this.editedItem = { ...this.preEditedItem };
-      this.save();
+      if (this.editedItem.goal === this.defaultItem.goal
+          && this.editedItem.name === this.defaultItem.name
+          && this.editedItem.requiredVotes === this.defaultItem.requiredVotes
+          && this.editedItem.until === this.defaultItem.until) {
+        // neuer Meilenstein wurde gecanceled
+        this.close();
+      } else {
+        // Meilenstein bearbeiten wurde gecanceled
+        this.save();
+      }
     },
     close() {
       this.dialog2 = false;
