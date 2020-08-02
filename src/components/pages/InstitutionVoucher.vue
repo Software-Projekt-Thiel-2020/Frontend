@@ -6,6 +6,14 @@
       >
         Eingestellte Gutscheine
       </h4>
+      <v-btn
+        class="addVoucher"
+        @click="openDialog"
+      >
+        <v-icon class="plus">
+          mdi-plus-thick
+        </v-icon>
+      </v-btn>
       <v-divider class="mt-5" />
       <v-layout
         v-if="loadingVouchers == true"
@@ -128,7 +136,6 @@
                 type="number"
                 label="Preis (in Wei)"
                 class="inputField"
-                required
                 @change="valuesChanged()"
               />
             </v-col>
@@ -156,7 +163,6 @@
                 type="number"
                 label="Gültigkeit (in Jahren)"
                 class="inputField"
-                required
                 @change="valuesChanged()"
               />
             </v-col>
@@ -192,6 +198,118 @@
         </v-form>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-if="addVoucherOverlay"
+      v-model="addVoucherOverlay"
+      absolute
+      persistent
+    >
+      <v-card>
+        <v-layout
+          justify-center
+        >
+          <v-card-title>
+            Gutschein erstellen
+          </v-card-title>
+        </v-layout>
+        <v-form>
+          <v-row>
+            <v-col cols="3" />
+            <v-col cols="6">
+              <v-text-field
+                v-model="newVoucher.title"
+                label="Titel"
+                class="inputField"
+                required
+              />
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
+          <v-row>
+            <v-col cols="3" />
+            <v-col cols="6">
+              <v-text-field
+                v-model="newVoucher.price"
+                type="number"
+                label="Preis (in Wei)"
+                class="inputField"
+                required
+              />
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
+          <v-row>
+            <v-col cols="3" />
+            <v-col cols="6">
+              <v-text-field
+                v-model="newVoucher.subject"
+                label="Beschreibung"
+                class="inputField"
+                required
+              />
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
+          <v-row>
+            <v-col cols="3" />
+            <v-col cols="6">
+              <v-checkbox
+                v-model="newVoucher.available"
+                style="display:inline-flex"
+                class="text-center align-center"
+                label="Verfügbarkeit"
+              />
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
+          <v-row>
+            <v-col cols="3" />
+            <v-col cols="6">
+              <v-text-field
+                v-model="newVoucher.validTime"
+                type="number"
+                label="Gültigkeit (in Jahren)"
+                class="inputField"
+                required
+              />
+            </v-col>
+            <v-col cols="3" />
+          </v-row>
+
+          <v-card-actions
+            class="ma-0 pa-0"
+          >
+            <v-btn-toggle
+              borderless
+              style="width: 50%"
+            >
+              <v-btn
+                color="error"
+                block
+                tile
+                @click="closeDialog()"
+              >
+                Schließen
+              </v-btn>
+              <v-btn
+                :disabled="!newVoucher.price
+                  || !newVoucher.title
+                  || !newVoucher.subject
+                  || !newVoucher.validTime"
+                color="success"
+                block
+                tile
+                :loading="creatingVoucher"
+                @click="createVoucher"
+              >
+                Bestätigen
+              </v-btn>
+            </v-btn-toggle>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-dialog>
     <v-snackbar
       v-model="dialogVoucher.error"
       top
@@ -212,6 +330,20 @@
       color="success"
     >
       Gutschein wurde aktualisiert
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialogAddVoucher.error"
+      top
+      color="error"
+    >
+      Gutschein konnte nicht erstellt werden {{ dialogAddVoucher.errorMessage }}
+    </v-snackbar>
+    <v-snackbar
+      v-model="dialogAddVoucher.success"
+      top
+      color="success"
+    >
+      Gutschein wurde erstellt
     </v-snackbar>
     <v-snackbar
       v-model="dialogEth.error"
@@ -257,6 +389,21 @@ export default {
     dialogEth: {
       error: false,
       errorMessage: '',
+    },
+    addVoucherOverlay: false,
+    addVoucherDisabled: true,
+    creatingVoucher: false,
+    newVoucher: {
+      price: null,
+      title: '',
+      subject: '',
+      validTime: null,
+      available: true,
+    },
+    dialogAddVoucher: {
+      errorMessage: '',
+      error: false,
+      success: false,
     },
   }),
   created() {
@@ -310,6 +457,10 @@ export default {
     closeOverlay() {
       this.overlay = false;
       this.editItem = {};
+      this.newValidTime = null;
+      this.newAvailable = null;
+      this.newPrice = null;
+      this.disabled = true;
     },
     valuesChanged() {
       if (this.newValidTime === this.editItem.validTime
@@ -322,6 +473,17 @@ export default {
         this.disabled = false;
       }
     },
+    openDialog() {
+      this.addVoucherOverlay = true;
+    },
+    closeDialog() {
+      this.addVoucherOverlay = false;
+      this.newVoucher.title = '';
+      this.newVoucher.subject = '';
+      this.newVoucher.validTime = null;
+      this.newVoucher.available = true;
+      this.newVoucher.price = null;
+    },
     changeVoucher() {
       this.changingVoucher = true;
       const url = 'vouchers/institution';
@@ -329,7 +491,6 @@ export default {
         idVoucher: this.editItem.id,
         idInstitution: this.institutionId,
       };
-      const body = {};
       if (this.newValidTime) {
         headers.validTime = this.newValidTime;
       }
@@ -339,7 +500,7 @@ export default {
       if (this.newAvailable) {
         headers.available = this.newAvailable;
       }
-      axios.patch(url, body, { headers }).then(() => {
+      axios.patch(url, {}, { headers }).then(() => {
         this.dialogEdit.success = true;
       }).catch((err) => {
         this.dialogEdit.error = true;
@@ -347,6 +508,31 @@ export default {
       }).finally(() => {
         this.changingVoucher = false;
         this.closeOverlay();
+        this.loadVouchers();
+      });
+    },
+    createVoucher() {
+      this.creatingVoucher = true;
+      const url = 'vouchers/institution';
+      const headers = {
+        authToken: this.userData.authResponseToken,
+      };
+      const body = {
+        idInstitution: this.institutionId,
+        price: this.newVoucher.price,
+        title: this.newVoucher.title,
+        subject: this.newVoucher.subject,
+        validTime: this.newVoucher.validTime * 365 * 24 * 60 * 60,
+      };
+
+      axios.post(url, body, { headers }).then(() => {
+        this.dialogEdit.success = true;
+      }).catch((err) => {
+        this.dialogAddVoucher.error = true;
+        this.dialogAddVoucher.errorMessage = err.toString();
+      }).finally(() => {
+        this.creatingVoucher = false;
+        this.closeDialog();
         this.loadVouchers();
       });
     },
@@ -378,5 +564,13 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
+  }
+
+  .addVoucher {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 10px;
+      height: 10px;
   }
 </style>
