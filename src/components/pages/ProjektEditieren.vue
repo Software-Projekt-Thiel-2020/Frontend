@@ -654,10 +654,12 @@ export default {
       if (this.err.normErr === 0 && this.err.picErr === 0) {
         this.showAlert('Das Ändern war erfolgreich', 'success');
       }
+      this.newMilestones = [];
     },
     closeOverlay() {
       this.overlay = false;
       this.editElement = {};
+      this.newMilestones = [];
     },
     showAlert(msg, type) {
       this.alert = true;
