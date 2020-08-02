@@ -186,8 +186,20 @@
                   </v-chip>
                 </v-tab>
               </v-tabs>
+              <v-layout
+                v-if="loadingVouchers==true"
+                justify-center
+              >
+                <v-progress-circular
+                  :size="50"
+                  :width="7"
+                  color="green"
+                  indeterminate
+                  class="loadingCircle"
+                />
+              </v-layout>
               <v-card-text
-                v-if="vErrMsg.length !== 0"
+                v-else-if="vErrMsg.length !== 0"
                 class="text-center"
               >
                 <h1 class="my-10">
@@ -275,14 +287,6 @@
                 </v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
-              <v-card-text
-                v-if="dErrMsg.length !== 0"
-                class="text-center"
-              >
-                <h1 class="my-10">
-                  {{ dErrMsg }}
-                </h1>
-              </v-card-text>
               <v-layout
                 v-if="loadingDonations==true"
                 justify-center
@@ -295,6 +299,14 @@
                   class="loadingCircle"
                 />
               </v-layout>
+              <v-card-text
+                v-else-if="dErrMsg.length !== 0"
+                class="text-center"
+              >
+                <h1 class="my-10">
+                  {{ dErrMsg }}
+                </h1>
+              </v-card-text>
               <div v-else>
                 <v-card-text
                   v-if="donations === null || donations === undefined || donations.length === 0"
