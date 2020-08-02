@@ -5,7 +5,91 @@
     </v-container>
     <v-container>
       <h3>Suche nach Betrieben in deiner Nähe!</h3>
-      <v-form class="form-box ml-0">
+      <v-form
+        v-if="smallToolbar"
+        class="form-box ml-0"
+      >
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="searchName"
+                prepend-inner-icon="mdi-magnify"
+                label="Name des Betriebs"
+              />
+            </v-col>
+            <v-col>
+              <v-select
+                v-model="searchCode"
+                :items="lCodes"
+                label="Ländercode"
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col
+              cols="5"
+            >
+              <v-text-field
+                v-model="searchPlace"
+                prepend-inner-icon="mdi-magnify"
+                label="Stadt/PLZ"
+              />
+            </v-col>
+            <v-col
+              cols="5"
+            >
+              <v-text-field
+                v-model="radius"
+                prepend-inner-icon="mdi-radius-outline"
+                label="Radius(km)"
+              />
+            </v-col>
+            <v-col
+              cols="1"
+            >
+              <v-btn
+                fab
+                class="mt-1"
+                :color="locationButton"
+                label="Mich finden"
+                @click="getOwnLocation"
+              >
+                <v-icon>mdi-crosshairs-gps</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-btn
+              class="ma-1"
+              min-width="150"
+              max-width="150"
+              color="success"
+              large
+              tile
+              :disabled="searchButton"
+              @click="suchen"
+            >
+              Suchen
+            </v-btn>
+            <v-btn
+              class="ma-1"
+              min-width="150"
+              max-width="150"
+              color="error"
+              large
+              tile
+              @click="reset"
+            >
+              Zurücksetzten
+            </v-btn>
+          </v-row>
+        </v-container>
+      </v-form>
+      <v-form
+        v-else
+        class="form-box ml-0"
+      >
         <v-container>
           <v-row>
             <v-col
@@ -186,6 +270,9 @@ export default {
     },
     searchButton() {
       return !(this.searchName !== '' || (this.longitude !== -1 && this.latitude !== -1) || (this.searchPlace !== '' && this.searchCode !== ''));
+    },
+    smallToolbar() {
+      return this.$vuetify.breakpoint.name === 'xs';
     },
   },
   mounted() {

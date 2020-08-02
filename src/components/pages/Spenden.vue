@@ -9,7 +9,6 @@
         v-if="smallToolbar"
         class="form-box ml-0"
       >
-        mobile version
         <v-container>
           <v-row>
             <v-col>
@@ -269,7 +268,7 @@ export default {
       return !(this.searchName !== '' || (this.longitude !== -1 && this.latitude !== -1) || (this.searchPlace !== '' && this.searchCode !== ''));
     },
     smallToolbar() {
-      return this.$vuetify.breakpoint.xsOnly;
+      return this.$vuetify.breakpoint.name === 'xs';
     },
   },
   mounted() {
