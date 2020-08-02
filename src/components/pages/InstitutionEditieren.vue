@@ -73,7 +73,7 @@
               <img
                 v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath"
+                :src="apiurl+'/file/'+item.picturePath"
               >
               <img
                 v-else
@@ -389,6 +389,7 @@ export default {
       normErr: 0,
     },
     loading: true,
+    uploadingImage: false,
   }),
   mounted() {
     this.load();
@@ -485,10 +486,12 @@ export default {
       };
       const formData = new FormData();
       formData.append('file', pic);
-
+      this.uploadingImage = true;
       await axios.post('file', formData, { headers })
         .catch(() => {
           this.err.picErr = 1;
+        }).finally(() => {
+          this.uploadingImage = false;
         });
     },
     sentStauts() {
