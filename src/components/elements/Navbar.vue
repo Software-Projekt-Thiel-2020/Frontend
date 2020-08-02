@@ -210,6 +210,18 @@
             </router-link>
           </v-list-item>
           <v-list-item>
+            <router-link
+              to="/ProjektEditieren"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-alpha-p-box
+                </v-icon>Meine Projekte
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item>
             <v-list-item-title
               class="clickable"
               @click="signOut"
@@ -347,6 +359,19 @@
                 <v-icon>mdi-bank-plus</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Institution erstellen</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
+          <router-link
+            v-if="userSession.isUserSignedIn()"
+            to="/ProjektEditieren"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-alpha-p-box</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Meine Projekte</v-list-item-title>
             </v-list-item>
           </router-link>
 

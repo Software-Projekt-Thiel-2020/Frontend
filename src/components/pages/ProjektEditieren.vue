@@ -241,7 +241,7 @@
                   <v-row gutters>
                     <v-col cols="12">
                       <p class="mr-1">
-                        Es können nur Meilensteine mit höherem Ziel hinzugeüft werden!
+                        Es können nur Meilensteine mit höherem Ziel hinzugefügt werden!
                       </p>
                       <v-data-table
                         :headers="tableHeaders"
@@ -272,7 +272,7 @@
                                   <v-row justify="center">
                                     <v-col>
                                       <v-text-field
-                                        v-model="newMile.name"
+                                        v-model="newMile.milestoneName"
                                         label="Meilensteinname"
                                         outlined
                                         clearable
@@ -298,7 +298,6 @@
                                         :min="today"
                                         :max="editElement.until"
                                       />
-                                      <!-- WATREN AUF API! until noch nicht mitgeliefert -->
                                     </v-col>
                                   </v-row>
                                 </v-card-text>
@@ -312,7 +311,7 @@
                                     Cancel
                                   </v-btn>
                                   <v-btn
-                                    :disabled="newMile.name === '' || newMile.goal === '' || newMile.until === null"
+                                    :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null"
                                     color="blue darken-1"
                                     text
                                     @click="saveMilestone"
@@ -328,12 +327,14 @@
                           <div
                             v-if="isNewMilestone(item)"
                           >
+                            <!-- Zunächst nicht implementiert
                             <v-icon
                               small
                               @click="editMilestone(item)"
                             >
                               mdi-pencil
                             </v-icon>
+                            -->
                             <v-icon
                               small
                               @click="deleteMilestone(item)"
@@ -410,7 +411,7 @@ export default {
         text: 'Meilensteinname',
         align: 'start',
         sortable: false,
-        value: 'name',
+        value: 'milestoneName',
       },
       { text: 'Spendenziel', value: 'goal' },
       { text: 'Meilensteinende', value: 'until' },
@@ -418,12 +419,13 @@ export default {
     ],
     newMilestones: [],
     newMile: {
-      name: '',
+      milestoneName: '',
       goal: null,
       until: null,
     },
     today: null,
     milestoneDialog: false,
+    editMilestoneDialog: false,
     minWei: 1,
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -455,17 +457,12 @@ export default {
       return [...this.editElement.milestones, ...this.newMilestones].map((milestone) => {
         const mCopy = JSON.parse(JSON.stringify(milestone));
         mCopy.newIndex = this.newMilestones.indexOf(milestone);
-        // until * 100, weil ms auf s umgerechnet wird
+        // until * 1000, weil ms auf s umgerechnet wird
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
       });
     },
     weiRule() {
-      /* weiRule: [
-        (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
-        (v) => (/^[1-9][0-9]*$/s.test(v) || v === null) || 'Bitte nur ganze Zahlen eingeben',
-        (v) => (v === null) || `Ziel muss über ${this.minWei} liegen`,
-      ], */
       return [
         (v) => {
           if (!!v || v === null) {
@@ -508,11 +505,20 @@ export default {
       this.today = new Date().toISOString().substring(0, 10);
     },
     closeDialog() {
-      this.newMile.name = '';
+      this.newMile.milestoneName = '';
       this.newMile.goal = null;
       this.newMile.until = null;
 
       this.milestoneDialog = false;
+    },
+    // Noch nicht volständig implementiert
+    editMilestone(milestone) {
+      this.newMile = milestone;
+      // in this case "5.9.2020" -> "5-9-2020" -> 2020-9-5
+      let newTime = JSON.parse(JSON.stringify(this.newMile));
+      newTime = newTime.until.split('.').reverse().join('-');
+      this.newMile.until = new Date(newTime).toISOString().substring(0, 10);
+      this.editMilestoneDialog = true;
     },
     isNewMilestone(item) {
       try {
@@ -531,20 +537,11 @@ export default {
         // Do nothing (or print err msg)
       }
     },
-    editMilestone(milestone) {
-      this.newMile = milestone;
-      // in this case "5.9.2020" -> "5-9-2020" -> 2020-9-5
-      let newTime = JSON.parse(JSON.stringify(this.newMile));
-      newTime = newTime.until.split('.').reverse().join('-');
-      this.newMile.until = new Date(newTime).toISOString().substring(0, 10);
-      this.milestoneDialog = true;
-    },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
       // until / 1000 --> s auf ms umrechnen
       dateStone.until = new Date(dateStone.until).getTime() / 1000;
       this.newMilestones.push(dateStone);
-
       this.closeDialog();
     },
     setMarkerPos(event) {
@@ -567,6 +564,8 @@ export default {
             this.editElement.description = window.atob(res.data.description);
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
+            // until * 1000 --> s auf ms
+            this.editElement.until = new Date(this.editElement.until * 1000).toISOString().substring(0, 10);
 
             const coords = latLng(this.editElement.latitude, this.editElement.longitude);
             this.center = coords;
@@ -600,7 +599,17 @@ export default {
         if (this.editElement.latitude) headers.latitude = this.editElement.latitude;
         if (this.editElement.longitude) headers.longitude = this.editElement.longitude;
         if (this.newMilestones.length > 0) {
-          headers.milestones = this.newMilestones.sort((a, b) => a.goal - b.goal);
+          headers.milestones = this.newMilestones.sort((a, b) => a.goal - b.goal)
+            .map((mile) => {
+              const formattedMile = JSON.parse(JSON.stringify(mile));
+              formattedMile.name = formattedMile.milestoneName;
+              delete formattedMile.milestoneName;
+
+              // required Votes muss man mitsenden, wird aber nicht verwendet
+              formattedMile.requiredVotes = 1337;
+
+              return formattedMile;
+            });
           headers.milestones = JSON.stringify(headers.milestones);
         }
 
