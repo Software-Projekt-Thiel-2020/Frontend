@@ -5,11 +5,11 @@
         :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
         class="font-weight-thin white--text"
       >
-        {{ project.name }}
+        {{ project ? project.name : "Projekt" }}
       </h1>
       <a
         class=""
-        :href="project.homepage"
+        :href="project ? project.homepage : ''"
       >
         <v-btn
           outlined
