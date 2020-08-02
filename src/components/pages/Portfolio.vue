@@ -341,7 +341,7 @@ import { userSession } from '../../userSession';
 export default {
   name: 'Historie',
   data: () => ({
-    weiFormula: 1000000000000000000,
+    weiFormula: 1e18,
     tab: null,
     donations: [],
     vouchers: [],
