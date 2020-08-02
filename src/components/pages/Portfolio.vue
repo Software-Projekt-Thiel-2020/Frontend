@@ -283,42 +283,56 @@
                   {{ dErrMsg }}
                 </h1>
               </v-card-text>
-              <v-card-text
-                v-else-if="donations === null || donations === undefined || donations.length === 0"
-                class="text-center"
+              <v-layout
+                v-if="loadingDonations==true"
+                justify-center
               >
-                <h1 class="my-10 noEntryText">
-                  Keine Spenden getätigt
-                </h1>
-              </v-card-text>
-              <v-row
-                v-else
-                class="ma-2"
-              >
-                <v-col
-                  v-for="donation in donations.slice((donationPage*6)-6,donationPage*6)"
-                  :key="donation.id"
-                  cols="12"
-                >
-                  <v-card light>
-                    <v-card-title>
-                      {{ donation.projectname }}
-                      <v-spacer />
-                      <h3 class="pricetag font-weight-light">
-                        {{ donation.amount / weiFormula }} ETH
-                      </h3>
-                    </v-card-title>
-                  </v-card>
-                </v-col>
-              </v-row>
-              <div class="text-center">
-                <v-pagination
-                  v-model="donationPage"
-                  :length="Math.ceil(donations.length/6)"
-                  :total-visible="7"
-                  light
-                  color="secondary"
+                <v-progress-circular
+                  :size="50"
+                  :width="7"
+                  color="green"
+                  indeterminate
+                  class="loadingCircle"
                 />
+              </v-layout>
+              <div v-else>
+                <v-card-text
+                  v-if="donations === null || donations === undefined || donations.length === 0"
+                  class="text-center"
+                >
+                  <h1 class="my-10 noEntryText">
+                    Keine Spenden getätigt
+                  </h1>
+                </v-card-text>
+                <v-row
+                  v-else
+                  class="ma-2"
+                >
+                  <v-col
+                    v-for="donation in donations.slice((donationPage*6)-6,donationPage*6)"
+                    :key="donation.id"
+                    cols="12"
+                  >
+                    <v-card light>
+                      <v-card-title>
+                        {{ donation.projectname }}
+                        <v-spacer />
+                        <h3 class="pricetag font-weight-light">
+                          {{ donation.amount / weiFormula }} ETH
+                        </h3>
+                      </v-card-title>
+                    </v-card>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-pagination
+                    v-model="donationPage"
+                    :length="Math.ceil(donations.length/6)"
+                    :total-visible="7"
+                    light
+                    color="secondary"
+                  />
+                </div>
               </div>
             </v-card>
           </v-col>
@@ -349,6 +363,8 @@ export default {
     redeemSucc: false,
     voucherPage: 1,
     donationPage: 1,
+    loadingVouchers: true,
+    loadingDonations: true,
   }),
   computed: {
     tabVouchers() {
@@ -385,6 +401,7 @@ export default {
       return this.vouchers.filter((voucher) => !voucher.used);
     },
     loadVouchers() {
+      this.loadingVouchers = true;
       axios.get(`vouchers/user?idUser=${this.user.id}`)
         .then((res) => {
           if (res.data.length !== 0) {
@@ -392,9 +409,12 @@ export default {
           }
         }).catch((err) => {
           this.vErrMsg = err.toString();
+        }).finally(() => {
+          this.loadingVouchers = false;
         });
     },
     loadDonations() {
+      this.loadingDonations = true;
       axios.get(`donations?iduser=${this.user.id}`)
         .then((res) => {
           if (res.data.length !== 0) {
@@ -404,6 +424,8 @@ export default {
           }
         }).catch((err) => {
           this.dErrMsg = err.toString();
+        }).finally(() => {
+          this.loadingDonations = false;
         });
     },
     redeemVoucher(voucher) {
@@ -448,5 +470,10 @@ export default {
 
   .wallet {
     max-width: 500px;
+  }
+
+  .loadingCircle {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 </style>
