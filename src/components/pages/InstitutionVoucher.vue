@@ -478,14 +478,18 @@ export default {
         idInstitution: this.institutionId,
       };
       if (this.newValidTime) {
-        headers.validTime = this.newValidTime;
+        headers.validTimeVoucher = this.newValidTime * 365 * 24 * 60 * 60;
       }
       if (this.newPrice) {
-        headers.price = this.newPrice;
+        headers.priceVoucher = this.newPrice;
       }
+      /*
       if (this.newAvailable) {
-        headers.available = this.newAvailable;
-      }
+        headers.availableVoucher = true;
+      } else {
+        headers.availableVoucher = false;
+      } */
+
       axios.patch(url, {}, { headers }).then(() => {
         this.dialogEdit.success = true;
       }).catch((err) => {
