@@ -102,6 +102,7 @@
           v-model="overlay"
           absolute
           persistent
+          :fullscreen="smallScreenDialog"
         >
           <v-card>
             <v-card-title class="text-center">
@@ -239,7 +240,6 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
@@ -377,6 +377,11 @@ export default {
       normErr: 0,
     },
   }),
+  computed: {
+    smallScreenDialog() {
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+  },
   mounted() {
     this.load();
   },
