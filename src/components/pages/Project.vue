@@ -111,12 +111,6 @@
                 elevation="7"
                 class="text-center"
               >
-                <v-card-text>
-                  <h1>Wofür Spenden Sie?</h1>
-                  <p class="description">
-                    Antwort des Projektinhabers: {{ project.description }}
-                  </p>
-                </v-card-text>
                 <v-system-bar
                   color="secondary"
                   height="40px"
@@ -168,6 +162,16 @@
                     />
                   </div>
                 </div>
+              </v-card>
+              <v-card
+                v-if="project"
+                elevation="7"
+                class="text-center py-8 mt-8"
+              >
+                <v-card-text>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <div v-html="compiledMarkdown" />
+                </v-card-text>
               </v-card>
             </v-col>
             <v-col>
@@ -270,6 +274,8 @@
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 
 export default {
   name: 'Project',
@@ -301,6 +307,12 @@ export default {
       return null;
     },
 
+    compiledMarkdown() {
+      if (this.project) {
+        return marked(DOMPurify.sanitize(this.project.description), { sanitize: true });
+      }
+      return '';
+    },
   },
   created() {
     this.projectid = this.$route.params.id;

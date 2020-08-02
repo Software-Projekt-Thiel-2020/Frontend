@@ -91,9 +91,11 @@
                     v-if="project[0].description"
                     class="mb-4"
                   >
-                    <p>
-                      Beschreibung: {{ project[0].description }}
+                    <p class="institutionName">
+                      Beschreibung:
                     </p>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="compiledMarkdown" />
                   </div>
                 </v-card-text>
                 <v-card-actions>
@@ -249,6 +251,8 @@
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 import { userSession } from '../../userSession';
 
 export default {
@@ -290,6 +294,14 @@ export default {
     indexClicked: null,
     boughtVoucher: null,
   }),
+  computed: {
+    compiledMarkdown() {
+      if (this.project.length > 0) {
+        return marked(DOMPurify.sanitize(this.project[0].description), { sanitize: true });
+      }
+      return '';
+    },
+  },
   created() {
     this.userSession = userSession;
     this.institutionId = this.$route.params.id;
