@@ -17,6 +17,7 @@
       <v-layout
         v-if="loading == true"
         justify-center
+        class="loadingCircle"
       >
         <v-progress-circular
           :size="70"
@@ -281,10 +282,10 @@ export default {
 
 <style scoped>
 
-    .inputField ::placeholder{
-        color: black!important;
-        opacity: 1;
-    }
+  .inputField ::placeholder{
+      color: black!important;
+      opacity: 1;
+  }
 
   .pageBox{
     position:relative;
@@ -294,5 +295,10 @@ export default {
   .linkToDonate {
       width: 100%;
       bottom: 40px;
+  }
+
+  .loadingCircle {
+    margin-top: 100px;
+    margin-bottom: 100px;
   }
 </style>
