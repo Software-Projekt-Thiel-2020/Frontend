@@ -157,7 +157,7 @@
                     <v-progress-linear
                       color="secondary"
                       height="15"
-                      :value="(milestone.totalDonated/milestone.goal)"
+                      :value="(milestone.totalDonated/milestone.goal) * 100"
                       striped
                     />
                   </div>
@@ -264,6 +264,7 @@ export default {
       axios.post('donations', {}, { headers })
         .then(() => {
           this.openDialog();
+          this.loadProject();
         })
         .catch((err) => {
           this.errorMessage = err.toString();
