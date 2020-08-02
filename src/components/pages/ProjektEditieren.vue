@@ -94,6 +94,7 @@
         <v-dialog
           v-if="overlay"
           v-model="overlay"
+          :fullscreen="smallScreen"
           absolute
           persistent
         >
@@ -194,7 +195,6 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
@@ -258,7 +258,16 @@
                               dark
                               @click="milestoneDialog = true"
                             >
-                              Meilenstein hinzufügen
+                              <v-icon
+                                v-if="$vuetify.breakpoint.xsOnly"
+                              >
+                                mdi-plus-thick
+                              </v-icon>
+                              <span
+                                v-else
+                              >
+                                Meilenstein hinzufügen
+                              </span>
                             </v-btn>
                             <v-dialog
                               v-model="milestoneDialog"
@@ -461,6 +470,9 @@ export default {
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
       });
+    },
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
     },
     weiRule() {
       return [
