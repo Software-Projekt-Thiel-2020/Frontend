@@ -92,6 +92,18 @@
                   >
                     Website
                   </v-btn>
+                  <router-link
+                    :to="'/institutionVoucher/'+item.id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      class="ma-2"
+                      style="color: black"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                 </v-card-actions>
               </div>
             </v-card>

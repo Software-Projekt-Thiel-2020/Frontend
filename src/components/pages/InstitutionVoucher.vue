@@ -516,16 +516,13 @@ export default {
       const url = 'vouchers/institution';
       const headers = {
         authToken: this.userData.authResponseToken,
-      };
-      const body = {
         idInstitution: this.institutionId,
         price: this.newVoucher.price,
         title: this.newVoucher.title,
         subject: this.newVoucher.subject,
         validTime: this.newVoucher.validTime * 365 * 24 * 60 * 60,
       };
-
-      axios.post(url, body, { headers }).then(() => {
+      axios.post(url, {}, { headers }).then(() => {
         this.dialogEdit.success = true;
       }).catch((err) => {
         this.dialogAddVoucher.error = true;
