@@ -428,12 +428,6 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Neuer Meilenstein' : 'Meilenstein bearbeiten';
     },
-    watch: {
-      dialog2(val) {
-        // eslint-disable-next-line no-unused-expressions
-        val || this.close();
-      },
-    },
   },
   created() {
     this.userSession = userSession;
