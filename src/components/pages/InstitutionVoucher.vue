@@ -102,6 +102,22 @@
             </h3>
           </v-col>
         </v-row>
+        <v-layout
+          justify-center
+        >
+          <router-link
+            to="/InstitutionEditieren"
+            tag="span"
+            class="link"
+          >
+            <v-btn
+              class="mt-5"
+              style="color: black"
+            >
+              Meine Institution
+            </v-btn>
+          </router-link>
+        </v-layout>
       </div>
       <v-container />
     </v-container>
@@ -483,12 +499,11 @@ export default {
       if (this.newPrice) {
         headers.priceVoucher = this.newPrice;
       }
-      /*
       if (this.newAvailable) {
         headers.availableVoucher = true;
       } else {
         headers.availableVoucher = false;
-      } */
+      }
 
       axios.patch(url, {}, { headers }).then(() => {
         this.dialogEdit.success = true;
