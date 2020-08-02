@@ -111,6 +111,12 @@
                 elevation="7"
                 class="text-center"
               >
+                <v-card-text>
+                  <h1>Wofür Spenden Sie?</h1>
+                  <p class="description">
+                    Antwort des Projektinhabers: {{ project.description }}
+                  </p>
+                </v-card-text>
                 <v-system-bar
                   color="secondary"
                   height="40px"
@@ -404,6 +410,12 @@ export default {
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  .description {
+    font-size: 17px;
+    text-align: center;
+    margin-top: 5px;
   }
 
   @keyframes stroke {
