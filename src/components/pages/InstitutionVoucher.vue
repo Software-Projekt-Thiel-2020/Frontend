@@ -523,7 +523,7 @@ export default {
         validTime: this.newVoucher.validTime * 365 * 24 * 60 * 60,
       };
       axios.post(url, {}, { headers }).then(() => {
-        this.dialogEdit.success = true;
+        this.dialogAddVoucher.success = true;
       }).catch((err) => {
         this.dialogAddVoucher.error = true;
         this.dialogAddVoucher.errorMessage = err.toString();
