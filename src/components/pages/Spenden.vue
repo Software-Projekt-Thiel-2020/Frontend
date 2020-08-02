@@ -105,17 +105,7 @@
         />
       </v-layout>
       <div v-if="!gotResponse">
-        <v-skeleton-loader>
-          <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
-           da Anzahl an gefundenen Projekte beim Laden
-            nicht herauszufinden ist -->
-          <!-- v-for="index in 7"
-          :key="index"
-          class="my-10"
-          type="list-item-avatar"
-          tile
-          /> -->
-        </v-skeleton-loader>
+        <v-skeleton-loader />
       </div>
       <v-alert
         v-if="errorMessage"
