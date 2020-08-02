@@ -324,6 +324,7 @@
                   color="success"
                   block
                   tile
+                  :loading="loadingChanges"
                   @click="changeInst()"
                 >
                   Bestätigen
@@ -396,6 +397,7 @@ export default {
     },
     loading: true,
     uploadingImage: false,
+    loadingChanges: false,
   }),
   mounted() {
     this.load();
@@ -466,7 +468,7 @@ export default {
         delete this.editElement.picture;
 
         headers.description = window.btoa(this.editElement.description);
-
+        this.loadingChanges = true;
         axios.patch('institutions', null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -475,13 +477,16 @@ export default {
               this.postPic(authToken, newPic)
                 .then(() => {
                   this.sentStauts();
+                }).finally(() => {
+                  this.loadingChanges = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
