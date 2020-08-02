@@ -24,12 +24,12 @@
     </v-parallax>
 
 
-    <v-container>
+    <v-container v-resize="onResize">
       <div class="argument">
         <v-row>
-          <v-col cols="6">
+          <v-col>
             <h3>Spenden hilft der Welt</h3>
-            <p>
+            <p class="text-left">
               Besonders in der Zeit von Corona sind etliche lokale Restaurants und Unternehmen kurz vor der Insolvenz.
               Damit Sie auch in Zukunft in Ihrem Lieblingsrestaurant essen können bietet unsere Seite die perfekte
               Möglichkeit, um diese zu unterstützen. Bereits eine kleine Spende, oder der Kauf eines Gutscheins, kann es einem
@@ -37,8 +37,10 @@
               die Dienste von Betrieben in Ihrer Nähe in Anspruch nehmen.
             </p>
           </v-col>
-          <v-col cols="1" />
-          <v-col cols="5">
+          <v-col
+            v-if="!custom"
+            cols="4"
+          >
             <v-img src="https://picsum.photos/510/300?random" />
           </v-col>
         </v-row>
@@ -46,13 +48,15 @@
 
       <div class="argument">
         <v-row>
-          <v-col cols="6">
+          <v-col
+            v-if="!custom"
+            cols="4"
+          >
             <v-img src="https://picsum.photos/510/200?random" />
           </v-col>
-          <v-col cols="1" />
-          <v-col cols="5">
+          <v-col>
             <h3>Geld ist geil</h3>
-            <p>
+            <p class="text-left">
               Geld ist geil und deshalb profitieren auch Sie wenn Sie eine Spende tätigen. Abgesehen von dem
               guten Gefühl, welches Sie erhalten, wenn Sie Menschen in der Not helfen, ist es im Zuge
               der Coronakrise möglich, Ihren gespendeten Betrag von der Steuer abzusetzen. Dies ist allerdings erst ab
@@ -68,6 +72,28 @@
 <script>
 export default {
   name: 'WarumSpenden',
+  data: () => ({
+    custom: false,
+  }),
+  computed: {
+    customBreak() {
+      return this.windowSize.x <= 700;
+    },
+  },
+  mounted() {
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+  },
+  beforeDestroy() {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.onResize, { passive: true });
+    }
+  },
+  methods: {
+    onResize() {
+      this.custom = window.innerWidth <= 700;
+    },
+  },
 };
 </script>
 
