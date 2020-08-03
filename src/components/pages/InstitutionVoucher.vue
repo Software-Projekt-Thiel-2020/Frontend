@@ -525,7 +525,7 @@ export default {
     timeRulesNew() {
       return [
         () => /[0-9]+/.test(this.newVoucher.validTime) || 'Bitte geben Sie eine Zahl ein',
-        () => (this.newVoucher.validTime > 0) || 'Keine valide Gültigkeit',
+        () => (this.newVoucher.validTime > 0) || 'Ein Gutschein muss mind. 1 Jahr gültig sein',
         () => (this.newVoucher.validTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
       ];
     },
@@ -538,7 +538,7 @@ export default {
     timeRulesEdit() {
       return [
         () => /[0-9]+/.test(this.newValidTime) || 'Bitte geben Sie eine Zahl ein',
-        () => (this.newValidTime > 0) || 'Keine valide Gültigkeit',
+        () => (this.newValidTime > 0) || 'Ein Gutschein muss mind. 1 Jahr gültig sein',
         () => (this.newValidTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
         () => (this.newValidTime >= this.oldTime) || 'Neue Zeit darf nicht kleiner sein',
       ];
