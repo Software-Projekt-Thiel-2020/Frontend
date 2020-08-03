@@ -1,7 +1,7 @@
 {
   "name": "Spenderschlender",
   "short_name": "Spenderschlender",
-  "start_url": "http://spenderschlender.3ef.de/",
+  "start_url": "http://localhost:8080/#/",
   "description": "A blockchain donation and voucher project",
   "display": "standalone",
   "background_color": "#3779c4",
