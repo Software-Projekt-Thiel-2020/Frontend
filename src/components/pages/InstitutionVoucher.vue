@@ -243,6 +243,7 @@
                 label="Titel"
                 class="inputField"
                 required
+                :rules="titleRulesNew()"
               />
             </v-col>
             <v-col cols="3" />
@@ -527,6 +528,11 @@ export default {
       return [
         () => (this.newValidTime > 0) || 'Keine valide Gültigkeit',
         () => (this.newValidTime >= this.oldTime) || 'Neue Gültigkeit darf nicht kleiner sein',
+      ];
+    },
+    titleRulesNew() {
+      return [
+        () => (this.newVoucher.title.length <= 32) || 'Der Titel darf maximal 32 Zeichen lang sein',
       ];
     },
     changeVoucher() {
