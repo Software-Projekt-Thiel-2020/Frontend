@@ -505,8 +505,7 @@ export default {
     },
     subjectRules() {
       return [
-        // eslint-disable-next-line no-control-regex
-        (v) => (this.validate(this.window.btoa(v))) || 'Beschreibung muss Base64 encoded sein',
+        (v) => (this.validate(this.window.btoa(v))) || 'Beschreibung muss Base64 encodedierbar sein',
       ];
     },
     validate(str) {
@@ -525,6 +524,7 @@ export default {
     timeRulesNew() {
       return [
         () => (this.newVoucher.validTime > 0) || 'Keine valide Gültigkeit',
+        () => (this.newVoucher.validTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
       ];
     },
     priceRulesEdit() {
@@ -535,6 +535,7 @@ export default {
     timeRulesEdit() {
       return [
         () => (this.newValidTime > 0) || 'Keine valide Gültigkeit',
+        () => (this.newValidTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
         () => (this.newValidTime >= this.oldTime) || 'Neue Gültigkeit darf nicht kleiner sein',
       ];
     },
@@ -544,6 +545,7 @@ export default {
       ];
     },
     changeVoucher() {
+      // authToken: this.userData.authResponseToken, sobald im Backend Route geändert
       this.changingVoucher = true;
       const url = 'vouchers/institution';
       const headers = {
