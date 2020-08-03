@@ -1,9 +1,7 @@
 <template>
   <div>
-    <v-container class="mt-2">
+    <v-container no-gutters>
       <h1>Spenden</h1>
-    </v-container>
-    <v-container>
       <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
       <v-form class="form-box ml-0">
         <v-container>
@@ -90,8 +88,7 @@
         </v-container>
       </v-form>
     </v-container>
-    <v-container>
-      <h2>Ergebnisse:</h2>
+    <v-container fluid>
       <div v-if="!gotResponse">
         <v-skeleton-loader>
           <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
@@ -119,64 +116,55 @@
       </v-alert>
       <div
         v-else-if="gotResponse"
-        class="d-flex flex-row flex-wrap"
-        :class="$vuetify.breakpoint.lgAndDown ? 'justify-space-around' : ''"
       >
-        <v-card
-          v-for="item in resultList"
-          :key="item.id"
-          class="ma-4 grey lighten-3 text-left"
-          outlined
-          :max-width="$vuetify.breakpoint.mdAndDown ? 350 : 500"
-          :min-width="$vuetify.breakpoint.mdAndDown ? 350 : 500"
-          max-height="400"
+        <v-row
+          dense
         >
-          <v-row no-gutters>
-            <v-col>
-              <v-card-title
-                class="headline"
-              >
+          <v-col
+            v-for="item in resultList"
+            :key="item.id"
+            sm="12"
+            md="6"
+            lg="4"
+            xl="3"
+          >
+            <v-card>
+              <v-img
+                class="white--text align-end"
+                height="200px"
+                width="100%"
+                :src="apiurl+'/file/'+item.picturePath"
+                alt="/assets/placeholder.png"
+              />
+
+              <v-card-title>
                 {{ item.name }}
               </v-card-title>
-              <v-card-text>
-                <v-row no-gutters>
-                  <v-col>
-                    <span class="font-weight-medium">Bis zum: {{ new Date(item.until * 1000).toLocaleDateString() }}</span>
-                  </v-col>
-                  <v-col>
-                    <a :href="item.webpage">Zur Website</a>
-                  </v-col>
-                </v-row>
-                <p
-                  class="mt-3 text-left text-wrap"
-                >
-                  {{ item.description }}
-                </p>
+              <v-card-subtitle>
+                Bis zum: {{ new Date(item.until * 1000).toLocaleDateString() }}
+              </v-card-subtitle>
+
+              <v-card-text class="text--primary">
+                {{ item.description }}
               </v-card-text>
+
               <v-card-actions>
                 <v-btn
-                  style="bottom: 0; left: 0; position: absolute"
+                  color="rgba(0, 0, 0, 0.54)"
+                  text
+                  width="80%"
                   :to="'project/'+item.id"
-                  class="no-text text-decoration-none ma-2 mt-3"
                 >
                   Spenden
                 </v-btn>
+                <v-spacer />
+                <v-btn icon :href="item.webpage">
+                  <v-icon>mdi-bookmark</v-icon>
+                </v-btn>
               </v-card-actions>
-            </v-col>
-            <v-col
-              cols="4"
-            >
-              <v-img
-                class="mb-3 mt-3 pl-6"
-                :src="apiurl+'/file/'+item.picturePath"
-                alt="/assets/placeholder.png"
-                max-width="300"
-                max-height="150"
-                contain
-              />
-            </v-col>
-          </v-row>
-        </v-card>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </v-container>
   </div>
