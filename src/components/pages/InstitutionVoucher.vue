@@ -153,6 +153,7 @@
                 type="number"
                 label="Preis (in Wei)"
                 class="inputField"
+                :rules="priceRulesEdit()"
                 @change="valuesChanged()"
               />
             </v-col>
@@ -180,6 +181,7 @@
                 type="number"
                 label="Gültigkeit (in Jahren)"
                 class="inputField"
+                :rules="timeRulesEdit()"
                 @change="valuesChanged()"
               />
             </v-col>
@@ -230,7 +232,9 @@
             Gutschein erstellen
           </v-card-title>
         </v-layout>
-        <v-form>
+        <v-form
+          v-model="newVoucher.form"
+        >
           <v-row>
             <v-col cols="3" />
             <v-col cols="6">
@@ -252,6 +256,7 @@
                 label="Preis (in Wei)"
                 class="inputField"
                 required
+                :rules="priceRules()"
               />
             </v-col>
             <v-col cols="3" />
@@ -263,6 +268,7 @@
                 v-model="newVoucher.subject"
                 label="Beschreibung"
                 class="inputField"
+                :rules="subjectRules()"
                 required
               />
             </v-col>
@@ -277,6 +283,7 @@
                 label="Gültigkeit (in Jahren)"
                 class="inputField"
                 required
+                :rules="timeRulesNew()"
               />
             </v-col>
             <v-col cols="3" />
@@ -302,10 +309,12 @@
                   || !newVoucher.title
                   || (newVoucher.title.length > 32)
                   || !newVoucher.subject
-                  || !newVoucher.validTime"
+                  || !newVoucher.validTime
+                  || !newVoucher.form"
                 color="success"
                 block
                 tile
+                :rules="priceRules"
                 :loading="creatingVoucher"
                 @click="createVoucher"
               >
@@ -383,13 +392,13 @@ export default {
     oldTime: null,
     newPrice: null,
     newAvailable: null,
+    form: false,
     changingVoucher: false,
     dialogEdit: {
       errorMessage: '',
       error: false,
       success: false,
     },
-    form: false,
     disabled: true,
     ethToEur: null,
     dialogEth: {
@@ -404,6 +413,7 @@ export default {
       title: '',
       subject: '',
       validTime: null,
+      form: false,
     },
     dialogAddVoucher: {
       errorMessage: '',
@@ -468,11 +478,15 @@ export default {
       this.disabled = true;
     },
     valuesChanged() {
-      if (this.newValidTime === this.editItem.validTime
+      if (this.newValidTime === this.oldTime
         && this.newPrice === this.editItem.price
         && this.newAvailable === this.editItem.available) {
         this.disabled = true;
       } else if (!this.newValidTime && !this.newPrice && this.newAvailable === this.editItem.available) {
+        this.disabled = true;
+      } else if (this.newPrice < 0) {
+        this.disabled = true;
+      } else if ((this.newValidTime < 1 || this.newValidTime < this.oldTime) && this.newValidTime) {
         this.disabled = true;
       } else {
         this.disabled = false;
@@ -490,7 +504,29 @@ export default {
     },
     subjectRules() {
       return [
-        (v) => /^([\u0000-\u00ff][0-9])*$/i.test(v) || 'Keine valide Beschreibung',
+        // eslint-disable-next-line no-control-regex
+        (v) => (/^([\u0000-\u00ff][0-9])*$/i).test(v) || 'Keine valide Beschreibung',
+      ];
+    },
+    priceRules() {
+      return [
+        () => (this.newVoucher.price >= 0) || 'Kein valider Preis',
+      ];
+    },
+    timeRulesNew() {
+      return [
+        () => (this.newVoucher.validTime > 0) || 'Keine valide Gültigkeit',
+      ];
+    },
+    priceRulesEdit() {
+      return [
+        () => (this.newPrice >= 0) || 'Kein valider Preis',
+      ];
+    },
+    timeRulesEdit() {
+      return [
+        () => (this.newValidTime > 0) || 'Keine valide Gültigkeit',
+        () => (this.newValidTime >= this.oldTime) || 'Neue Gültigkeit darf nicht kleiner sein',
       ];
     },
     changeVoucher() {
