@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="description" content="A blockchain donation and voucher project">
     <meta name="keywords" content="Spenden, Gutscheine, SpenderSchledner, Ehter, Etherium">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <title>
         Spenderschlender
     </title>
@@ -14,16 +14,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
     <script src="https://kit.fontawesome.com/4274794bcc.js" ></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then((reg) => {
-                        console.log('Service worker registered.', reg);
-                    });
-            });
-        }
-    </script>
   </head>
   <body>
     <noscript>

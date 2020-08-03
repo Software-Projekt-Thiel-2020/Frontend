@@ -12,6 +12,7 @@
     "blockstack": "21.0.0",
     "core-js": "^3.6.4",
     "leaflet": "^1.6.0",
+    "offline-plugin": "^5.0.7",
     "vue": "^2.6.11",
     "vue-confetti": "^2.0.9",
     "vue-currency-input": "^1.18.3",

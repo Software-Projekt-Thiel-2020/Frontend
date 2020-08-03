@@ -7,7 +7,7 @@
   "background_color": "#3779c4",
   "theme_color": "#abeeff",
   "icons": [{
-    "src": "http://blockstack-todos.appartisan.com/logo.png",
+    "src": "/favicon.png",
     "sizes": "512x512",
     "type": "image/png"
   }]
