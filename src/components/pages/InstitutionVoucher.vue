@@ -505,7 +505,7 @@ export default {
     subjectRules() {
       return [
         // eslint-disable-next-line no-control-regex
-        (v) => (/^([\u0000-\u00ff][0-9])*$/i).test(v) || 'Keine valide Beschreibung',
+        (v) => /^([\u0000-\u00ff]_[0-9]_)*$/i.test(v) || 'Keine valide Beschreibung',
       ];
     },
     priceRules() {
