@@ -342,6 +342,7 @@ export default {
       let url = 'vouchers/institution?idInstitution=';
       url += this.institutionId;
       url += '&available=1';
+      this.loadingVouchers = true;
       axios.get(url)
         .then((res) => {
           this.vouchers = res.data;
@@ -398,6 +399,7 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.$confetti.stop();
+      this.loadVouchers();
     },
   },
 };
