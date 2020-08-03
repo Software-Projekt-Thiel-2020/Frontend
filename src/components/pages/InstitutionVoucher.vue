@@ -17,7 +17,7 @@
       </v-btn>
       <v-divider class="mt-5" />
       <v-layout
-        v-if="loadingVouchers == true"
+        v-if="loadingVouchers === true"
         justify-center
       >
         <v-progress-circular
@@ -97,7 +97,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="vouchers.length==0">
+        <v-row v-if="vouchers.length === 0">
           <v-col class="noVouchers">
             <h3>
               Keine Gutscheine vorhanden
@@ -242,6 +242,7 @@
               <v-text-field
                 v-model="newVoucher.title"
                 label="Titel"
+                counter
                 class="inputField"
                 required
                 :rules="titleRulesNew()"
@@ -374,7 +375,7 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'InstitutionVoucher',
@@ -520,7 +521,7 @@ export default {
     priceRules() {
       return [
         () => (this.newVoucher.price >= 0) || 'Kein valider Preis',
-        () => /[0-9]+/.test(this.newVoucher.price) || 'Bitte geben Sie eine Zahl ein',
+        () => /^[0-9]+$/.test(this.newVoucher.price) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
     timeRulesNew() {
@@ -533,7 +534,7 @@ export default {
     priceRulesEdit() {
       return [
         () => (this.newPrice >= 0) || 'Kein valider Preis',
-        () => /[0-9]+/.test(this.newPrice) || 'Bitte geben Sie eine Zahl ein',
+        () => /^[0-9]+$/.test(this.newPrice) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
     timeRulesEdit() {
