@@ -519,10 +519,12 @@ export default {
     priceRules() {
       return [
         () => (this.newVoucher.price >= 0) || 'Kein valider Preis',
+        () => /[0-9]+/.test(this.newVoucher.price) || 'Bitte geben Sie eine Zahl ein',
       ];
     },
     timeRulesNew() {
       return [
+        () => /[0-9]+/.test(this.newVoucher.validTime) || 'Bitte geben Sie eine Zahl ein',
         () => (this.newVoucher.validTime > 0) || 'Keine valide Gültigkeit',
         () => (this.newVoucher.validTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
       ];
@@ -530,13 +532,15 @@ export default {
     priceRulesEdit() {
       return [
         () => (this.newPrice >= 0) || 'Kein valider Preis',
+        () => /[0-9]+/.test(this.newPrice) || 'Bitte geben Sie eine Zahl ein',
       ];
     },
     timeRulesEdit() {
       return [
+        () => /[0-9]+/.test(this.newValidTime) || 'Bitte geben Sie eine Zahl ein',
         () => (this.newValidTime > 0) || 'Keine valide Gültigkeit',
         () => (this.newValidTime < 21) || 'Ein Gutschein kann max. 20 Jahre gültig sein',
-        () => (this.newValidTime >= this.oldTime) || 'Neue Gültigkeit darf nicht kleiner sein',
+        () => (this.newValidTime >= this.oldTime) || 'Neue Zeit darf nicht kleiner sein',
       ];
     },
     titleRulesNew() {
