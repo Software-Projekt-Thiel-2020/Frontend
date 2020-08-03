@@ -632,8 +632,8 @@ export default {
   }
 
   .addVoucher {
-      position: absolute;
-      top: 10px;
+      position: fixed;
+      top: 80px;
       right: 10px;
       width: 10px;
       height: 10px;
