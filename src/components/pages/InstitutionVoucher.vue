@@ -300,6 +300,7 @@
               <v-btn
                 :disabled="!newVoucher.price
                   || !newVoucher.title
+                  || (newVoucher.title.length > 32)
                   || !newVoucher.subject
                   || !newVoucher.validTime"
                 color="success"
@@ -431,7 +432,7 @@ export default {
     weiToEuro() {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR')
         .then((res) => {
-          this.ethToEur = res.data.EUR / 1000000000000000000;
+          this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
           this.dialogEth.errorMessage = err.toString();
