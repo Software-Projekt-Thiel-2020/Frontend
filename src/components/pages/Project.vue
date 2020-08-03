@@ -196,6 +196,7 @@
                   <v-btn
                     class="btn-hover color-9"
                     dark
+                    :disabled="donationDisabled"
                     @click="donate()"
                   >
                     Betrag Spenden
@@ -228,6 +229,7 @@ export default {
     loading: false,
     voteEnabled: false,
     voteDisabled: true,
+    donationDisabled: true,
     apiurl: window.apiurl,
   }),
   computed: {
@@ -319,6 +321,11 @@ export default {
     },
     compareInput() {
       const EthVal = this.donationValue * this.eurToEth;
+      if (this.donationValue <= 0) {
+        this.donationDisabled = true;
+      } else {
+        this.donationDisabled = false;
+      }
       if (EthVal >= 0.01) {
         this.voteEnabled = true;
         this.voteDisabled = false;
