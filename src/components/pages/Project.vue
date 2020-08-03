@@ -149,11 +149,11 @@
                         </h1>
                       </v-col>
                     </v-row>
-                    <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
+                    <h3>{{ (milestone.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100) }}%</h3>
                     <v-progress-linear
                       color="secondary"
                       height="15"
-                      :value="(milestone.totalDonated/milestone.goal)"
+                      :value="(milestone.totalDonated/milestone.goal) * 100"
                       striped
                     />
                   </div>
@@ -178,7 +178,10 @@
                   </h4>
                   <currency-input
                     v-model="donationValue"
+                    :allow-negative="false"
+                    :auto-decimal-mode="true"
                     class="mt-3 headline"
+                    @change="compareInput"
                   />
                   <br>
                   <h1 class="display-1">
@@ -186,6 +189,7 @@
                   </h1>
                   <v-checkbox
                     v-model="voteEnabled"
+                    :disabled="voteDisabled"
                     style="display:inline-flex"
                     class="text-center align-center"
                     label="Für Meilenstein abstimmen"
@@ -235,11 +239,12 @@ export default {
     donationValue: 0,
     goalPercentage: 0,
     dialog: false,
-    weiFormula: 1000000000000000000,
+    weiFormula: 1e18,
     errorMessage: null,
     error: false,
     loading: false,
-    voteEnabled: true,
+    voteEnabled: false,
+    voteDisabled: true,
     apiurl: window.apiurl,
     notLoggedin: false,
   }),
@@ -260,7 +265,7 @@ export default {
       this.userData = window.userSession.loadUserData();
       // console.log(this.userData);
     }
-    this.szaboToEuro();
+    this.weiToEuro();
     this.loadProject();
   },
   methods: {
@@ -280,9 +285,9 @@ export default {
         axios.post('donations', {}, { headers })
           .then(() => {
             this.openDialog();
+            this.loadProject();
           })
           .catch((err) => {
-            this.error = true;
             this.errorMessage = err.toString();
           })
           .finally(() => {
@@ -298,11 +303,11 @@ export default {
       this.dialog = false;
       this.$confetti.stop();
     },
-    szaboToEuro() {
+    weiToEuro() {
       this.loading = true;
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
-          this.exrate = (res.data.ETH * 1000000000000000000);
+          this.exrate = (res.data.ETH * 1e18);
           this.eurToEth = res.data.ETH;
           // console.log(this.exrate);
         })
@@ -330,9 +335,19 @@ export default {
         });
     },
     showValue(value) {
-      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
-      if (value > 10e6) return `${(value / 10e6)} MWEI`;
+      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (value > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
+    },
+    compareInput() {
+      const EthVal = this.donationValue * this.eurToEth;
+      if (EthVal >= 0.01) {
+        this.voteEnabled = true;
+        this.voteDisabled = false;
+      } else {
+        this.voteEnabled = false;
+        this.voteDisabled = true;
+      }
     },
   },
 };

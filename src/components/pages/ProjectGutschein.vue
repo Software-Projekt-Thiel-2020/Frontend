@@ -356,7 +356,7 @@ export default {
     weiToEuro() {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR')
         .then((res) => {
-          this.ethToEur = res.data.EUR / 1000000000000000000;
+          this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
           this.dialogEth.errorMessage = err.toString();
@@ -387,8 +387,8 @@ export default {
       }
     },
     showValue(value) {
-      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
-      if (value > 10e6) return `${(value / 10e6)} MWEI`;
+      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (value > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
     openDialog() {

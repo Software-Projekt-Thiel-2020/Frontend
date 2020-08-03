@@ -229,7 +229,7 @@
                   >
                     <v-card-title>{{ voucher.titel }}</v-card-title>
                     <v-card-subtitle class="overline">
-                      {{ voucher.titel }}
+                      {{ voucher.bought }}
                     </v-card-subtitle>
                     <v-card-text>{{ voucher.description }}</v-card-text>
                     <v-card-actions>
@@ -326,7 +326,10 @@
                     :key="donation.id"
                     cols="12"
                   >
-                    <v-card light>
+                    <v-card
+                      color="white"
+                      light
+                    >
                       <v-card-title>
                         {{ donation.projectname }}
                         <v-spacer />
@@ -334,6 +337,9 @@
                           {{ donation.amount / weiFormula }} ETH
                         </h3>
                       </v-card-title>
+                      <v-card-subtitle class="overline lightgrey">
+                        {{ donation.timeofdonation }}
+                      </v-card-subtitle>
                     </v-card>
                   </v-col>
                 </v-row>
@@ -362,7 +368,7 @@ import { userSession } from '../../userSession';
 export default {
   name: 'Historie',
   data: () => ({
-    weiFormula: 1000000000000000000,
+    weiFormula: 1e18,
     tab: null,
     donations: [],
     vouchers: [],
@@ -491,5 +497,8 @@ export default {
   .loadingCircle {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  .lightgrey {
+    color: rgba(0,0,0,0.6) !important;
   }
 </style>
