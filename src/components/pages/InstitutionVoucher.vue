@@ -550,12 +550,12 @@ export default {
       ];
     },
     changeVoucher() {
-      // authToken: this.userData.authResponseToken, sobald im Backend Route geändert
       this.changingVoucher = true;
       const url = 'vouchers/institution';
       const headers = {
         idVoucher: this.editItem.id,
         idInstitution: this.institutionId,
+        authToken: this.userData.authResponseToken,
       };
       if (this.newValidTime) {
         headers.validTimeVoucher = this.newValidTime * 365 * 24 * 60 * 60;
