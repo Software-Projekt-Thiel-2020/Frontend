@@ -8,6 +8,7 @@
       </h4>
       <v-btn
         class="addVoucher"
+        color="success"
         @click="openDialog"
       >
         <v-icon class="plus">
@@ -638,6 +639,8 @@ export default {
       right: 10px;
       width: 10px;
       height: 10px;
+      z-index: 2;
+      border: 1px solid black;
   }
 
     .loadingCircle {
