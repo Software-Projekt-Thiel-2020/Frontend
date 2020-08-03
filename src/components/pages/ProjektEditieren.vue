@@ -36,7 +36,19 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="(gotResponse && userProjects.length === 0)">
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+          class="loadingCircle"
+        />
+      </v-layout>
+      <div v-else-if="(gotResponse && userProjects.length === 0)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
@@ -406,6 +418,7 @@ export default {
     alertType: null,
     userFeedback: '',
     form: false,
+    loading: true,
     tableHeaders: [
       {
         text: 'Meilensteinname',
@@ -485,6 +498,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       setTimeout(() => {
         axios.get(`projects?username=${window.user.username}`)
           .then((res) => {
@@ -498,6 +512,7 @@ export default {
           .finally(() => {
             this.gotResponse = true;
             this.resultList = this.userProjects;
+            this.loading = false;
           });
       }, 400);
     },
@@ -708,5 +723,9 @@ export default {
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
+  }
+
+   .loadingCircle {
+    margin-top: 50px;
   }
 </style>
