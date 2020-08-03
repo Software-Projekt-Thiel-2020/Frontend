@@ -321,17 +321,17 @@ export default {
     },
     compareInput() {
       const EthVal = this.donationValue * this.eurToEth;
-      if (this.donationValue <= 0) {
-        this.donationDisabled = true;
-      } else {
-        this.donationDisabled = false;
-      }
       if (EthVal >= 0.01) {
         this.voteEnabled = true;
         this.voteDisabled = false;
       } else {
         this.voteEnabled = false;
         this.voteDisabled = true;
+      }
+      if (this.donationValue <= 0) {
+        this.donationDisabled = true;
+      } else {
+        this.donationDisabled = false;
       }
     },
   },
