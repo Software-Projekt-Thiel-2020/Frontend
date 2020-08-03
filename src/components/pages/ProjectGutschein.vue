@@ -73,7 +73,21 @@
             class="projectBox"
             elevation="4"
           >
-            <div class="d-flex flex-no-wrap justify-space-between">
+            <v-layout
+              v-if="loadingProject == true"
+              justify-center
+            >
+              <v-progress-circular
+                :size="50"
+                :width="7"
+                color="green"
+                indeterminate
+              />
+            </v-layout>
+            <div
+              v-else
+              class="d-flex flex-no-wrap justify-space-between"
+            >
               <div>
                 <v-card-title class="font-weight-light display-1">
                   Infos über den Betrieb
@@ -99,7 +113,14 @@
                 size="250"
                 tile
               >
-                <v-img :src="image" />
+                <img
+                  v-if="project[0].picturePath"
+                  :src="apiurl+'/file/'+project[0].picturePath"
+                >
+                <img
+                  v-else
+                  src="../../assets/placeholder.png"
+                >
               </v-avatar>
             </div>
           </v-card>
@@ -246,6 +267,7 @@ import { userSession } from '../../userSession';
 export default {
   name: 'ProjectGutschein',
   data: () => ({
+    apiurl: window.apiurl,
     userSession: null,
     userData: null,
     institutionId: null,
@@ -258,6 +280,7 @@ export default {
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
     loadingVouchers: true,
+    loadingProject: true,
     dialogVoucher: {
       errorMessage: '',
       error: false,
@@ -311,12 +334,15 @@ export default {
         .catch((err) => {
           this.dialogProject.errorMessage = err.toString();
           this.dialogProject.error = true;
+        }).finally(() => {
+          this.loadingProject = false;
         });
     },
     loadVouchers() {
       let url = 'vouchers/institution?idInstitution=';
       url += this.institutionId;
       url += '&available=1';
+      this.loadingVouchers = true;
       axios.get(url)
         .then((res) => {
           this.vouchers = res.data;
@@ -373,6 +399,7 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.$confetti.stop();
+      this.loadVouchers();
     },
   },
 };
