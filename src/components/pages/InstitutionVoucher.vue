@@ -91,7 +91,7 @@
                 dark
                 @click="editVoucher(voucher)"
               >
-                Gutschein editieren
+                <span v-if="!$vuetify.breakpoint.xsOnly"> Gutschein editieren </span> <span v-else> editieren </span>
               </v-btn>
             </v-card>
           </v-col>
