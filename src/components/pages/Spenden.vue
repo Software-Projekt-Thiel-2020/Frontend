@@ -117,51 +117,66 @@
           {{ line }}<br>
         </div>
       </v-alert>
-      <div v-else-if="gotResponse">
-        <template>
-          <v-row >
-              <v-col
-                      v-for="item in resultList"
-                      :key="item.name"
-              cols="12"
-                      sm="4"
+      <div
+        v-else-if="gotResponse"
+        class="d-flex flex-row flex-wrap"
+        :class="$vuetify.breakpoint.lgAndDown ? 'justify-space-around' : ''"
+      >
+        <v-card
+          v-for="item in resultList"
+          :key="item.id"
+          class="ma-4 grey lighten-3 text-left"
+          outlined
+          :max-width="$vuetify.breakpoint.mdAndDown ? 350 : 500"
+          :min-width="$vuetify.breakpoint.mdAndDown ? 350 : 500"
+          max-height="400"
+        >
+          <v-row no-gutters>
+            <v-col>
+              <v-card-title
+                class="headline"
               >
-                <v-card
-                        class="project"
-                        elevation="5"
+                {{ item.name }}
+              </v-card-title>
+              <v-card-text>
+                <v-row no-gutters>
+                  <v-col>
+                    <span class="font-weight-medium">Bis zum: {{ new Date(item.until * 1000).toLocaleDateString() }}</span>
+                  </v-col>
+                  <v-col>
+                    <a :href="item.webpage">Zur Website</a>
+                  </v-col>
+                </v-row>
+                <p
+                  class="mt-3 text-left text-wrap"
                 >
-                  <v-img
-                          :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
-                          alt="/assets/placeholder.png"
-                          max-width="150px"
-                          max-height="150px"
-                          min-width="150px"
-                          min-height="150px"
-                          class="elementImage"
-                  />
-                  <div
-                          class="companyData"
-                          style="border:0;"
-                  >
-                    <h2 class="ma-3">
-                      {{ item.name }}
-                    </h2>
-                    <h4 class="ma-3">
-                      Zur Website:
-                      <a :href="item.webpage">{{ item.webpage }}</a>
-                    </h4>
-                  </div>
-                  <v-card-actions>
-                    <router-link :to="'project/'+item.id">
-                      <v-btn class="spendenButton">
-                        Spenden
-                      </v-btn>
-                    </router-link>
-                  </v-card-actions>
-                </v-card>
-              </v-col>
-            </v-row>
-        </template>
+                  {{ item.description }}
+                </p>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  style="bottom: 0; left: 0; position: absolute"
+                  :to="'project/'+item.id"
+                  class="no-text text-decoration-none ma-2 mt-3"
+                >
+                  Spenden
+                </v-btn>
+              </v-card-actions>
+            </v-col>
+            <v-col
+              cols="4"
+            >
+              <v-img
+                class="mb-3 mt-3 pl-6"
+                :src="apiurl+'/file/'+item.picturePath"
+                alt="/assets/placeholder.png"
+                max-width="300"
+                max-height="150"
+                contain
+              />
+            </v-col>
+          </v-row>
+        </v-card>
       </div>
     </v-container>
   </div>
@@ -292,37 +307,12 @@ export default {
 
 
 <style scoped>
-
-    .project {
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 25px;
-    }
-
     .form-box {
         max-width: 700px;
         margin-left: 0px;
     }
 
-    .spendenButton {
-        align-self: flex-end;
-        margin-bottom: 15px;
-        margin-right: 15px;
-        font-size: 1.5rem;
-        text-decoration: none;
-    }
-
     .form-input input {
         border: 1px solid gray;
-    }
-
-    .elementImage{
-      max-width: 200px;
-      max-height: 200px;
-    }
-
-    .companyData {
-        margin-left: 15px;
-        flex-basis: 55%
     }
 </style>
