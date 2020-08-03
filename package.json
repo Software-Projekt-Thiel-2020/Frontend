@@ -59,6 +59,13 @@
     "type": "git",
     "url": "git+https://github.com/Software-Projekt-Thiel-2020/Frontend.git"
   },
+  "keywoeds": [
+    "Spenden",
+    "Gutscheine",
+    "SpenderSchledner",
+    "Ehter",
+    "Etherium"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
