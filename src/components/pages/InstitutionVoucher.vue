@@ -506,8 +506,16 @@ export default {
     subjectRules() {
       return [
         // eslint-disable-next-line no-control-regex
-        (v) => /^([\u0000-\u00ff]_[0-9]_)*$/i.test(v) || 'Keine valide Beschreibung',
+        (v) => (this.validate(v)) || 'Beschreibung muss Base64 encoded sein',
       ];
+    },
+    validate(str) {
+      try {
+        atob(str);
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
     priceRules() {
       return [
