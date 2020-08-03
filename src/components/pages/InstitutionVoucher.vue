@@ -506,7 +506,7 @@ export default {
     subjectRules() {
       return [
         // eslint-disable-next-line no-control-regex
-        (v) => (this.validate(v)) || 'Beschreibung muss Base64 encoded sein',
+        (v) => (this.validate(this.window.btoa(v))) || 'Beschreibung muss Base64 encoded sein',
       ];
     },
     validate(str) {
