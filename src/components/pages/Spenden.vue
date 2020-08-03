@@ -50,6 +50,7 @@
                 class="mt-1"
                 :color="locationButton"
                 label="Mich finden"
+                :loading="loadLocation"
                 @click="getOwnLocation"
               >
                 <v-icon>mdi-crosshairs-gps</v-icon>
@@ -89,18 +90,19 @@
       </v-form>
     </v-container>
     <v-container fluid>
+      <v-layout
+        v-if="loading==true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
       <div v-if="!gotResponse">
-        <v-skeleton-loader>
-          <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
-           da Anzahl an gefundenen Projekte beim Laden
-            nicht herauszufinden ist -->
-          v-for="index in 7"
-          :key="index"
-          class="my-10"
-          type="list-item-avatar"
-          tile
-          />
-        </v-skeleton-loader>
+        <v-skeleton-loader />
       </div>
       <v-alert
         v-if="errorMessage"
@@ -158,7 +160,10 @@
                   Spenden
                 </v-btn>
                 <v-spacer />
-                <v-btn icon :href="item.webpage">
+                <v-btn
+                  icon
+                  :href="item.webpage"
+                >
                   <v-icon>mdi-bookmark</v-icon>
                 </v-btn>
               </v-card-actions>
@@ -176,6 +181,8 @@ import axios from 'axios';
 export default {
   name: 'Spenden',
   data: () => ({
+    loadLocation: false,
+    loading: false,
     items: [],
     gotResponse: false,
     errorMessage: '',
@@ -205,6 +212,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get('projects')
         .then((res) => {
           this.items = res.data;
@@ -215,6 +223,7 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     getOwnLocation() {
@@ -222,12 +231,15 @@ export default {
         this.errorMessage = 'Geolocation ist nicht verfügbar';
         return;
       }
+      this.loadLocation = true;
       navigator.geolocation.getCurrentPosition((pos) => {
         this.location = pos;
         this.longitude = pos.coords.longitude;
         this.latitude = pos.coords.latitude;
+        this.loadLocation = false;
       }, (err) => {
         this.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
+        this.loadLocation = false;
       });
     },
     reset() {
@@ -237,6 +249,7 @@ export default {
       this.latitude = -1;
       this.radius = 10;
       this.errorMessage = '';
+      this.gotResponse = false;
       this.load();
     },
     loadProjects() {
@@ -258,11 +271,19 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
+      } else {
+        this.gotResponse = true;
+        this.loading = false;
       }
     },
     suchen() {
       this.errorMessage = '';
+      this.gotResponse = false;
+      this.loading = true;
       if (this.searchPlace && this.searchCode) {
         let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
         if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
@@ -284,6 +305,9 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
       } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
         this.loadProjects();
