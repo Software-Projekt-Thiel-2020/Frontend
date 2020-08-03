@@ -198,6 +198,7 @@
                   <v-btn
                     class="btn-hover color-9"
                     dark
+                    :loading="loadDonation"
                     @click="donate()"
                   >
                     Betrag Spenden
@@ -247,6 +248,7 @@ export default {
     voteDisabled: true,
     apiurl: window.apiurl,
     notLoggedin: false,
+    loadDonation: false,
   }),
   computed: {
     getDonationETHValue() {
@@ -281,7 +283,7 @@ export default {
           voteEnabled: this.voteEnabled ? 1 : 0,
         };
         this.userData = window.userSession.loadUserData();
-        this.loading = true;
+        this.loadDonation = true;
         axios.post('donations', {}, { headers })
           .then(() => {
             this.openDialog();
@@ -289,9 +291,10 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+            this.error = true;
           })
           .finally(() => {
-            this.loading = false;
+            this.loadDonation = false;
           });
       }
     },
