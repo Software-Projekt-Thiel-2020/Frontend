@@ -11,8 +11,8 @@
       </div>
     </div>
     <v-form
-      class="mt-2"
       v-model="form"
+      class="mt-2"
     >
       <v-row>
         <v-col cols="6">
