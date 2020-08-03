@@ -487,6 +487,11 @@ export default {
       this.newVoucher.validTime = null;
       this.newVoucher.price = null;
     },
+    subjectRules() {
+      return [
+        (v) => /^([\u0000-\u00ff][0-9])*$/i.test(v) || 'Keine valide Beschreibung',
+      ];
+    },
     changeVoucher() {
       this.changingVoucher = true;
       const url = 'vouchers/institution';
@@ -580,5 +585,9 @@ export default {
     .loadingCircle {
     margin-top: 50px;
     margin-bottom: 50px;
+  }
+
+  .wrongInput {
+    color: red;
   }
 </style>
