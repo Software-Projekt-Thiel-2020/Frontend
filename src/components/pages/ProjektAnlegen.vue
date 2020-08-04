@@ -165,8 +165,6 @@
                 v-model="project.latitude"
                 label="Latitude (optional)"
                 outlined
-                :rules="numberRule"
-                type="number"
                 @change="updateMap(project.latitude, null)"
               />
             </v-col>
@@ -177,8 +175,6 @@
                 v-model="project.longitude"
                 label="Longitude (optional)"
                 outlined
-                :rules="numberRule"
-                type="number"
                 @change="updateMap(null, project.longitude)"
               />
             </v-col>
@@ -351,10 +347,6 @@ export default {
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
-    ],
-    numberRule: [
-      (v) => /^[0-9]*[.,]?[0-9]*$/s.test(v) || 'Bitte nur Zahlen (>0) eingeben',
-      (v) => parseFloat(v) > 0 || 'Bitte nur Zahlen (>0) eingeben',
     ],
     blockTime: true,
     blockAdditionalMilestones: true,

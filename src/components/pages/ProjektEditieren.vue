@@ -234,11 +234,9 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="numberRule"
-                        type="number"
+                        :rules="notEmpty"
                         class="inputField"
                         required
-                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -246,11 +244,9 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="numberRule"
-                        type="number"
+                        :rules="notEmpty"
                         class="inputField"
                         required
-                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -455,10 +451,6 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
-    numberRule: [
-      (v) => parseFloat(v) > 0 || 'Bitte nur Zahlen (>0) eingeben',
-      (v) => /^[0-9]*[.,]?[0-9]*$/s.test(v) || 'Bitte nur Zahlen (>0) eingeben',
-    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -571,21 +563,6 @@ export default {
       this.marker = event.latlng;
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
-    },
-    updateMap(lat, long) {
-      try {
-        let newCoords;
-        if (lat !== null) {
-          newCoords = latLng(lat, this.marker.lng);
-        }
-        if (long !== null) {
-          newCoords = latLng(this.marker.lat, long);
-        }
-        this.marker = newCoords;
-        this.center = newCoords;
-      } catch (e) {
-        // Do nothing if user input is not parseable
-      }
     },
     editClick(itemId) {
       let projectId = -1;
