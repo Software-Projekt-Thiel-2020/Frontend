@@ -1,3 +1,40 @@
+
+Skip to content
+Pull requests
+Issues
+Marketplace
+Explore
+@CodingJosh42
+Software-Projekt-Thiel-2020 /
+Frontend
+
+2
+1
+
+    1
+
+Code
+Issues 21
+Pull requests 10
+Actions
+Projects 1
+Wiki
+Security
+
+    Insights
+
+Frontend/src/components/pages/Project.vue
+@Alizame
+Alizame fixed loading errors
+Latest commit a169fee yesterday
+History
+5 contributors
+@dermodmaster
+@Corebull
+@Alizame
+@xGurke
+@CodingJosh42
+545 lines (520 sloc) 14.1 KB
 <template>
   <div class="gradientBackground">
     <div class="titleHeader text-center">
