@@ -87,7 +87,7 @@
             :rules="notEmpty"
           />
         </v-col>
-        <v-col>
+        <v-col v-if="backend_userdata.length && backend_userdata[0].group === 'support'">
           <router-link
             to="/institution"
             tag="span"
@@ -96,7 +96,7 @@
               class="mt-2 ml-1"
               style="text-transform: none"
             >
-              neue Institution erstellen
+              Neue Institution erstellen
             </v-btn>
           </router-link>
         </v-col>
@@ -390,6 +390,13 @@
     >
       Loggen Sie sich ein, um ein Spendenprojekt erstellen zu können
     </v-snackbar>
+    <v-snackbar
+      v-model="user.error"
+      top
+      color="error"
+    >
+      Benutzerdaten konnten nicht geladen werden {{ user.errorMessage }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -501,6 +508,11 @@ export default {
       minZoom: 1,
     },
     loading: false,
+    user: {
+      errorMessage: '',
+      error: false,
+    },
+    backend_userdata: [],
   }),
   computed: {
     smallDevice() {
@@ -535,6 +547,7 @@ export default {
     this.$refs.map.mapObject.invalidateSize();
     this.getTodaysDate();
     this.getUserInstitutions();
+    this.get_user();
   },
   methods: {
     updateMap(lat, long) {
@@ -687,6 +700,23 @@ export default {
           this.dialog.error = true;
         }).finally(() => {
           this.loading = false;
+        });
+    },
+    get_user() {
+      axios.get(`users?username=${this.userData.username}`)
+        .then((res) => {
+          if (res.data.length > 0) {
+            this.backend_userdata = res.data;
+          } else {
+            this.backend_userdata = [];
+          }
+        })
+        .catch((err) => {
+          this.user.errorMessage = err.toString();
+          this.user.error = true;
+        })
+        .finally(() => {
+          this.gotResponse = true;
         });
     },
   },
