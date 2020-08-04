@@ -139,7 +139,7 @@
             </template>
             <v-date-picker
               v-model="date"
-              :min="today"
+              :min="minDate"
               @input="afterDayInput"
             />
           </v-menu>
@@ -299,7 +299,7 @@
                           <v-col>
                             <v-date-picker
                               v-model="editedItem.until"
-                              :min="today"
+                              :min="minDate"
                               :max="date"
                             />
                           </v-col>
@@ -480,7 +480,7 @@ export default {
     dateMenu: false,
     timeMenu: false,
     date: '',
-    today: '',
+    minDate: '',
     time: '',
     allInstitutions: [],
     allInstitutionsSortedNameId: [],
@@ -545,7 +545,7 @@ export default {
       this.dialog.notloggedIn = true;
     }
     this.$refs.map.mapObject.invalidateSize();
-    this.getTodaysDate();
+    this.getMinDate();
     this.getUserInstitutions();
     this.get_user();
   },
@@ -636,8 +636,11 @@ export default {
       this.milestonesDate.push(cpy);
       this.close();
     },
-    getTodaysDate() {
-      this.today = new Date().toJSON().slice(0, 10);
+    getMinDate() {
+      this.minDate = new Date();
+      // Smart Contracts: min: today + 1 day
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     getUserInstitutions() {
       axios.get(`institutions?username=${window.user.username}`)

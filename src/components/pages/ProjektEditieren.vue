@@ -349,7 +349,7 @@
                                     <v-col align="center">
                                       <v-date-picker
                                         v-model="newMile.until"
-                                        :min="today"
+                                        :min="minDate"
                                         :max="editElement.until"
                                       />
                                     </v-col>
@@ -473,7 +473,7 @@ export default {
       goal: null,
       until: null,
     },
-    today: null,
+    minDate: null,
     milestoneDialog: false,
     editFlag: false,
     minWei: 1,
@@ -537,7 +537,7 @@ export default {
   },
   mounted() {
     this.load();
-    this.getTodaysDate();
+    this.getMinDate();
   },
   methods: {
     load() {
@@ -559,8 +559,11 @@ export default {
           });
       }, 400);
     },
-    getTodaysDate() {
-      this.today = new Date().toISOString().substring(0, 10);
+    getMinDate() {
+      this.minDate = new Date();
+      // Smart Contracts: min: today + 1 day
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     editMilestone(milestone) {
       this.newMile = JSON.parse(JSON.stringify(milestone));
