@@ -158,7 +158,6 @@
                     class="pl-12 pr-12"
                     :disabled="!form"
                     color="success"
-                    :loading="loading"
                     @click="createInstitution"
                   >
                     Institution erstellen
@@ -205,7 +204,6 @@ export default {
     LMarker,
   },
   data: () => ({
-    loading: false,
     userSession: null,
     userData: null,
     form: false,
@@ -293,7 +291,6 @@ export default {
       if (this.webpage !== '') {
         headers.webpage = this.webpage;
       }
-      this.loading = true;
       axios.post('institutions', { }, { headers })
         .then(() => {
           this.dialog.successful = true;
@@ -302,8 +299,6 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
-        }).finally(() => {
-          this.loading = false;
         });
     },
     setMarkerPos(event) {

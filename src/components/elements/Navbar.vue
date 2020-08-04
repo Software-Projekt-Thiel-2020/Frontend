@@ -119,7 +119,7 @@
         <h3
           v-else
         >
-          {{ (backend_userdata.balance / (1e18)).toFixed(2) }} ETH
+          {{ (backend_userdata.balance / (1000000000000000000)).toFixed(2) }} ETH
         </h3>
         <v-icon class="display-1">
           mdi-ethereum
