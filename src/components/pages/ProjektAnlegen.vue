@@ -363,7 +363,6 @@
             </v-btn>
           </v-layout>
         </v-col>
-        </v-layout>
       </v-row>
     </v-form>
     <v-snackbar
