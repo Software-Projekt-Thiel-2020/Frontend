@@ -206,6 +206,18 @@
                   class="mt-6 grey--text text--darken-2"
                   elevation="10"
                 >
+
+                  <v-system-bar
+                          color="secondary"
+                          height="40px"
+                  >
+                    <v-card-text
+                            class="headline font-weight-thin"
+                            style="color: white"
+                    >
+                      Beschreibung
+                    </v-card-text>
+                  </v-system-bar>
                   <v-layout
                     v-if="loadingInstitution == true"
                     justify-center
@@ -221,8 +233,7 @@
                     v-if="institution"
                   >
                     <v-card-text>
-                      <h1> Beschreibung: </h1>
-                      <h3 class="pt-1">
+                      <h3 class="subtitle pt-1">
                         Institution: {{ institution[0].name }}
                       </h3>
                       <br>
