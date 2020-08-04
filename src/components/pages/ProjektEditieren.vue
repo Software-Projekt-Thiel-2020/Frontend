@@ -208,6 +208,29 @@
                       :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
+                        Kurz-Beschreibung:
+                      </h4>
+                    </v-col>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editElement.short"
+                          label="Kurz-Beschreibung"
+                          outlined
+                          counter
+                          maxlength="140"
+                          clearable
+                          :rules="textRule"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-row>
+                  <v-row gutters>
+                    <v-col
+                      class="mt-5"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
+                    >
+                      <h4 class="font-weight-medium fromField">
                         Beschreibung:
                       </h4>
                     </v-col>
@@ -648,6 +671,8 @@ export default {
             this.editElement = res.data;
             // TODO: revert this.editElement.description = window.atob(res.data.description);
             this.editElement.description = res.data.description;
+            // TODO: revert this.editElement.short = res.data.short;
+            this.editElement.short = window.atob(res.data.short);
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
             // until * 1000 --> s auf ms
@@ -691,6 +716,7 @@ export default {
           authToken,
         };
         if (this.editElement.webpage) headers.webpage = this.editElement.webpage;
+        if (this.editElement.short) headers.short = window.btoa(this.editElement.short);
         if (this.editElement.description) headers.description = window.btoa(this.editElement.description);
         if (this.editElement.latitude) headers.latitude = this.editElement.latitude;
         if (this.editElement.longitude) headers.longitude = this.editElement.longitude;

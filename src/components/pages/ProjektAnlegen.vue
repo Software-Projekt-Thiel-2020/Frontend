@@ -177,6 +177,19 @@
       </v-row>
       <v-row>
         <v-col cols="12">
+          <v-text-field
+            v-model="project.short"
+            label="Kurz-Beschreibung*"
+            outlined
+            counter
+            maxlength="140"
+            clearable
+            :rules="textRule"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
           <v-textarea
             v-model="project.description"
             label="Beschreibung*"
@@ -417,7 +430,13 @@ export default {
   data: () => ({
     form: false,
     milestonesDate: [],
+    shortRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^[\x00-\x7F]+$/is.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
     textRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
@@ -487,6 +506,7 @@ export default {
     project: {
       title: null,
       website: '',
+      short: '',
       description: '',
       idInstitution: null,
       requiredVotes: 1,
@@ -671,9 +691,8 @@ export default {
         goal: this.project.goal,
         // until / 1000 --> Umrechnen von ms auf s
         until: this.project.until / 1000,
+        short: window.btoa(this.project.short),
         description: window.btoa(this.project.description),
-        // ist required, wird aber nicht verwendet !
-        requiredVotes: 1337,
       };
       if (this.project.website !== '') {
         headers.website = this.project.website;
