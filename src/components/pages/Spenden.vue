@@ -171,7 +171,7 @@
               </v-card-subtitle>
 
               <v-card-text class="text--primary">
-                ToDo: Das ist die kurzbeschreibung!
+                {{ item.short }}
               </v-card-text>
 
               <v-card-actions>
