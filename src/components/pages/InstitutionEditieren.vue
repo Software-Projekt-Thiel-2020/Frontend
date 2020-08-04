@@ -287,7 +287,6 @@
                         :placeholder="String(editElement.longitude)"
                         type="number"
                         :rules="coordRules"
-                        required
                         class="inputField"
                         @change="updateMap(null, editElement.longitude)"
                       />
@@ -299,7 +298,6 @@
                         :placeholder="String(editElement.latitude)"
                         type="number"
                         :rules="coordRules"
-                        required
                         class="inputField"
                         @change="updateMap(editElement.latitude, null)"
                       />
@@ -387,7 +385,6 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     coordRules: [
-      (v) => !!v || 'Feld muss ausgefüllt werden',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -433,7 +430,7 @@ export default {
     },
     updateMap(lat, long) {
       try {
-        let newCoords;
+        let newCoords = this.marker;
         if (lat !== null) {
           newCoords = latLng(lat, this.marker.lng);
         }
@@ -461,7 +458,17 @@ export default {
 
           this.instName = inst.name;
 
-          const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          if (coords === null) {
+            // Set MAP to center Germany
+            coords = latLng(51.1642292, 10.4541194);
+            if (this.editElement.latitude === null) {
+              this.editElement.latitude = '';
+            }
+            if (this.editElement.longitude === null) {
+              this.editElement.longitude = '';
+            }
+          }
           this.center = coords;
           this.marker = coords;
           this.overlay = true;

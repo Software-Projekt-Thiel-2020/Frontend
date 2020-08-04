@@ -602,7 +602,17 @@ export default {
             // until * 1000 --> s auf ms
             this.editElement.until = new Date(this.editElement.until * 1000).toISOString().substring(0, 10);
 
-            const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            if (coords === null) {
+              // Set MAP to center Germany
+              coords = latLng(51.1642292, 10.4541194);
+              if (this.editElement.latitude === null) {
+                this.editElement.latitude = '';
+              }
+              if (this.editElement.longitude === null) {
+                this.editElement.longitude = '';
+              }
+            }
             this.center = coords;
             this.marker = coords;
             this.overlay = true;
