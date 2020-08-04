@@ -130,7 +130,7 @@
             lg="4"
             xl="3"
           >
-            <v-card>
+            <v-card elevation="10">
               <v-img
                 class="white--text align-end"
                 height="200px"
