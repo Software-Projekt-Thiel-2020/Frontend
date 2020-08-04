@@ -4,6 +4,7 @@
       v-if="boughtVoucher "
       v-model="dialog"
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
+      persistent
     >
       <v-card class="text-center py-10">
         <svg
@@ -23,6 +24,7 @@
         /></svg>
         <div class="donation_title">
           <v-icon
+            v-if="!dialogBreak"
             class="mr-2 display-2"
             color="red"
           >
@@ -30,6 +32,7 @@
           </v-icon>
           Gutschein erworben!
           <v-icon
+            v-if="!dialogBreak"
             class="ml-2 display-2"
             color="red"
           >
@@ -48,6 +51,7 @@
             <v-card-actions>
               Gültigkeit: {{ boughtVoucher.validTime / 60 / 60 / 24 / 365 }} Jahre
               <v-spacer />
+              <br v-if="!dialogBreak">
               <h3 class="pricetag font-weight-light">
                 {{ showValue(boughtVoucher.price) }}
               </h3>
@@ -72,6 +76,7 @@
           <v-card
             class="projectBox"
             elevation="4"
+            width="100%"
           >
             <v-layout
               v-if="loadingProject == true"
@@ -90,28 +95,68 @@
             >
               <div>
                 <v-card-title class="font-weight-light display-1">
-                  Infos über den Betrieb
+                  <span v-if="customBreak">
+                    Informationen
+                  </span>
+                  <span v-else>
+                    Informationen über den Betrieb
+                  </span>
                 </v-card-title>
                 <v-card-text>
-                  <p class="institutionName">
-                    Name: {{ project[0].name }}
-                  </p>
-                  <div class="mb-4">
-                    <p>
-                      Adresse: {{ project[0].address }}
-                    </p>
-                  </div>
+                  <v-row
+                    class="font-weight-medium"
+                    style="font-size: larger"
+                  >
+                    <v-col
+                      :cols="spaltenBreak"
+                    >
+                      Name:
+                    </v-col>
+                    <v-col>
+                      {{ project[0].name }}
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      :cols="spaltenBreak"
+                    >
+                      Adresse:
+                    </v-col>
+                    <v-col>
+                      {{ project[0].address }}
+                    </v-col>
+                  </v-row>
+                  <v-row
+                    v-if="pictureBreak"
+                  >
+                    <v-col
+                      :cols="spaltenBreak"
+                    >
+                      Bild:
+                    </v-col>
+                    <v-col>
+                      <v-img
+                        max-height="160"
+                        max-width="160"
+                        contain
+                        :src="image"
+                      />
+                    </v-col>
+                  </v-row>
                 </v-card-text>
                 <v-card-actions>
                   <a :href="'//'+project[0].webpage">
-                    <v-btn outlined>Webseite besuchen</v-btn>
+                    <v-btn outlined>
+                      Webseite besuchen
+                    </v-btn>
                   </a>
                 </v-card-actions>
-              </div>
-              <v-avatar
-                class="ma-3"
-                size="250"
-                tile
+              </v-col>
+              <v-col
+                v-if="!pictureBreak"
+                cols="4"
+                align="right"
+                justify="top"
               >
                 <img
                   v-if="project[0].picturePath"
@@ -137,7 +182,7 @@
         </v-col>
       </v-row>
       <v-layout
-        v-if="loadingVouchers == true"
+        v-if="loadingVouchers === true"
         justify-center
       >
         <v-progress-circular
@@ -180,7 +225,7 @@
                   </h4>
                   {{ getETHValue(voucher.price) }}€
                 </v-col>
-                <v-col class="voucherData">
+                <v-col class="voucherData mr-3">
                   <h4>
                     Gültigkeit:
                   </h4>
@@ -198,15 +243,24 @@
                 :id="voucher.id"
                 class="mt-2 btn-hover color-9"
                 dark
-                :loading="loading && indexClicked == voucher.id"
+                :loading="loading && indexClicked === voucher.id"
                 @click="buyVoucher(voucher)"
               >
-                Gutschein kaufen
+                <span
+                  v-if="!$vuetify.breakpoint.xsOnly"
+                >
+                  Gutschein kaufen
+                </span>
+                <span
+                  v-else
+                >
+                  Kaufen
+                </span>
               </v-btn>
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="vouchers.length==0">
+        <v-row v-if="vouchers.length === 0">
           <v-col class="noVouchers">
             <h3>
               Keine Gutscheine vorhanden
@@ -262,11 +316,14 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'ProjectGutschein',
   data: () => ({
+    customBreak: false,
+    pictureBreak: false,
+    dialogBreak: false,
     apiurl: window.apiurl,
     userSession: null,
     userData: null,
@@ -305,6 +362,14 @@ export default {
     indexClicked: null,
     boughtVoucher: null,
   }),
+  computed: {
+    spaltenBreak() {
+      if (this.$vuetify.breakpoint.xsOnly) {
+        return 4;
+      }
+      return this.$vuetify.breakpoint.lgAndUp ? 2 : 3;
+    },
+  },
   created() {
     this.userSession = userSession;
     this.institutionId = this.$route.params.id;
@@ -316,8 +381,20 @@ export default {
       this.userData = userSession.loadUserData();
     }
     this.weiToEuro();
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+  },
+  beforeDestroy() {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.onResize, { passive: true });
+    }
   },
   methods: {
+    onResize() {
+      this.customBreak = window.innerWidth < 848;
+      this.pictureBreak = window.innerWidth < 640;
+      this.dialogBreak = window.innerWidth < 500;
+    },
     getETHValue(value) {
       if (value > 0) {
         return (value * this.ethToEur).toFixed(4);
@@ -420,13 +497,7 @@ export default {
     .projectBox {
         padding: 20px;
         background-color: rgba(255, 255, 255, 0.8);
-
     }
-
-    .goalBox {
-        border: 1px dotted black;
-    }
-
 
     a {
         text-decoration: none;
@@ -470,9 +541,6 @@ export default {
       color: red;
     }
 
-    .institutionName {
-      font-size: 20px;
-    }
     .checkmark__circle {
       stroke-dasharray: 166;
       stroke-dashoffset: 166;
