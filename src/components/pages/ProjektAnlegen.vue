@@ -286,16 +286,20 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-btn
-          :disabled="!form"
-          color="success"
-          class="font-weight-medium ma-2"
-          elevation="2"
-          :loading="loading"
-          @click="calcMainUntil()"
+        <v-layout
+          justify-center
         >
-          Spendenprojekt anlegen
-        </v-btn>
+          <v-btn
+            :disabled="!form"
+            color="success"
+            class="font-weight-medium ma-2"
+            elevation="2"
+            :loading="loading"
+            @click="calcMainUntil()"
+          >
+            Spendenprojekt anlegen
+          </v-btn>
+        </v-layout>
       </v-row>
     </v-form>
     <v-snackbar
