@@ -52,7 +52,7 @@
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Institutionen gefunden.
@@ -104,6 +104,18 @@
                   >
                     Website
                   </v-btn>
+                  <router-link
+                    :to="'/institutionVoucher/'+item.id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      class="ma-2"
+                      style="color: black"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                 </v-card-actions>
               </div>
             </v-card>
