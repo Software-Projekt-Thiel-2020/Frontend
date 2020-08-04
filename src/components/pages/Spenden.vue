@@ -15,7 +15,7 @@
               <v-text-field
                 v-model="searchName"
                 prepend-inner-icon="mdi-magnify"
-                label="Name des Betriebs"
+                label="Name des Projekts"
               />
             </v-col>
             <v-col>
