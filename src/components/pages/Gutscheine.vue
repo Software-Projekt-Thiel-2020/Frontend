@@ -3,131 +3,60 @@
     <v-container no-gutters>
       <h1>Gutscheine kaufen</h1>
       <h3>Suche nach Institutionen in deiner Nähe!</h3>
-      <v-form
-        v-if="smallToolbar"
-        class="form-box ml-0"
-      >
-        <v-container>
-          <v-row>
-            <v-col>
+      <v-form>
+        <v-container fluid>
+          <v-row dense>
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-text-field
                 v-model="searchName"
                 prepend-inner-icon="mdi-magnify"
                 label="Name der Institution"
               />
             </v-col>
-            <v-col>
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-select
                 v-model="searchCode"
                 :items="lCodes"
                 label="Ländercode"
               />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="5">
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-text-field
                 v-model="searchPlace"
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
               />
             </v-col>
-            <v-col cols="5">
+            <v-col
+              cols="8"
+              sm="5"
+              lg="2"
+            >
               <v-text-field
                 v-model="radius"
                 prepend-inner-icon="mdi-radius-outline"
                 label="Radius(km)"
               />
             </v-col>
-            <v-col
-              cols="1"
-            >
-              <v-btn
-                fab
-                class="mt-1"
-                :color="locationButton"
-                label="Mich finden"
-                @click="getOwnLocation"
-              >
-                <v-icon>mdi-crosshairs-gps</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-btn
-              class="ma-1"
-              min-width="150"
-              max-width="150"
-              color="success"
-              large
-              tile
-              :disabled="searchButton"
-              @click="suchen"
-            >
-              Suchen
-            </v-btn>
-            <v-btn
-              class="ma-1"
-              min-width="150"
-              max-width="150"
-              color="error"
-              large
-              tile
-              @click="reset"
-            >
-              Zurücksetzten
-            </v-btn>
-          </v-row>
-        </v-container>
-      </v-form>
-      <v-form
-        v-else
-        class="form-box ml-0"
-      >
-        <v-container>
-          <v-row>
             <v-col
               cols="4"
-            >
-              <v-text-field
-                v-model="searchName"
-                prepend-inner-icon="mdi-magnify"
-                label="Name der Institution"
-              />
-            </v-col>
-            <v-col
-              cols="2"
-            >
-              <v-select
-                v-model="searchCode"
-                :items="lCodes"
-                label="Ländercode"
-              />
-            </v-col>
-            <v-col
-              cols="3"
-            >
-              <v-text-field
-                v-model="searchPlace"
-                prepend-inner-icon="mdi-magnify"
-                label="Stadt/PLZ"
-              />
-            </v-col>
-            <v-col
-              cols="2"
-            >
-              <v-text-field
-                v-model="radius"
-                prepend-inner-icon="mdi-radius-outline"
-                label="Radius(km)"
-              />
-            </v-col>
-            <v-col
-              cols="1"
+              sm="1"
+              lg="1"
             >
               <v-btn
                 fab
-                class="mt-1"
                 :color="locationButton"
                 label="Mich finden"
                 :loading="loadLocation"
@@ -137,34 +66,36 @@
               </v-btn>
             </v-col>
           </v-row>
+
           <v-row>
             <v-col
-              cols="3"
+              cols="12"
+              sm="6"
+              lg="3"
             >
               <v-btn
-                min-width="150"
-                max-width="150"
                 color="success"
-                large
                 :disabled="searchButton"
+                min-width="15em"
                 @click="suchen"
               >
                 Suchen
               </v-btn>
             </v-col>
             <v-col
-              cols="3"
+              cols="12"
+              sm="6"
+              lg="3"
             >
               <v-btn
-                min-width="150"
-                max-width="150"
                 color="error"
-                large
+                min-width="15em"
                 @click="reset"
               >
                 Zurücksetzten
               </v-btn>
             </v-col>
+            <v-col />
           </v-row>
         </v-container>
       </v-form>
@@ -412,12 +343,4 @@ export default {
 
 
 <style scoped>
-    .form-box {
-        max-width: 700px;
-        margin-left: 0px;
-    }
-
-    .form-input input {
-        border: 1px solid gray;
-    }
 </style>
