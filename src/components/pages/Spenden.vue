@@ -1,135 +1,62 @@
 <template>
   <div>
-    <v-container class="mt-2">
+    <v-container no-gutters>
       <h1>Spenden</h1>
-    </v-container>
-    <v-container>
       <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
-      <v-form
-        v-if="smallToolbar"
-        class="form-box ml-0"
-      >
-        <v-container>
-          <v-row>
-            <v-col>
+      <v-form>
+        <v-container fluid>
+          <v-row dense>
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-text-field
                 v-model="searchName"
                 prepend-inner-icon="mdi-magnify"
                 label="Name des Projekts"
               />
             </v-col>
-            <v-col>
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-select
                 v-model="searchCode"
                 :items="lCodes"
                 label="Ländercode"
               />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="5">
+            <v-col
+              cols="12"
+              sm="6"
+              lg="3"
+            >
               <v-text-field
                 v-model="searchPlace"
                 prepend-inner-icon="mdi-magnify"
                 label="Stadt/PLZ"
               />
             </v-col>
-            <v-col cols="5">
+            <v-col
+              cols="8"
+              sm="5"
+              lg="2"
+            >
               <v-text-field
                 v-model="radius"
                 prepend-inner-icon="mdi-radius-outline"
                 label="Radius(km)"
               />
             </v-col>
-            <v-col
-              cols="1"
-            >
-              <v-btn
-                fab
-                class="mt-1"
-                :color="locationButton"
-                label="Mich finden"
-                @click="getOwnLocation"
-              >
-                <v-icon>mdi-crosshairs-gps</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-btn
-              class="ma-1"
-              min-width="150"
-              max-width="150"
-              color="success"
-              large
-              tile
-              :disabled="searchButton"
-              @click="suchen"
-            >
-              Suchen
-            </v-btn>
-            <v-btn
-              class="ma-1"
-              min-width="150"
-              max-width="150"
-              color="error"
-              large
-              tile
-              @click="reset"
-            >
-              Zurücksetzten
-            </v-btn>
-          </v-row>
-        </v-container>
-      </v-form>
-      <v-form
-        v-else
-        class="form-box ml-0"
-      >
-        <v-container>
-          <v-row>
             <v-col
               cols="4"
-            >
-              <v-text-field
-                v-model="searchName"
-                prepend-inner-icon="mdi-magnify"
-                label="Name des Projekts"
-              />
-            </v-col>
-            <v-col
-              cols="2"
-            >
-              <v-select
-                v-model="searchCode"
-                :items="lCodes"
-                label="Ländercode"
-              />
-            </v-col>
-            <v-col
-              cols="3"
-            >
-              <v-text-field
-                v-model="searchPlace"
-                prepend-inner-icon="mdi-magnify"
-                label="Stadt/PLZ"
-              />
-            </v-col>
-            <v-col
-              cols="2"
-            >
-              <v-text-field
-                v-model="radius"
-                prepend-inner-icon="mdi-radius-outline"
-                label="Radius(km)"
-              />
-            </v-col>
-            <v-col
-              cols="1"
+              sm="1"
+              lg="1"
             >
               <v-btn
                 fab
-                class="mt-1"
                 :color="locationButton"
                 label="Mich finden"
                 :loading="loadLocation"
@@ -141,38 +68,40 @@
           </v-row>
           <v-row>
             <v-col
-              cols="3"
+              cols="12"
+              sm="6"
+              lg="3"
             >
               <v-btn
-                min-width="150"
-                max-width="150"
                 color="success"
-                large
                 :disabled="searchButton"
+                min-width="15em"
                 @click="suchen"
               >
                 Suchen
               </v-btn>
             </v-col>
             <v-col
-              cols="3"
+              cols="12"
+              sm="6"
+              lg="3"
             >
               <v-btn
-                min-width="150"
-                max-width="150"
                 color="error"
-                large
+                min-width="15em"
                 @click="reset"
               >
                 Zurücksetzten
               </v-btn>
             </v-col>
+            <v-col />
           </v-row>
         </v-container>
       </v-form>
     </v-container>
-    <v-container>
-      <h2>Ergebnisse:</h2>
+
+
+    <v-container fluid>
       <v-layout
         v-if="loading==true"
         justify-center
@@ -199,44 +128,68 @@
           {{ line }}<br>
         </div>
       </v-alert>
-      <div v-else-if="gotResponse">
-        <v-row>
+      <div
+        v-else-if="gotResponse"
+      >
+        <v-row
+          dense
+        >
           <v-col
             v-for="item in resultList"
-            :key="item.name"
+            :key="item.id"
+            sm="12"
+            md="6"
+            lg="4"
+            xl="3"
           >
-            <v-card
-              class="project"
-              elevation="5"
-            >
-              <img
-                v-if="item.picturePath"
-                class="elementImage"
-                :src="apiurl+'/file/'+item.picturePath"
+            <v-card elevation="10">
+              <v-img
+                class="white--text align-end grey lighten-2"
+                height="300px"
+                width="100%"
+                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
               >
-              <img
-                v-else
-                class="elementImage"
-                src="../../assets/placeholder.png"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2 class="ma-3">
-                  {{ item.name }}
-                </h2>
-                <h4 class="ma-3">
-                  Zur Website:
-                  <a :href="'//'+item.webpage">{{ item.webpage }}</a>
-                </h4>
-              </div>
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey darken-5"
+                    />
+                  </v-row>
+                </template>
+              </v-img>
+
+              <v-card-title>
+                {{ item.name }}
+              </v-card-title>
+              <v-card-subtitle>
+                Bis zum: {{ new Date(item.until * 1000).toLocaleDateString() }}
+              </v-card-subtitle>
+
+              <v-card-text class="text--primary">
+                ToDo: Das ist die kurzbeschreibung!
+              </v-card-text>
+
               <v-card-actions>
-                <router-link :to="'project/'+item.id">
-                  <v-btn class="spendenButton">
-                    Spenden
-                  </v-btn>
-                </router-link>
+                <v-btn
+                  color="rgba(0, 0, 0, 0.54)"
+                  text
+                  width="80%"
+                  :to="'project/'+item.id"
+                >
+                  Spenden
+                </v-btn>
+                <v-spacer />
+                <v-btn
+                  icon
+                  :href="item.webpage"
+                >
+                  <v-icon>mdi-bookmark</v-icon>
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -276,9 +229,6 @@ export default {
     },
     searchButton() {
       return !(this.searchName !== '' || (this.longitude !== -1 && this.latitude !== -1) || (this.searchPlace !== '' && this.searchCode !== ''));
-    },
-    smallToolbar() {
-      return this.$vuetify.breakpoint.name === 'xs';
     },
   },
   mounted() {
@@ -393,37 +343,4 @@ export default {
 
 
 <style scoped>
-
-    .project {
-        display: flex;
-        flex-direction: row;
-        margin-bottom: 25px;
-    }
-
-    .form-box {
-        max-width: 700px;
-        margin-left: 0px;
-    }
-
-    .spendenButton {
-        align-self: flex-end;
-        margin-bottom: 15px;
-        margin-right: 15px;
-        font-size: 1.5rem;
-        text-decoration: none;
-    }
-
-    .form-input input {
-        border: 1px solid gray;
-    }
-
-    .elementImage{
-      max-width: 200px;
-      max-height: 200px;
-    }
-
-    .companyData {
-        margin-left: 15px;
-        flex-basis: 55%
-    }
 </style>
