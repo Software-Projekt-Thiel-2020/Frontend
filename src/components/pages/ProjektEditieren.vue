@@ -576,7 +576,7 @@ export default {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
-            this.editElement.description = window.atob(res.data.description);
+            this.editElement.description = res.data.description;
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
             // until * 1000 --> s auf ms

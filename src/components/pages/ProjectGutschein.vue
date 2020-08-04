@@ -105,9 +105,11 @@
                     v-if="project[0].description"
                     class="mb-4"
                   >
-                    <p>
-                      Beschreibung: {{ project[0].description }}
+                    <p class="institutionName">
+                      Beschreibung:
                     </p>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="compiledMarkdown" />
                   </div>
                 </v-card-text>
                 <v-card-actions>
@@ -145,7 +147,7 @@
         </v-col>
       </v-row>
       <v-layout
-        v-if="loadingVouchers == true"
+        v-if="loadingVouchers === true"
         justify-center
       >
         <v-progress-circular
@@ -206,7 +208,7 @@
                 :id="voucher.id"
                 class="mt-2 btn-hover color-9"
                 dark
-                :loading="loading && indexClicked == voucher.id"
+                :loading="loading && indexClicked === voucher.id"
                 @click="buyVoucher(voucher)"
               >
                 Gutschein kaufen
@@ -214,7 +216,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="vouchers.length==0">
+        <v-row v-if="vouchers.length === 0">
           <v-col class="noVouchers">
             <h3>
               Keine Gutscheine vorhanden
@@ -270,7 +272,9 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'ProjectGutschein',
@@ -313,6 +317,14 @@ export default {
     indexClicked: null,
     boughtVoucher: null,
   }),
+  computed: {
+    compiledMarkdown() {
+      if (this.project.length > 0) {
+        return marked(DOMPurify.sanitize(this.project[0].description), { sanitize: true });
+      }
+      return '';
+    },
+  },
   created() {
     this.userSession = userSession;
     this.institutionId = this.$route.params.id;
@@ -421,8 +433,7 @@ export default {
     }
 
     .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
+      background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     }
 
     .projectBox {

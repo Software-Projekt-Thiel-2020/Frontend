@@ -431,7 +431,7 @@ export default {
           this.editElement.name = inst.name;
           this.editElement.picturePath = inst.picturePath;
           this.editElement.webpage = inst.webpage;
-          this.editElement.description = window.atob(inst.description);
+          this.editElement.description = inst.description;
           this.editElement.address = inst.address;
           this.editElement.longitude = inst.longitude;
           this.editElement.latitude = inst.latitude;
