@@ -346,11 +346,7 @@ export default {
         this.voteEnabled = false;
         this.voteDisabled = true;
       }
-      if (this.donationValue <= 0) {
-        this.donationDisabled = true;
-      } else {
-        this.donationDisabled = false;
-      }
+      this.donationValue = this.donationValue <= 0;
     },
   },
 };
