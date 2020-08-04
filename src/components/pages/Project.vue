@@ -59,7 +59,7 @@
         :width="7"
         color="green"
         indeterminate
-        class="loadingCircle"
+        class="mt-24"
       />
     </v-layout>
     <div v-else-if="project">
@@ -70,21 +70,13 @@
         >
           {{ project ? project.name : "Projekt" }}
         </h1>
-        <a
-          class=""
-          :href="'//'+project.webpage"
-        >
-          <v-btn
-            outlined
-            color="white"
-          >Webseite besuchen</v-btn>
-        </a>
       </div>
       <v-container>
         <v-card
           v-if="project"
           elevation="7"
-          class="py-6 text-center projectBox"
+          class="pa-8 text-center"
+          color="rgba(255, 255, 255, 0.35)"
         >
           <v-card-text>
             <v-row justify="center">
@@ -94,7 +86,7 @@
               >
                 <v-card
                   v-if="project"
-                  elevation="7"
+                  elevation="10"
                   class="text-center"
                 >
                   <v-system-bar
@@ -151,18 +143,31 @@
                 </v-card>
               </v-col>
               <v-col>
-                <v-card class="py-8">
+                <v-card
+                  class="py-8"
+                  elevation="10"
+                >
                   <div>
-                    <img
+                    <v-img
                       v-if="project.picturePath"
-                      class="projectImage"
-                      :src="apiurl+'/file/'+project.picturePath"
+
+                      max-height="200px"
+                      contain
+                      :src="project.picturePath ? (apiurl+'/file/'+project.picturePath) : require(`@/assets/placeholder.png`)"
                     >
-                    <img
-                      v-else
-                      class="projectImage"
-                      src="../../assets/placeholder.png"
-                    >
+                      <template v-slot:placeholder>
+                        <v-row
+                          class="fill-height ma-0"
+                          align="center"
+                          justify="center"
+                        >
+                          <v-progress-circular
+                            indeterminate
+                            color="grey darken-5"
+                          />
+                        </v-row>
+                      </template>
+                    </v-img>
                     <h4 class="headline font-weight-light">
                       Jetzt Spenden!
                     </h4>
@@ -198,7 +203,8 @@
                 </v-card>
                 <v-card
                   v-if="project"
-                  class="institution"
+                  class="mt-6 grey--text text--darken-2"
+                  elevation="10"
                 >
                   <v-layout
                     v-if="loadingInstitution == true"
@@ -216,7 +222,7 @@
                   >
                     <v-card-text>
                       <h1> Beschreibung: </h1>
-                      <h3 class="institutionInfos">
+                      <h3 class="pt-1">
                         Institution: {{ institution[0].name }}
                       </h3>
                       <br>
@@ -231,21 +237,19 @@
                       <v-btn
                         outlined
                         color="grey"
-                        class="websiteButton"
+                        class="mb-4 mx-2"
                       >
                         Zu den Gutscheinen
                       </v-btn>
                     </router-link>
-                    <a
-                      class=""
+                    <v-btn
+                      outlined
+                      color="grey"
+                      class="mb-4 mx-2"
                       :href="institution[0].webpage"
                     >
-                      <v-btn
-                        outlined
-                        color="grey"
-                        class="websiteButton"
-                      >Webseite besuchen</v-btn>
-                    </a>
+                      Webseite besuchen
+                    </v-btn>
                   </div>
                   <v-alert
                     v-if="institutionDialog.error"
@@ -318,10 +322,7 @@ export default {
       return null;
     },
     compiledMarkdown() {
-      if (this.project) {
-        return marked(DOMPurify.sanitize(this.project.description), { sanitize: true });
-      }
-      return '';
+      return this.project ? marked(DOMPurify.sanitize(this.project.description)) : '';
     },
   },
   created() {
@@ -454,19 +455,6 @@ export default {
     background-color: rgb(255, 255, 255);
     min-height: 100%;
   }
-  .projectBox{
-    background-color: rgba(255, 255, 255, 0.8);
-  }
-  .projectImage{
-    max-height: 200px;
-    max-width: 200px;
-  }
-  .goalBox {
-    border: 1px dotted black;
-  }
-  a {
-    text-decoration: none;
-  }
   input {
     border: 1px lightgrey solid;
     text-align: center;
@@ -519,22 +507,7 @@ export default {
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
   }
-  .description {
-    font-size: 17px;
-    text-align: center;
-    margin-top: 5px;
-  }
-  .institution {
-    margin-top: 25px;
-    color: #737773;
-  }
-  .institutionInfos {
-    margin-top: 10px;
-    font-size: 17px;
-  }
-  .websiteButton {
-    margin-bottom:10px;
-  }
+
   @keyframes stroke {
     100% {
       stroke-dashoffset: 0;
@@ -552,9 +525,5 @@ export default {
     100% {
       box-shadow: inset 0px 0px 0px 30px #7ac142;
     }
-  }
-
-   .loadingCircle {
-    margin-top: 100px;
   }
 </style>
