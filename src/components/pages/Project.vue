@@ -300,7 +300,7 @@ export default {
     donationValue: 0,
     goalPercentage: 0,
     dialog: false,
-    weiFormula: 1000000000000000000,
+    weiFormula: 1e18,
     errorMessage: null,
     loading: false,
     voteEnabled: true,
@@ -339,7 +339,7 @@ export default {
       this.userData = window.userSession.loadUserData();
       // console.log(this.userData);
     }
-    this.szaboToEuro();
+    this.weiToEuro();
     this.loadProject();
   },
   methods: {
@@ -378,11 +378,11 @@ export default {
       this.dialog = false;
       this.$confetti.stop();
     },
-    szaboToEuro() {
+    weiToEuro() {
       this.loading = true;
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
-          this.exrate = (res.data.ETH * 1000000000000000000);
+          this.exrate = (res.data.ETH * 1e18);
           this.eurToEth = res.data.ETH;
           // console.log(this.exrate);
         })
@@ -428,8 +428,8 @@ export default {
       }
     },
     showValue(value) {
-      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
-      if (value > 10e6) return `${(value / 10e6)} MWEI`;
+      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (value > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
     compareInput() {
