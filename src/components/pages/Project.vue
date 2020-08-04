@@ -191,6 +191,7 @@
                       class="btn-hover color-9"
                       dark
                       :loading="loadDonation"
+                      :disabled="donationValue <= 0"
                       @click="donate()"
                     >
                       Betrag Spenden
@@ -239,6 +240,7 @@ export default {
     loading: false,
     voteEnabled: false,
     voteDisabled: true,
+    donationDisabled: true,
     apiurl: window.apiurl,
     notLoggedin: false,
     loadDonation: false,
