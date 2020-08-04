@@ -87,7 +87,7 @@
             :rules="notEmpty"
           />
         </v-col>
-        <v-col v-if="backend_userdata && backend_userdata.group === 'support'">
+        <v-col v-if="backend_userdata.length && backend_userdata[0].group === 'support'">
           <router-link
             to="/institution"
             tag="span"
@@ -512,7 +512,7 @@ export default {
       errorMessage: '',
       error: false,
     },
-    backend_userdata: null,
+    backend_userdata: [],
   }),
   computed: {
     smallDevice() {
@@ -708,7 +708,7 @@ export default {
           if (res.data.length > 0) {
             this.backend_userdata = res.data;
           } else {
-            this.backend_userdata = false;
+            this.backend_userdata = [];
           }
         })
         .catch((err) => {
