@@ -632,6 +632,8 @@ export default {
     editClick(itemId) {
       let projectId = -1;
       try {
+        this.err.picErr = 0;
+        this.err.normErr = 0;
         projectId = parseInt(itemId, 10);
       } catch (e) {
         return;
@@ -641,7 +643,8 @@ export default {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
-            this.editElement.description = window.atob(res.data.description);
+            // TODO: revert this.editElement.description = window.atob(res.data.description);
+            this.editElement.description = res.data.description;
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
             // until * 1000 --> s auf ms
@@ -740,11 +743,9 @@ export default {
     sentStauts() {
       if (this.err.normErr === 1) {
         this.showAlert('Das Ändern war nicht erfolgreich', 'error');
-      }
-      if (this.err.picErr === 1) {
+      } else if (this.err.picErr === 1) {
         this.showAlert('Das Ändern des Bilds war nicht erfolgreich', 'warning');
-      }
-      if (this.err.normErr === 0 && this.err.picErr === 0) {
+      } else if (this.err.normErr === 0 && this.err.picErr === 0) {
         this.showAlert('Das Ändern war erfolgreich', 'success');
       }
       this.newMilestones = [];
