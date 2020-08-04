@@ -234,9 +234,10 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -244,9 +245,10 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -462,6 +464,9 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -578,6 +583,21 @@ export default {
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
     },
+    updateMap(lat, long) {
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
+      }
+    },
     editClick(itemId) {
       let projectId = -1;
       try {
@@ -596,7 +616,17 @@ export default {
             // until * 1000 --> s auf ms
             this.editElement.until = new Date(this.editElement.until * 1000).toISOString().substring(0, 10);
 
-            const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            if (coords === null) {
+              // Set MAP to center Germany
+              coords = latLng(51.1642292, 10.4541194);
+              if (this.editElement.latitude === null) {
+                this.editElement.latitude = '';
+              }
+              if (this.editElement.longitude === null) {
+                this.editElement.longitude = '';
+              }
+            }
             this.center = coords;
             this.marker = coords;
             this.overlay = true;

@@ -129,7 +129,8 @@
                       label="Longitude*"
                       background-color="grey lighten-4"
                       required
-                      :rules="numberRule"
+                      type="number"
+                      :rules="coordRules"
                       @change="updateMap(null, coords.longitude)"
                     />
                   </v-col>
@@ -139,7 +140,8 @@
                       label="Latitude*"
                       background-color="grey lighten-4"
                       required
-                      :rules="numberRule"
+                      type="number"
+                      :rules="coordRules"
                       @change="updateMap(coords.latitude, null)"
                     />
                   </v-col>
@@ -194,7 +196,7 @@
 import axios from 'axios';
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
 export default {
@@ -226,9 +228,9 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
-    numberRule: [
+    coordRules: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
-      (v) => /^[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',

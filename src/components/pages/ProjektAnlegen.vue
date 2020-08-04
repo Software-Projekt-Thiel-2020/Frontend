@@ -213,6 +213,8 @@
                 v-model="project.latitude"
                 label="Latitude"
                 outlined
+                type="number"
+                :rules="coordRules"
                 @change="updateMap(project.latitude, null)"
               />
             </v-col>
@@ -223,6 +225,8 @@
                 v-model="project.longitude"
                 label="Longitude"
                 outlined
+                type="number"
+                :rules="coordRules"
                 @change="updateMap(null, project.longitude)"
               />
             </v-col>
@@ -416,6 +420,9 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     blockTime: true,
     blockAdditionalMilestones: true,
     dialog: {
@@ -531,15 +538,19 @@ export default {
   },
   methods: {
     updateMap(lat, long) {
-      let newCoords;
-      if (lat !== null) {
-        newCoords = latLng(lat, this.marker.lng);
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
       }
-      if (long !== null) {
-        newCoords = latLng(this.marker.lat, long);
-      }
-      this.marker = newCoords;
-      this.center = newCoords;
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
