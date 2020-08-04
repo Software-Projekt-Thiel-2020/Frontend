@@ -308,6 +308,25 @@
                         {{ donation.amount / weiFormula }} ETH
                       </h3>
                     </v-card-title>
+                    <v-card-text>
+                      <div>
+                        Meilenstein erreicht?{{ donation }}
+                        <v-btn
+                          icon
+                          :color="donation.voted === 1 ? 'success' : 'grey'"
+                          @click="voteForMilestone(donation, 1)"
+                        >
+                          <v-icon>mdi-thumb-up</v-icon>
+                        </v-btn>
+                        <v-btn
+                          icon
+                          :color="donation.voted === 0 ? 'deep-orange' : 'grey'"
+                          @click="voteForMilestone(donation, 0)"
+                        >
+                          <v-icon>mdi-thumb-down</v-icon>
+                        </v-btn>
+                      </div>
+                    </v-card-text>
                   </v-card>
                 </v-col>
               </v-row>
@@ -421,6 +440,21 @@ export default {
           this.redeemVTitle = voucher.titel;
           this.loadData();
           window.scrollTo(0, 0);
+        });
+    },
+    voteForMilestone(donation, vote) {
+      const head = {
+        authToken: userSession.loadUserData().authResponseToken,
+        id: donation.id,
+        vote,
+      };
+      axios.post('donations/vote', {}, { headers: head })
+        .then(() => {
+          const index = this.donations.indexOf(donation);
+          this.donations[index].voted = vote;
+        })
+        .catch((err) => {
+          this.errorMessage = err.toString();
         });
     },
   },
