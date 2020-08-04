@@ -485,6 +485,7 @@
       <v-btn
         depressed
         color="success"
+        @click="register_dialog.successful = false"
       >
         Schließen
       </v-btn>
@@ -500,6 +501,7 @@
       <v-btn
         depressed
         color="error"
+        @click="error = false"
       >
         Schließen
       </v-btn>
