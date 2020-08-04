@@ -151,124 +151,124 @@
                     </v-btn>
                   </a>
                 </v-card-actions>
-              </v-col>
-              <v-col
-                v-if="!pictureBreak"
-                cols="4"
-                align="right"
-                justify="top"
-              >
-                <img
-                  v-if="project[0].picturePath"
-                  :src="apiurl+'/file/'+project[0].picturePath"
-                >
-                <img
-                  v-else
-                  src="../../assets/placeholder.png"
-                >
-              </v-avatar>
+              </div>
             </div>
           </v-card>
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col class="titleHeader text-center">
-          <h1
-            :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
-            class="font-weight-thin white--text text-center"
+        <v-col
+          v-if="!pictureBreak"
+          cols="4"
+          align="right"
+          justify="top"
+        >
+          <img
+            v-if="project[0].picturePath"
+            :src="apiurl+'/file/'+project[0].picturePath"
           >
-            Verfügbare Gutscheine
-          </h1>
+          <img
+            v-else
+            src="../../assets/placeholder.png"
+          >
         </v-col>
       </v-row>
-      <v-layout
-        v-if="loadingVouchers === true"
-        justify-center
-      >
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          color="green"
-          indeterminate
-        />
-      </v-layout>
-      <div v-else>
-        <v-row>
-          <v-col
-            v-for="voucher in vouchers"
-            :key="voucher.id"
-            cols="6"
-          >
-            <v-card
-              elevation="7"
-              class="py-6 text-center"
-            >
-              <v-row>
-                <v-col>
-                  <h3 class="headline">
-                    {{ voucher.title }}
-                  </h3>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h4>
-                    Beschreibung:
-                  </h4>
-                  {{ voucher.subject }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h4>
-                    Preis:
-                  </h4>
-                  {{ getETHValue(voucher.price) }}€
-                </v-col>
-                <v-col class="voucherData mr-3">
-                  <h4>
-                    Gültigkeit:
-                  </h4>
-                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h5>
-                    Wurde bereits {{ voucher.amount }} mal gekauft
-                  </h5>
-                </v-col>
-              </v-row>
-              <v-btn
-                :id="voucher.id"
-                class="mt-2 btn-hover color-9"
-                dark
-                :loading="loading && indexClicked === voucher.id"
-                @click="buyVoucher(voucher)"
-              >
-                <span
-                  v-if="!$vuetify.breakpoint.xsOnly"
-                >
-                  Gutschein kaufen
-                </span>
-                <span
-                  v-else
-                >
-                  Kaufen
-                </span>
-              </v-btn>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row v-if="vouchers.length === 0">
-          <v-col class="noVouchers">
-            <h3>
-              Keine Gutscheine vorhanden
-            </h3>
-          </v-col>
-        </v-row>
-      </div>
     </v-container>
+    <v-row>
+      <v-col class="titleHeader text-center">
+        <h1
+          :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
+          class="font-weight-thin white--text text-center"
+        >
+          Verfügbare Gutscheine
+        </h1>
+      </v-col>
+    </v-row>
+    <v-layout
+      v-if="loadingVouchers === true"
+      justify-center
+    >
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="green"
+        indeterminate
+      />
+    </v-layout>
+    <div v-else>
+      <v-row>
+        <v-col
+          v-for="voucher in vouchers"
+          :key="voucher.id"
+          cols="6"
+        >
+          <v-card
+            elevation="7"
+            class="py-6 text-center"
+          >
+            <v-row>
+              <v-col>
+                <h3 class="headline">
+                  {{ voucher.title }}
+                </h3>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="voucherData">
+                <h4>
+                  Beschreibung:
+                </h4>
+                {{ voucher.subject }}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="voucherData">
+                <h4>
+                  Preis:
+                </h4>
+                {{ getETHValue(voucher.price) }}€
+              </v-col>
+              <v-col class="voucherData mr-3">
+                <h4>
+                  Gültigkeit:
+                </h4>
+                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class="voucherData">
+                <h5>
+                  Wurde bereits {{ voucher.amount }} mal gekauft
+                </h5>
+              </v-col>
+            </v-row>
+            <v-btn
+              :id="voucher.id"
+              class="mt-2 btn-hover color-9"
+              dark
+              :loading="loading && indexClicked === voucher.id"
+              @click="buyVoucher(voucher)"
+            >
+              <span
+                v-if="!$vuetify.breakpoint.xsOnly"
+              >
+                Gutschein kaufen
+              </span>
+              <span
+                v-else
+              >
+                Kaufen
+              </span>
+            </v-btn>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row v-if="vouchers.length === 0">
+        <v-col class="noVouchers">
+          <h3>
+            Keine Gutscheine vorhanden
+          </h3>
+        </v-col>
+      </v-row>
+    </div>
     <v-snackbar
       v-model="dialogVoucher.error"
       top

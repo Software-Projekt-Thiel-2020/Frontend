@@ -132,7 +132,7 @@
                 Close
               </v-btn>
             </v-snackbar>
-          </v-row>
+          </v-snackbar>
         </v-col>
       </v-row>
       <v-alert

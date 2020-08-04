@@ -347,22 +347,22 @@
           <p class="ml-2 text-left font-weight-light">
             Mit * markierte Felder müssen ausgefüllt werden
           </p>
-        <v-layout
-          justify-center
-        >
-          <v-btn
-            :disabled="!form"
-            color="success"
-            class="font-weight-medium ma-2"
-            elevation="2"
-            large
-            :loading="loading"
-            @click="calcMainUntil()"
+          <v-layout
+            justify-center
           >
-            Spendenprojekt anlegen
-          </v-btn>
+            <v-btn
+              :disabled="!form"
+              color="success"
+              class="font-weight-medium ma-2"
+              elevation="2"
+              large
+              :loading="loading"
+              @click="calcMainUntil()"
+            >
+              Spendenprojekt anlegen
+            </v-btn>
+          </v-layout>
         </v-col>
-        </v-layout>
       </v-row>
     </v-form>
     <v-snackbar
