@@ -63,14 +63,12 @@
       />
     </v-layout>
     <div v-else-if="project">
-      <div
-        class="titleHeader text-center"
-      >
+      <div class="titleHeader text-center">
         <h1
           :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
           class="font-weight-thin white--text"
         >
-          {{ project.name }}
+          {{ project ? project.name : "Projekt" }}
         </h1>
         <a
           class=""
@@ -141,15 +139,25 @@
                           </h1>
                         </v-col>
                       </v-row>
-                      <h3>{{ (milestone.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100) }}%</h3>
+                      <h3>{{ (milestone.totalDonated/milestone.goal) > 100 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100 + Number.EPSILON) / 100 }}%</h3>
                       <v-progress-linear
                         color="secondary"
                         height="15"
-                        :value="(milestone.totalDonated/milestone.goal) * 100"
+                        :value="(milestone.totalDonated/milestone.goal)"
                         striped
                       />
                     </div>
                   </div>
+                </v-card>
+                <v-card
+                  v-if="project"
+                  elevation="7"
+                  class="text-center py-8 mt-8"
+                >
+                  <v-card-text>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="compiledMarkdown" />
+                  </v-card-text>
                 </v-card>
               </v-col>
               <v-col>
@@ -198,6 +206,62 @@
                     </v-btn>
                   </div>
                 </v-card>
+                <v-card
+                  v-if="project"
+                  class="institution"
+                >
+                  <v-layout
+                    v-if="loadingInstitution == true"
+                    justify-center
+                  >
+                    <v-progress-circular
+                      :size="30"
+                      :width="7"
+                      color="green"
+                      indeterminate
+                    />
+                  </v-layout>
+                  <div
+                    v-if="institution"
+                  >
+                    <v-card-text>
+                      <h1> Weitere Infos: </h1>
+                      <p class="institutionInfos">
+                        Institution: {{ institution[0].name }}
+                      </p>
+                    </v-card-text>
+                    <router-link
+                      :to="'/projectGutschein/'+institution[0].id"
+                      tag="span"
+                      class="link"
+                    >
+                      <v-btn
+                        outlined
+                        color="grey"
+                        class="websiteButton"
+                      >
+                        Zu den Gutscheinen
+                      </v-btn>
+                    </router-link>
+                    <a
+                      class=""
+                      :href="institution[0].webpage"
+                    >
+                      <v-btn
+                        outlined
+                        color="grey"
+                        class="websiteButton"
+                      >Webseite besuchen</v-btn>
+                    </a>
+                  </div>
+                  <v-alert
+                    v-if="institutionDialog.error"
+                    type="error"
+                    tile
+                  >
+                    Insititution konnte nicht geladen werden: {{ institutionDialog.errorMessage }}
+                  </v-alert>
+                </v-card>
               </v-col>
             </v-row>
           </v-card-text>
@@ -223,6 +287,8 @@
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 
 export default {
   name: 'Project',
@@ -234,16 +300,22 @@ export default {
     donationValue: 0,
     goalPercentage: 0,
     dialog: false,
-    weiFormula: 1e18,
+    weiFormula: 1000000000000000000,
     errorMessage: null,
-    error: false,
     loading: false,
-    voteEnabled: false,
+    voteEnabled: true,
     voteDisabled: true,
     donationDisabled: true,
     apiurl: window.apiurl,
+    institutionDialog: {
+      errorMessage: '',
+      error: false,
+    },
+    loadingInstitution: false,
+    institution: undefined,
     notLoggedin: false,
     loadDonation: false,
+    error: false,
   }),
   computed: {
     getDonationETHValue() {
@@ -252,7 +324,12 @@ export default {
       }
       return null;
     },
-
+    compiledMarkdown() {
+      if (this.project) {
+        return marked(DOMPurify.sanitize(this.project.description), { sanitize: true });
+      }
+      return '';
+    },
   },
   created() {
     this.projectid = this.$route.params.id;
@@ -262,7 +339,7 @@ export default {
       this.userData = window.userSession.loadUserData();
       // console.log(this.userData);
     }
-    this.weiToEuro();
+    this.szaboToEuro();
     this.loadProject();
   },
   methods: {
@@ -301,11 +378,11 @@ export default {
       this.dialog = false;
       this.$confetti.stop();
     },
-    weiToEuro() {
+    szaboToEuro() {
       this.loading = true;
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=EUR&tsyms=ETH')
         .then((res) => {
-          this.exrate = (res.data.ETH * 1e18);
+          this.exrate = (res.data.ETH * 1000000000000000000);
           this.eurToEth = res.data.ETH;
           // console.log(this.exrate);
         })
@@ -324,6 +401,7 @@ export default {
         .then((res) => {
           // console.log(res.data);
           this.project = res.data;
+          this.loadInstitution();
         })
         .catch((err) => {
           this.errorMessage = err.toString();
@@ -332,9 +410,26 @@ export default {
           this.loading = false;
         });
     },
+    loadInstitution() {
+      if (this.project) {
+        let url = 'institutions?id=';
+        url += this.project.idinstitution;
+        this.loadingInstitution = true;
+        axios.get(url)
+          .then((res) => {
+            this.institution = res.data;
+          })
+          .catch((err) => {
+            this.institutionDialog.errorMessage = err.toString();
+            this.institutionDialog.error = true;
+          }).finally(() => {
+            this.loadingInstitution = false;
+          });
+      }
+    },
     showValue(value) {
-      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
-      if (value > 1e6) return `${(value / 1e6)} MWEI`;
+      if (value > 10e10) return `${(value / 10e18).toFixed(8)} ETH`;
+      if (value > 10e6) return `${(value / 10e6)} MWEI`;
       return `${value} WEI`;
     },
     compareInput() {
@@ -361,59 +456,47 @@ export default {
     padding-top: 10px;
     backdrop-filter: blur(15px) brightness(0.5);
   }
-
   .gradientBackground {
     background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     background-color: rgb(255, 255, 255);
     min-height: 100%;
   }
-
   .projectBox{
     background-color: rgba(255, 255, 255, 0.8);
   }
-
   .projectImage{
     max-height: 200px;
     max-width: 200px;
   }
-
   .goalBox {
     border: 1px dotted black;
   }
-
-
   a {
     text-decoration: none;
   }
-
   input {
     border: 1px lightgrey solid;
     text-align: center;
     border-radius: 50px;
   }
-
   .donation_title{
     font-size: 2rem;
     vertical-align: text-bottom;
   }
-
   .btn-hover {
     background-size: 300% 100%;
     border-radius: 50px;
     text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
     transition: all .4s ease-in-out;
   }
-
   .btn-hover:hover {
     background-position: 100% 0;
     transition: all .4s ease-in-out;
   }
-
   .btn-hover.color-9 {
     background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
     box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
   }
-
   .checkmark__circle {
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
@@ -423,7 +506,6 @@ export default {
     fill: none;
     animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
   }
-
   .checkmark {
     width: 56px;
     height: 56px;
@@ -438,14 +520,28 @@ export default {
     box-shadow: inset 0px 0px 0px #7ac142;
     animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
   }
-
   .checkmark__check {
     transform-origin: 50% 50%;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
   }
-
+  .description {
+    font-size: 17px;
+    text-align: center;
+    margin-top: 5px;
+  }
+  .institution {
+    margin-top: 25px;
+    color: #737773;
+  }
+  .institutionInfos {
+    margin-top: 10px;
+    font-size: 17px;
+  }
+  .websiteButton {
+    margin-bottom:10px;
+  }
   @keyframes stroke {
     100% {
       stroke-dashoffset: 0;
