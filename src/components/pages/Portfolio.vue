@@ -309,8 +309,8 @@
                       </h3>
                     </v-card-title>
                     <v-card-text>
-                      <div>
-                        Meilenstein erreicht?{{ donation }}
+                      <div v-if="donation.voteEnabled">
+                        Meilenstein erreicht?
                         <v-btn
                           icon
                           :color="donation.voted === 1 ? 'success' : 'grey'"
@@ -443,6 +443,9 @@ export default {
         });
     },
     voteForMilestone(donation, vote) {
+      if (donation.voted !== null) {
+        return;
+      }
       const head = {
         authToken: userSession.loadUserData().authResponseToken,
         id: donation.id,
