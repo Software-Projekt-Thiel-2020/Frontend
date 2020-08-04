@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ma-5"
+    class="pa-5 gradientBackground"
   >
     <v-container>
       <div>
@@ -109,12 +109,29 @@
           >
             {{ userFeedback }}
             <v-btn
-              color="white"
-              text
-              @click="snackbar = false"
+              :disabled="(!valid || !vForm)"
+              color="success"
+              class="mt-4"
+              @click="submit"
             >
-              Close
+              Bestätigen
             </v-btn>
+            <v-snackbar
+              v-model="snackbar"
+              multi-line
+              :color="snackbarType"
+              centered
+              :timeout="0"
+            >
+              {{ userFeedback }}
+              <v-btn
+                color="white"
+                text
+                @click="snackbar = false"
+              >
+                Close
+              </v-btn>
+            </v-snackbar>
           </v-snackbar>
         </v-col>
       </v-row>
@@ -131,13 +148,11 @@
           tag="span"
           class="link"
         >
-          <v-btn>
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Spenden und Gutscheine
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Spenden/Gutscheine
           </v-btn>
         </router-link>
       </div>
@@ -147,13 +162,11 @@
           tag="span"
           class="link"
         >
-          <v-btn class="mt-5">
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Institutionen
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Institutionen
           </v-btn>
         </router-link>
       </div>
@@ -163,7 +176,7 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'BenutzerProfil',
@@ -281,10 +294,9 @@ export default {
 </script>
 
 <style scoped>
-
   .inputField ::placeholder{
-      color: black!important;
-      opacity: 1;
+    color: black!important;
+    opacity: 1;
   }
 
   .pageBox{
@@ -293,8 +305,14 @@ export default {
   }
 
   .linkToDonate {
-      width: 100%;
-      bottom: 40px;
+    width: 100%;
+    bottom: 40px;
+  }
+
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(230, 255, 242), rgb(200, 245, 255));
+    height: 100%;
+    width: 100%;
   }
 
   .loadingCircle {

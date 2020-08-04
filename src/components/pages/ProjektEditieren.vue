@@ -6,6 +6,37 @@
       >
         Deine Projekte
       </h4>
+      <router-link
+        v-if="!$vuetify.breakpoint.smAndDown"
+        to="/projektanlegen"
+        tag="span"
+        class="newProject"
+      >
+        <v-btn
+          class="mt-5"
+          style="color: black"
+          color="success"
+        >
+          Projekt anlegen
+        </v-btn>
+      </router-link>
+      <v-layout
+        v-else
+        justify-center
+      >
+        <router-link
+          to="/projektanlegen"
+          tag="span"
+        >
+          <v-btn
+            class="mt-5"
+            style="color: black"
+            color="success"
+          >
+            Projekt anlegen
+          </v-btn>
+        </router-link>
+      </v-layout>
       <v-divider class="mt-5" />
 
       <v-alert
@@ -52,7 +83,7 @@
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Projekte gefunden.
@@ -106,6 +137,7 @@
         <v-dialog
           v-if="overlay"
           v-model="overlay"
+          :fullscreen="smallScreen"
           absolute
           persistent
         >
@@ -206,7 +238,6 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
@@ -234,9 +265,10 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -244,9 +276,10 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -270,7 +303,16 @@
                               dark
                               @click="milestoneDialog = true"
                             >
-                              Meilenstein hinzufügen
+                              <v-icon
+                                v-if="$vuetify.breakpoint.xsOnly"
+                              >
+                                mdi-plus-thick
+                              </v-icon>
+                              <span
+                                v-else
+                              >
+                                Meilenstein hinzufügen
+                              </span>
                             </v-btn>
                             <v-dialog
                               v-model="milestoneDialog"
@@ -381,6 +423,7 @@
                   color="success"
                   block
                   tile
+                  :loading="changingProject"
                   @click="changeProject()"
                 >
                   Bestätigen
@@ -419,6 +462,7 @@ export default {
     userFeedback: '',
     form: false,
     loading: true,
+    changingProject: false,
     tableHeaders: [
       {
         text: 'Meilensteinname',
@@ -451,6 +495,9 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -474,6 +521,9 @@ export default {
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
       });
+    },
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
     },
     weiRule() {
       return [
@@ -564,6 +614,21 @@ export default {
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
     },
+    updateMap(lat, long) {
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
+      }
+    },
     editClick(itemId) {
       let projectId = -1;
       try {
@@ -582,7 +647,17 @@ export default {
             // until * 1000 --> s auf ms
             this.editElement.until = new Date(this.editElement.until * 1000).toISOString().substring(0, 10);
 
-            const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+            if (coords === null) {
+              // Set MAP to center Germany
+              coords = latLng(51.1642292, 10.4541194);
+              if (this.editElement.latitude === null) {
+                this.editElement.latitude = '';
+              }
+              if (this.editElement.longitude === null) {
+                this.editElement.longitude = '';
+              }
+            }
             this.center = coords;
             this.marker = coords;
             this.overlay = true;
@@ -627,7 +702,7 @@ export default {
             });
           headers.milestones = JSON.stringify(headers.milestones);
         }
-
+        this.changingProject = true;
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -636,13 +711,16 @@ export default {
               this.postPic(authToken, this.editElement.picture)
                 .then(() => {
                   this.sentStauts();
+                  this.changingProject = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.changingProject = false;
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
@@ -727,5 +805,11 @@ export default {
 
    .loadingCircle {
     margin-top: 50px;
+  }
+
+  .newProject {
+    position: absolute;
+    top: 5px;
+    right:10px;
   }
 </style>

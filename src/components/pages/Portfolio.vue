@@ -236,7 +236,7 @@
                       <v-btn
                         v-if="!voucher.used"
                         color="success"
-                        :loading="reedemingVoucher"
+                        :loading="reedemingVoucher && indexClicked == voucher.id"
                         @click="redeemVoucher(voucher)"
                       >
                         Einlösen
@@ -385,6 +385,7 @@ export default {
     loadingVouchers: true,
     loadingDonations: true,
     reedemingVoucher: false,
+    indexClicked: null,
   }),
   computed: {
     tabVouchers() {
@@ -449,6 +450,7 @@ export default {
         });
     },
     redeemVoucher(voucher) {
+      this.indexClicked = voucher.id;
       const head = {
         authToken: userSession.loadUserData().authResponseToken,
         id: voucher.id,

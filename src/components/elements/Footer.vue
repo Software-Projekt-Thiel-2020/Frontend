@@ -9,31 +9,35 @@
       class="primary white--text text-center"
       style="width: 100vw"
     >
-      <v-card-text>
-        <router-link
-          to="/agb"
-          tag="span"
-          class="ma-3"
+      <v-card-text
+        class="mt-0 pt-0"
+      >
+        <v-row
+          align="center"
+          justify="center"
         >
-          <span class="link white--text">Unsere AGB</span>
-        </router-link>
-        <router-link
-          to="/datenschutz"
-          tag="span"
-          class="ma-3"
-        >
-          <span class="link white--text">Datenschutzerklärung</span>
-        </router-link>
-        <router-link
-          to="/impressum"
-          tag="span"
-          class="ma-3"
-        >
-          <span class="link white--text">Impressum</span>
-        </router-link>
-
-        <br>
-
+          <router-link
+            to="/agb"
+            tag="span"
+            class="ma-3"
+          >
+            <span class="link white--text">Unsere AGB</span>
+          </router-link>
+          <router-link
+            to="/datenschutz"
+            tag="span"
+            class="ma-3"
+          >
+            <span class="link white--text">Datenschutzerklärung</span>
+          </router-link>
+          <router-link
+            to="/impressum"
+            tag="span"
+            class="ma-3"
+          >
+            <span class="link white--text">Impressum</span>
+          </router-link>
+        </v-row>
         <router-link
           to="/warumspenden"
           tag="span"
@@ -41,7 +45,7 @@
         >
           <v-btn
             target="_blank"
-            class="btn-hover color-9 mt-3"
+            class="btn-hover color-9 mt-0"
             style="text-transform: none"
           >
             Warum Du bei uns spenden solltest...

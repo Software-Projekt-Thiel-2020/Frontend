@@ -52,7 +52,7 @@
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Institutionen gefunden.
@@ -104,6 +104,18 @@
                   >
                     Website
                   </v-btn>
+                  <router-link
+                    :to="'/institutionVoucher/'+item.id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      class="ma-2"
+                      style="color: black"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                 </v-card-actions>
               </div>
             </v-card>
@@ -114,6 +126,7 @@
           v-model="overlay"
           absolute
           persistent
+          :fullscreen="smallScreenDialog"
         >
           <v-card>
             <v-card-title class="text-center">
@@ -257,7 +270,6 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
@@ -285,9 +297,10 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -295,9 +308,10 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -343,7 +357,7 @@ import axios from 'axios';
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'InstitutionEditieren',
@@ -382,6 +396,9 @@ export default {
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -399,6 +416,11 @@ export default {
     uploadingImage: false,
     loadingChanges: false,
   }),
+  computed: {
+    smallScreenDialog() {
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+  },
   mounted() {
     this.load();
   },
@@ -423,6 +445,21 @@ export default {
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
     },
+    updateMap(lat, long) {
+      try {
+        let newCoords = this.marker;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
+      }
+    },
     editClick(inst) {
       if (inst !== null && inst !== undefined) {
         if (typeof inst === 'object' && Object.keys(inst).length > 0) {
@@ -438,7 +475,17 @@ export default {
 
           this.instName = inst.name;
 
-          const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          if (coords === null) {
+            // Set MAP to center Germany
+            coords = latLng(51.1642292, 10.4541194);
+            if (this.editElement.latitude === null) {
+              this.editElement.latitude = '';
+            }
+            if (this.editElement.longitude === null) {
+              this.editElement.longitude = '';
+            }
+          }
           this.center = coords;
           this.marker = coords;
           this.overlay = true;

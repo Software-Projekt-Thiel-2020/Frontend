@@ -3,7 +3,7 @@
     <div class="gradientBackground">
       <div class="titleHeader text-center">
         <h1
-          :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
+          :class="smallDevice ? 'display-0 pl-1 pr-1' : 'display-3'"
           class="font-weight-thin white--text"
         >
           Neues Projekt anlegen
@@ -12,12 +12,13 @@
     </div>
     <v-form
       v-model="form"
+      class="mt-2"
     >
       <v-row>
         <v-col cols="6">
           <v-text-field
             v-model="project.title"
-            label="Projektname"
+            label="Projektname*"
             outlined
             clearable
             :rules="notEmpty"
@@ -26,18 +27,56 @@
         <v-col cols="6">
           <v-text-field
             v-model="project.website"
-            label="Link zur Website (optional)"
+            label="Website"
             :rules="websiteRule"
             outlined
             clearable
           />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row
+        v-if="smallDevice"
+      >
+        <v-col class="pb-0 mb-0">
+          <v-overflow-btn
+            v-model="project.idInstitution"
+            label="Institution*"
+            target="#dropdown-institution"
+            :items="allInstitutionsSortedNameId"
+            item-text="name"
+            item-value="id"
+            auto-select-first
+            outlined
+            clearable
+            :rules="notEmpty"
+          />
+        </v-col>
+        <v-row>
+          <v-col
+            class="mb-2 mt-0 pt-0"
+            align="center"
+          >
+            <router-link
+              to="/institution"
+              tag="span"
+            >
+              <v-btn
+                class="ml-1"
+                style="text-transform: none"
+              >
+                neue Institution erstellen
+              </v-btn>
+            </router-link>
+          </v-col>
+        </v-row>
+      </v-row>
+      <v-row
+        v-else
+      >
         <v-col cols="6">
           <v-overflow-btn
             v-model="project.idInstitution"
-            label="Institution"
+            label="Institution*"
             target="#dropdown-institution"
             :items="allInstitutionsSortedNameId"
             item-text="name"
@@ -54,6 +93,7 @@
             tag="span"
           >
             <v-btn
+              class="mt-2 ml-1"
               style="text-transform: none"
             >
               neue Institution erstellen
@@ -62,18 +102,22 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
+        <v-col>
           <v-text-field
             v-model="project.goal"
             min="1"
             oninput="validity.valid||(value='');"
-            label="Spendenziel in Wei"
+            label="Spendenziel* (WEI)"
             outlined
             clearable
             :rules="weiRule"
           />
         </v-col>
-        <v-col cols="3">
+      </v-row>
+      <v-row>
+        <v-col
+          :cols="smallDevice ? 6 : 4"
+        >
           <v-menu
             v-model="dateMenu"
             :close-on-content-click="false"
@@ -85,8 +129,9 @@
               <v-text-field
                 v-model="date"
                 :rules="notEmpty"
-                label="Projektende eingeben"
+                label="Projektende*"
                 readonly
+                outlined
                 clearable
                 v-bind="attrs"
                 v-on="on"
@@ -99,7 +144,9 @@
             />
           </v-menu>
         </v-col>
-        <v-col cols="3">
+        <v-col
+          :cols="smallDevice ? 6 : 4"
+        >
           <v-menu
             v-model="timeMenu"
             :close-on-content-click="false"
@@ -112,8 +159,9 @@
                 v-model="time"
                 :disabled="blockTime"
                 :rules="notEmpty"
-                label="Uhrzeit eingeben (GMT)"
+                label="Uhrzeit* (GMT)"
                 readonly
+                outlined
                 clearable
                 v-bind="attrs"
                 v-on="on"
@@ -131,7 +179,7 @@
         <v-col cols="12">
           <v-textarea
             v-model="project.description"
-            label="Beschreibung"
+            label="Beschreibung*"
             clearable
             counter
             no-resize
@@ -163,8 +211,10 @@
             <v-col>
               <v-text-field
                 v-model="project.latitude"
-                label="Latitude (optional)"
+                label="Latitude"
                 outlined
+                type="number"
+                :rules="coordRules"
                 @change="updateMap(project.latitude, null)"
               />
             </v-col>
@@ -173,8 +223,10 @@
             <v-col>
               <v-text-field
                 v-model="project.longitude"
-                label="Longitude (optional)"
+                label="Longitude"
                 outlined
+                type="number"
+                :rules="coordRules"
                 @change="updateMap(null, project.longitude)"
               />
             </v-col>
@@ -206,7 +258,16 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      Neuer Meilenstein
+                      <v-icon
+                        v-if="$vuetify.breakpoint.xsOnly"
+                      >
+                        mdi-plus-thick
+                      </v-icon>
+                      <span
+                        v-else
+                      >
+                        Neuer Meilenstein
+                      </span>
                     </v-btn>
                   </template>
                   <v-card>
@@ -228,7 +289,7 @@
                           <v-col cols="12">
                             <v-text-field
                               v-model="editedItem.goal"
-                              label="Spendenziel in Wei"
+                              label="Spendenziel* (WEI)"
                               min="1"
                               outlined
                               clearable
@@ -286,20 +347,31 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-btn
-          :disabled="!form"
-          color="success"
-          class="font-weight-medium ma-2"
-          elevation="2"
-          @click="calcMainUntil()"
-        >
-          Spendenprojekt anlegen
-        </v-btn>
+        <v-col>
+          <p class="ml-2 text-left font-weight-light">
+            Mit * markierte Felder müssen ausgefüllt werden
+          </p>
+          <v-layout
+            justify-center
+          >
+            <v-btn
+              :disabled="!form"
+              color="success"
+              class="font-weight-medium ma-2"
+              elevation="2"
+              large
+              :loading="loading"
+              @click="calcMainUntil()"
+            >
+              Spendenprojekt anlegen
+            </v-btn>
+          </v-layout>
+        </v-col>
       </v-row>
     </v-form>
     <v-snackbar
       v-model="dialog.successful"
-      bottom
+      top
       color="success"
     >
       Spendenprojekt erstellt!
@@ -325,7 +397,7 @@
 import axios from 'axios';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { latLng } from 'leaflet';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
 export default {
@@ -347,6 +419,9 @@ export default {
     ],
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+    ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     blockTime: true,
     blockAdditionalMilestones: true,
@@ -425,8 +500,12 @@ export default {
       zoomSnap: 0.5,
       minZoom: 1,
     },
+    loading: false,
   }),
   computed: {
+    smallDevice() {
+      return this.$vuetify.breakpoint.name === 'xs';
+    },
     formTitle() {
       return this.editedIndex === -1 ? 'Neuer Meilenstein' : 'Meilenstein bearbeiten';
     },
@@ -459,15 +538,19 @@ export default {
   },
   methods: {
     updateMap(lat, long) {
-      let newCoords;
-      if (lat !== null) {
-        newCoords = latLng(lat, this.marker.lng);
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
       }
-      if (long !== null) {
-        newCoords = latLng(this.marker.lat, long);
-      }
-      this.marker = newCoords;
-      this.center = newCoords;
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
@@ -564,6 +647,7 @@ export default {
       }
     },
     createSpendenProjekt() {
+      this.loading = true;
       const headers = {
         authToken: this.userData.authResponseToken,
         name: this.project.title,
@@ -580,6 +664,12 @@ export default {
       }
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
+        headers.milestones = headers.milestones.map((mile) => {
+          const cpy = mile;
+          // until / 1000 -> Umrechnung von ms auf s
+          cpy.until = new Date(mile.until).getTime() / 1000;
+          return cpy;
+        });
         headers.milestones = JSON.stringify(headers.milestones);
       }
       if (this.project.latitude !== '') {
@@ -595,6 +685,8 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
+        }).finally(() => {
+          this.loading = false;
         });
     },
   },
