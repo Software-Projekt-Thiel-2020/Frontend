@@ -212,12 +212,24 @@
           >
             <v-card elevation="10">
               <v-img
-                class="white--text align-end"
-                height="200px"
+                class="white--text align-end grey lighten-2"
+                height="300px"
                 width="100%"
-                :src="apiurl+'/file/'+item.picturePath"
-                alt="/assets/placeholder.png"
-              />
+                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
+              >
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey darken-5"
+                    />
+                  </v-row>
+                </template>
+              </v-img>
 
               <v-card-title>
                 {{ item.name }}
@@ -227,7 +239,7 @@
               </v-card-subtitle>
 
               <v-card-text class="text--primary">
-                {{ item.description }}
+                ToDo: Das ist die kurzbeschreibung!
               </v-card-text>
 
               <v-card-actions>
