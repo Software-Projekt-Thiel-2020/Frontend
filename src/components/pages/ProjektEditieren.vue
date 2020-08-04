@@ -381,14 +381,12 @@
                           <div
                             v-if="isNewMilestone(item)"
                           >
-                            <!-- Zunächst nicht implementiert
                             <v-icon
                               small
                               @click="editMilestone(item)"
                             >
                               mdi-pencil
                             </v-icon>
-                            -->
                             <v-icon
                               small
                               @click="deleteMilestone(item)"
@@ -464,14 +462,9 @@ export default {
     loading: true,
     changingProject: false,
     tableHeaders: [
-      {
-        text: 'Meilensteinname',
-        align: 'start',
-        sortable: false,
-        value: 'milestoneName',
-      },
+      { text: 'Meilensteinname', align: 'start', value: 'milestoneName' },
       { text: 'Spendenziel', value: 'goal' },
-      { text: 'Meilensteinende', value: 'until' },
+      { text: 'Meilensteinende', value: 'until', sortable: false },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     newMilestones: [],
@@ -482,7 +475,7 @@ export default {
     },
     today: null,
     milestoneDialog: false,
-    editMilestoneDialog: false,
+    editFlag: false,
     minWei: 1,
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -569,21 +562,14 @@ export default {
     getTodaysDate() {
       this.today = new Date().toISOString().substring(0, 10);
     },
-    closeDialog() {
-      this.newMile.milestoneName = '';
-      this.newMile.goal = null;
-      this.newMile.until = null;
-
-      this.milestoneDialog = false;
-    },
-    // Noch nicht volständig implementiert
     editMilestone(milestone) {
-      this.newMile = milestone;
-      // in this case "5.9.2020" -> "5-9-2020" -> 2020-9-5
-      let newTime = JSON.parse(JSON.stringify(this.newMile));
-      newTime = newTime.until.split('.').reverse().join('-');
-      this.newMile.until = new Date(newTime).toISOString().substring(0, 10);
-      this.editMilestoneDialog = true;
+      this.newMile = JSON.parse(JSON.stringify(milestone));
+      // in this case "5.9.2020" --> 2020-9-5
+      const [day, month, year] = this.newMile.until.split('.');
+      this.newMile.until = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+      this.editFlag = true;
+      this.milestoneDialog = true;
     },
     isNewMilestone(item) {
       try {
@@ -602,11 +588,25 @@ export default {
         // Do nothing (or print err msg)
       }
     },
+    closeDialog() {
+      this.newMile.milestoneName = '';
+      this.newMile.goal = null;
+      this.newMile.until = null;
+
+      this.editFlag = false;
+      this.milestoneDialog = false;
+    },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
       // until / 1000 --> s auf ms umrechnen
       dateStone.until = new Date(dateStone.until).getTime() / 1000;
+
+      if (this.editFlag) {
+        this.newMilestones.splice(this.newMile.newIndex, 1);
+      }
+      delete this.newMilestones.newIndex;
       this.newMilestones.push(dateStone);
+
       this.closeDialog();
     },
     setMarkerPos(event) {
