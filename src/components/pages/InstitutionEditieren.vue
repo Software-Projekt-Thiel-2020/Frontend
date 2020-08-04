@@ -285,9 +285,11 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="notEmpty"
-                        class="inputField"
+                        type="number"
+                        :rules="coordRules"
                         required
+                        class="inputField"
+                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -295,9 +297,11 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="notEmpty"
-                        class="inputField"
+                        type="number"
+                        :rules="coordRules"
                         required
+                        class="inputField"
+                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -343,7 +347,7 @@ import axios from 'axios';
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'InstitutionEditieren',
@@ -381,6 +385,10 @@ export default {
       (v) => !!v || 'Feld muss augefüllt werden',
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
+    coordRules: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -422,6 +430,21 @@ export default {
       this.marker = event.latlng;
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
+    },
+    updateMap(lat, long) {
+      try {
+        let newCoords;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
+      }
     },
     editClick(inst) {
       if (inst !== null && inst !== undefined) {
