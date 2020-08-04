@@ -149,16 +149,6 @@
                     </div>
                   </div>
                 </v-card>
-                <v-card
-                  v-if="project"
-                  elevation="7"
-                  class="text-center py-8 mt-8"
-                >
-                  <v-card-text>
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <div v-html="compiledMarkdown" />
-                  </v-card-text>
-                </v-card>
               </v-col>
               <v-col>
                 <v-card class="py-8">
@@ -225,10 +215,13 @@
                     v-if="institution"
                   >
                     <v-card-text>
-                      <h1> Weitere Infos: </h1>
-                      <p class="institutionInfos">
+                      <h1> Beschreibung: </h1>
+                      <h3 class="institutionInfos">
                         Institution: {{ institution[0].name }}
-                      </p>
+                      </h3>
+                      <br>
+                      <!-- eslint-disable-next-line vue/no-v-html -->
+                      <div v-html="compiledMarkdown" />
                     </v-card-text>
                     <router-link
                       :to="'/projectGutschein/'+institution[0].id"
