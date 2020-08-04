@@ -244,7 +244,7 @@
                     </router-link>
                     <a
                       class=""
-                      :href="'//'+institution[0].webpage"
+                      :href="institution[0].webpage"
                     >
                       <v-btn
                         outlined
@@ -303,6 +303,7 @@ export default {
     errorMessage: null,
     loading: false,
     voteEnabled: true,
+    voteDisabled: true,
     apiurl: window.apiurl,
     institutionDialog: {
       errorMessage: '',
