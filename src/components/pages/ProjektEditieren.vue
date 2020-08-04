@@ -381,6 +381,7 @@
                   color="success"
                   block
                   tile
+                  :loading="changingProject"
                   @click="changeProject()"
                 >
                   Bestätigen
@@ -419,6 +420,7 @@ export default {
     userFeedback: '',
     form: false,
     loading: true,
+    changingProject: false,
     tableHeaders: [
       {
         text: 'Meilensteinname',
@@ -627,7 +629,7 @@ export default {
             });
           headers.milestones = JSON.stringify(headers.milestones);
         }
-
+        this.changingProject = true;
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -636,13 +638,16 @@ export default {
               this.postPic(authToken, this.editElement.picture)
                 .then(() => {
                   this.sentStauts();
+                  this.changingProject = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.changingProject = false;
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
