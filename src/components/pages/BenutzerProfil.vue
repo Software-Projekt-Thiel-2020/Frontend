@@ -14,7 +14,19 @@
           ({{ item.username }})
         </p>
       </div>
-      <v-row v-if="!errorMessage">
+      <v-layout
+        v-if="loading == true"
+        justify-center
+        class="loadingCircle"
+      >
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
+      <v-row v-if="!errorMessage && loading == false">
         <v-col
           sm="6"
           class="text-left pageBox"
@@ -83,6 +95,7 @@
             :disabled="(!valid || !vForm)"
             color="success"
             class="mt-4"
+            :loading="processingChanges"
             @click="submit"
           >
             Änderungen bestätigen
@@ -106,7 +119,7 @@
         </v-col>
       </v-row>
       <v-alert
-        v-else
+        v-else-if="errorMessage"
         type="error"
         class="ma-10"
       >
@@ -127,6 +140,8 @@
             </h1>
           </v-btn>
         </router-link>
+      </div>
+      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
         <router-link
           to="/InstitutionEditieren"
           tag="span"
@@ -154,6 +169,8 @@ export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    loading: true,
+    processingChanges: false,
     item: {
       username: 'username',
       firstname: 'firstname',
@@ -186,6 +203,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.loading = true;
       axios.get(`users?username=${window.user.username}`)
         .then((res) => {
           if (res.data.length === 0) {
@@ -202,6 +220,7 @@ export default {
         })
         .finally(() => {
           this.gotResponse = true;
+          this.loading = false;
         });
     },
     reset() {
@@ -230,7 +249,7 @@ export default {
         } else {
           headers.email = this.item.email;
         }
-
+        this.processingChanges = true;
         axios.put('users', {}, { headers })
           .then(() => {
             this.snackSucc();
@@ -240,6 +259,8 @@ export default {
           .catch((err) => {
             this.snackErr();
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.processingChanges = false;
           });
       }
     },
@@ -261,10 +282,10 @@ export default {
 
 <style scoped>
 
-    .inputField ::placeholder{
-        color: black!important;
-        opacity: 1;
-    }
+  .inputField ::placeholder{
+      color: black!important;
+      opacity: 1;
+  }
 
   .pageBox{
     position:relative;
@@ -274,5 +295,10 @@ export default {
   .linkToDonate {
       width: 100%;
       bottom: 40px;
+  }
+
+  .loadingCircle {
+    margin-top: 100px;
+    margin-bottom: 100px;
   }
 </style>

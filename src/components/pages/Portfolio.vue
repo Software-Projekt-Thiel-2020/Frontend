@@ -186,8 +186,20 @@
                   </v-chip>
                 </v-tab>
               </v-tabs>
+              <v-layout
+                v-if="loadingVouchers==true"
+                justify-center
+              >
+                <v-progress-circular
+                  :size="50"
+                  :width="7"
+                  color="green"
+                  indeterminate
+                  class="loadingCircle"
+                />
+              </v-layout>
               <v-card-text
-                v-if="vErrMsg.length !== 0"
+                v-else-if="vErrMsg.length !== 0"
                 class="text-center"
               >
                 <h1 class="my-10">
@@ -217,13 +229,14 @@
                   >
                     <v-card-title>{{ voucher.titel }}</v-card-title>
                     <v-card-subtitle class="overline">
-                      {{ voucher.titel }}
+                      {{ voucher.bought }}
                     </v-card-subtitle>
                     <v-card-text>{{ voucher.description }}</v-card-text>
                     <v-card-actions>
                       <v-btn
                         v-if="!voucher.used"
                         color="success"
+                        :loading="reedemingVoucher"
                         @click="redeemVoucher(voucher)"
                       >
                         Einlösen
@@ -237,7 +250,7 @@
                       </v-btn>
                       <v-spacer />
                       <h3 class="pricetag font-weight-light">
-                        {{ voucher.price }} ETH
+                        {{ voucher.price / weiFormula }} ETH
                       </h3>
                     </v-card-actions>
                   </v-card>
@@ -275,50 +288,70 @@
                 </v-toolbar-title>
                 <v-spacer />
               </v-toolbar>
+              <v-layout
+                v-if="loadingDonations==true"
+                justify-center
+              >
+                <v-progress-circular
+                  :size="50"
+                  :width="7"
+                  color="green"
+                  indeterminate
+                  class="loadingCircle"
+                />
+              </v-layout>
               <v-card-text
-                v-if="dErrMsg.length !== 0"
+                v-else-if="dErrMsg.length !== 0"
                 class="text-center"
               >
                 <h1 class="my-10">
                   {{ dErrMsg }}
                 </h1>
               </v-card-text>
-              <v-card-text
-                v-else-if="donations === null || donations === undefined || donations.length === 0"
-                class="text-center"
-              >
-                <h1 class="my-10 noEntryText">
-                  Keine Spenden getätigt
-                </h1>
-              </v-card-text>
-              <v-row
-                v-else
-                class="ma-2"
-              >
-                <v-col
-                  v-for="donation in donations.slice((donationPage*6)-6,donationPage*6)"
-                  :key="donation.id"
-                  cols="12"
+              <div v-else>
+                <v-card-text
+                  v-if="donations === null || donations === undefined || donations.length === 0"
+                  class="text-center"
                 >
-                  <v-card light>
-                    <v-card-title>
-                      {{ donation.projectname }}
-                      <v-spacer />
-                      <h3 class="pricetag font-weight-light">
-                        {{ donation.amount / weiFormula }} ETH
-                      </h3>
-                    </v-card-title>
-                  </v-card>
-                </v-col>
-              </v-row>
-              <div class="text-center">
-                <v-pagination
-                  v-model="donationPage"
-                  :length="Math.ceil(donations.length/6)"
-                  :total-visible="7"
-                  light
-                  color="secondary"
-                />
+                  <h1 class="my-10 noEntryText">
+                    Keine Spenden getätigt
+                  </h1>
+                </v-card-text>
+                <v-row
+                  v-else
+                  class="ma-2"
+                >
+                  <v-col
+                    v-for="donation in donations.slice((donationPage*6)-6,donationPage*6)"
+                    :key="donation.id"
+                    cols="12"
+                  >
+                    <v-card
+                      color="white"
+                      light
+                    >
+                      <v-card-title>
+                        {{ donation.projectname }}
+                        <v-spacer />
+                        <h3 class="pricetag font-weight-light">
+                          {{ donation.amount / weiFormula }} ETH
+                        </h3>
+                      </v-card-title>
+                      <v-card-subtitle class="overline lightgrey">
+                        {{ donation.timeofdonation }}
+                      </v-card-subtitle>
+                    </v-card>
+                  </v-col>
+                </v-row>
+                <div class="text-center">
+                  <v-pagination
+                    v-model="donationPage"
+                    :length="Math.ceil(donations.length/6)"
+                    :total-visible="7"
+                    light
+                    color="secondary"
+                  />
+                </div>
               </div>
             </v-card>
           </v-col>
@@ -335,7 +368,7 @@ import { userSession } from '../../userSession';
 export default {
   name: 'Historie',
   data: () => ({
-    weiFormula: 1000000000000000000,
+    weiFormula: 1e18,
     tab: null,
     donations: [],
     vouchers: [],
@@ -349,6 +382,9 @@ export default {
     redeemSucc: false,
     voucherPage: 1,
     donationPage: 1,
+    loadingVouchers: true,
+    loadingDonations: true,
+    reedemingVoucher: false,
   }),
   computed: {
     tabVouchers() {
@@ -385,6 +421,7 @@ export default {
       return this.vouchers.filter((voucher) => !voucher.used);
     },
     loadVouchers() {
+      this.loadingVouchers = true;
       axios.get(`vouchers/user?idUser=${this.user.id}`)
         .then((res) => {
           if (res.data.length !== 0) {
@@ -392,9 +429,12 @@ export default {
           }
         }).catch((err) => {
           this.vErrMsg = err.toString();
+        }).finally(() => {
+          this.loadingVouchers = false;
         });
     },
     loadDonations() {
+      this.loadingDonations = true;
       axios.get(`donations?iduser=${this.user.id}`)
         .then((res) => {
           if (res.data.length !== 0) {
@@ -404,6 +444,8 @@ export default {
           }
         }).catch((err) => {
           this.dErrMsg = err.toString();
+        }).finally(() => {
+          this.loadingDonations = false;
         });
     },
     redeemVoucher(voucher) {
@@ -411,6 +453,7 @@ export default {
         authToken: userSession.loadUserData().authResponseToken,
         id: voucher.id,
       };
+      this.reedemingVoucher = true;
       axios.delete('vouchers/user', { headers: head, data: {} })
         .then(() => {
           this.redeemSucc = true;
@@ -418,6 +461,7 @@ export default {
           this.errorMessage = err.toString();
           this.redeemFail = true;
         }).finally(() => {
+          this.reedemingVoucher = false;
           this.redeemVTitle = voucher.titel;
           this.loadData();
           window.scrollTo(0, 0);
@@ -448,5 +492,13 @@ export default {
 
   .wallet {
     max-width: 500px;
+  }
+
+  .loadingCircle {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .lightgrey {
+    color: rgba(0,0,0,0.6) !important;
   }
 </style>
