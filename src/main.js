@@ -12,18 +12,18 @@ import AGB from './components/pages/AGB.vue';
 import Datenschutz from './components/pages/Datenschutz.vue';
 import Impressum from './components/pages/Impressum.vue';
 import Portfolio from './components/pages/Portfolio.vue';
-import Gutscheine from './components/pages/Gutscheine.vue';
-import Spenden from './components/pages/Spenden.vue';
+import Gutscheine from './components/pages/GutscheineÜbersicht.vue';
+import Spenden from './components/pages/SpendenprojekteÜbersicht.vue';
 import UeberUns from './components/pages/UeberUns.vue';
 import WarumSpenden from './components/pages/WarumSpenden.vue';
 import BenutzerProfil from './components/pages/BenutzerProfil.vue';
-import Project from './components/pages/Project.vue';
-import ProjektAnlegen from './components/pages/ProjektAnlegen.vue';
+import Spendenseite from './components/pages/Spendenseite.vue';
+import ProjektAnlegen from './components/pages/SpendenprojektAnlegen.vue';
 import Institution from './components/pages/Institution.vue';
-import ProjectGutschein from './components/pages/ProjectGutschein.vue';
+import Gutscheinseite from './components/pages/Gutscheinseite.vue';
 import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
-import ProjektEditieren from './components/pages/ProjektEditieren.vue';
-import InstitutionVoucher from './components/pages/InstitutionVoucher.vue';
+import SpendenprojektEditieren from './components/pages/SpendenprojektEditieren.vue';
+import InstitutionVoucher from './components/pages/InstitutionGutscheine.vue';
 
 // eslint-disable-next-line no-underscore-dangle
 delete L.Icon.Default.prototype._getIconUrl;
@@ -64,15 +64,15 @@ const routes = [
   { path: '/portfolio', component: Portfolio },
   { path: '/gutscheine', component: Gutscheine },
   { path: '/spenden', component: Spenden },
-  { path: '/project/:id', component: Project },
+  { path: '/project/:id', component: Spendenseite },
   { path: '/ueberuns', component: UeberUns },
   { path: '/warumspenden', component: WarumSpenden },
   { path: '/profil', component: BenutzerProfil },
   { path: '/projektanlegen', component: ProjektAnlegen },
   { path: '/institution', component: Institution },
-  { path: '/projectGutschein/:id', component: ProjectGutschein },
+  { path: '/projectGutschein/:id', component: Gutscheinseite },
   { path: '/InstitutionEditieren/', component: InstitutionEditieren },
-  { path: '/projektEditieren/', component: ProjektEditieren },
+  { path: '/projektEditieren/', component: SpendenprojektEditieren },
   { path: '/institutionVoucher/:id', component: InstitutionVoucher },
 ];
 
