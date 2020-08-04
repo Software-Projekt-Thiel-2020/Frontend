@@ -295,7 +295,9 @@ export default {
     },
     openDialog() {
       this.dialog = true;
-      this.$confetti.start();
+      this.$confetti.start({
+        particlesPerFrame: 0.5,
+      });
     },
     closeDialog() {
       this.dialog = false;
