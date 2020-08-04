@@ -73,13 +73,13 @@
                     v-if="!gotResponse"
                     class="display-1 font-weight-light"
                   >
-                    {{ 0 }} ETH
+                    {{ showValue(0) }}
                   </h3>
                   <h3
                     v-else
                     class="display-1 font-weight-light"
                   >
-                    {{ user.balance / weiFormula }} ETH
+                    {{ showValue(user.balance) }}
                   </h3>
                 </v-chip>
               </div>
@@ -250,7 +250,7 @@
                       </v-btn>
                       <v-spacer />
                       <h3 class="pricetag font-weight-light">
-                        {{ voucher.price / weiFormula }} ETH
+                        {{ showValue(voucher.price) }}
                       </h3>
                     </v-card-actions>
                   </v-card>
@@ -334,7 +334,7 @@
                         {{ donation.projectname }}
                         <v-spacer />
                         <h3 class="pricetag font-weight-light">
-                          {{ donation.amount / weiFormula }} ETH
+                          {{ showValue(donation.amount) }}
                         </h3>
                       </v-card-title>
                       <v-card-subtitle class="overline lightgrey">
@@ -415,6 +415,11 @@ export default {
     this.loadData();
   },
   methods: {
+    showValue(value) {
+      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (value > 1e6) return `${(value / 1e6)} MWEI`;
+      return `${value} WEI`;
+    },
     loadData() {
       axios.get(`users?username=${window.user.username}`)
         .then((res) => {
