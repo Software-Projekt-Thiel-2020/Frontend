@@ -6,6 +6,37 @@
       >
         Deine Projekte
       </h4>
+      <router-link
+        v-if="!$vuetify.breakpoint.smAndDown"
+        to="/projektanlegen"
+        tag="span"
+        class="newProject"
+      >
+        <v-btn
+          class="mt-5"
+          style="color: black"
+          color="success"
+        >
+          Projekt anlegen
+        </v-btn>
+      </router-link>
+      <v-layout
+        v-else
+        justify-center
+      >
+        <router-link
+          to="/projektanlegen"
+          tag="span"
+        >
+          <v-btn
+            class="mt-5"
+            style="color: black"
+            color="success"
+          >
+            Projekt anlegen
+          </v-btn>
+        </router-link>
+      </v-layout>
       <v-divider class="mt-5" />
 
       <v-alert
@@ -774,5 +805,11 @@ export default {
 
    .loadingCircle {
     margin-top: 50px;
+  }
+
+  .newProject {
+    position: absolute;
+    top: 5px;
+    right:10px;
   }
 </style>
