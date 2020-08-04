@@ -191,7 +191,7 @@
                       class="btn-hover color-9"
                       dark
                       :loading="loadDonation"
-                      :disabled="donationDisabled"
+                      :disabled="donationValue <= 0"
                       @click="donate()"
                     >
                       Betrag Spenden
@@ -346,7 +346,6 @@ export default {
         this.voteEnabled = false;
         this.voteDisabled = true;
       }
-      this.donationValue = this.donationValue <= 0;
     },
   },
 };
