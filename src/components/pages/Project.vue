@@ -5,11 +5,11 @@
         :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
         class="font-weight-thin white--text"
       >
-        {{ project.name }}
+        {{ project ? project.name : "Projekt" }}
       </h1>
       <a
         class=""
-        :href="project.homepage"
+        :href="project ? project.homepage : ''"
       >
         <v-btn
           outlined
@@ -111,12 +111,6 @@
                 elevation="7"
                 class="text-center"
               >
-                <v-card-text>
-                  <h1>Wofür Spenden Sie?</h1>
-                  <p class="description">
-                    Antwort des Projektinhabers: {{ project.description }}
-                  </p>
-                </v-card-text>
                 <v-system-bar
                   color="secondary"
                   height="40px"
@@ -168,6 +162,16 @@
                     />
                   </div>
                 </div>
+              </v-card>
+              <v-card
+                v-if="project"
+                elevation="7"
+                class="text-center py-8 mt-8"
+              >
+                <v-card-text>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <div v-html="compiledMarkdown" />
+                </v-card-text>
               </v-card>
             </v-col>
             <v-col>
@@ -270,6 +274,8 @@
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 
 export default {
   name: 'Project',
@@ -300,7 +306,12 @@ export default {
       }
       return null;
     },
-
+    compiledMarkdown() {
+      if (this.project) {
+        return marked(DOMPurify.sanitize(this.project.description), { sanitize: true });
+      }
+      return '';
+    },
   },
   created() {
     this.projectid = this.$route.params.id;
@@ -407,59 +418,47 @@ export default {
     padding-top: 10px;
     backdrop-filter: blur(15px) brightness(0.5);
   }
-
   .gradientBackground {
     background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     background-color: rgb(255, 255, 255);
     min-height: 100%;
   }
-
   .projectBox{
     background-color: rgba(255, 255, 255, 0.8);
   }
-
   .projectImage{
     max-height: 200px;
     max-width: 200px;
   }
-
   .goalBox {
     border: 1px dotted black;
   }
-
-
   a {
     text-decoration: none;
   }
-
   input {
     border: 1px lightgrey solid;
     text-align: center;
     border-radius: 50px;
   }
-
   .donation_title{
     font-size: 2rem;
     vertical-align: text-bottom;
   }
-
   .btn-hover {
     background-size: 300% 100%;
     border-radius: 50px;
     text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
     transition: all .4s ease-in-out;
   }
-
   .btn-hover:hover {
     background-position: 100% 0;
     transition: all .4s ease-in-out;
   }
-
   .btn-hover.color-9 {
     background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
     box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
   }
-
   .checkmark__circle {
     stroke-dasharray: 166;
     stroke-dashoffset: 166;
@@ -469,7 +468,6 @@ export default {
     fill: none;
     animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
   }
-
   .checkmark {
     width: 56px;
     height: 56px;
@@ -484,34 +482,28 @@ export default {
     box-shadow: inset 0px 0px 0px #7ac142;
     animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
   }
-
   .checkmark__check {
     transform-origin: 50% 50%;
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
   }
-
   .description {
     font-size: 17px;
     text-align: center;
     margin-top: 5px;
   }
-
   .institution {
     margin-top: 25px;
     color: #737773;
   }
-
   .institutionInfos {
     margin-top: 10px;
     font-size: 17px;
   }
-
   .websiteButton {
     margin-bottom:10px;
   }
-
   @keyframes stroke {
     100% {
       stroke-dashoffset: 0;
