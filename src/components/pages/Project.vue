@@ -181,7 +181,7 @@
                     </h1>
                     <v-checkbox
                       v-model="voteEnabled"
-                      :disabled="voteDisabled"
+                      :disabled="voteDisabled || project.milestones.length === 0"
                       style="display:inline-flex"
                       class="text-center align-center"
                       label="Für Meilenstein abstimmen"
@@ -340,8 +340,12 @@ export default {
     compareInput() {
       const EthVal = this.donationValue * this.eurToEth;
       if (EthVal >= 0.01) {
-        this.voteEnabled = true;
-        this.voteDisabled = false;
+        if (this.project.milestones.length === 0) {
+          this.voteEnabled = false;
+        } else {
+          this.voteEnabled = true;
+          this.voteDisabled = false;
+        }
       } else {
         this.voteEnabled = false;
         this.voteDisabled = true;
