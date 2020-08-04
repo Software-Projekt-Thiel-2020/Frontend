@@ -119,7 +119,7 @@
         <h3
           v-else
         >
-          {{ (backend_userdata.balance / (1000000000000000000)).toFixed(2) }} ETH
+          {{ (backend_userdata.balance / (1e18)).toFixed(2) }} ETH
         </h3>
         <v-icon class="display-1">
           mdi-ethereum
@@ -206,6 +206,18 @@
                 <v-icon class="mr-1">
                   mdi-bank-plus
                 </v-icon>Institution erstellen
+              </v-list-item-title>
+            </router-link>
+          </v-list-item>
+          <v-list-item>
+            <router-link
+              to="/ProjektEditieren"
+              tag="span"
+            >
+              <v-list-item-title class="clickable">
+                <v-icon class="mr-1">
+                  mdi-alpha-p-box
+                </v-icon>Meine Projekte
               </v-list-item-title>
             </router-link>
           </v-list-item>
@@ -350,6 +362,19 @@
             </v-list-item>
           </router-link>
 
+          <router-link
+            v-if="userSession.isUserSignedIn()"
+            to="/ProjektEditieren"
+            tag="span"
+          >
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon>mdi-alpha-p-box</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Meine Projekte</v-list-item-title>
+            </v-list-item>
+          </router-link>
+
           <v-list-item
             v-if="userSession.isUserSignedIn()"
             color="accent"
@@ -460,6 +485,7 @@
       <v-btn
         depressed
         color="success"
+        @click="register_dialog.successful = false"
       >
         Schließen
       </v-btn>
@@ -475,6 +501,7 @@
       <v-btn
         depressed
         color="error"
+        @click="error = false"
       >
         Schließen
       </v-btn>

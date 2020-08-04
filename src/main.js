@@ -22,6 +22,19 @@ import ProjektAnlegen from './components/pages/ProjektAnlegen.vue';
 import Institution from './components/pages/Institution.vue';
 import ProjectGutschein from './components/pages/ProjectGutschein.vue';
 import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
+import ProjektEditieren from './components/pages/ProjektEditieren.vue';
+import InstitutionVoucher from './components/pages/InstitutionVoucher.vue';
+
+// eslint-disable-next-line no-underscore-dangle
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  // eslint-disable-next-line global-require
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  // eslint-disable-next-line global-require
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  // eslint-disable-next-line global-require
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 // eslint-disable-next-line no-underscore-dangle
 delete L.Icon.Default.prototype._getIconUrl;
@@ -59,6 +72,8 @@ const routes = [
   { path: '/institution', component: Institution },
   { path: '/projectGutschein/:id', component: ProjectGutschein },
   { path: '/InstitutionEditieren/', component: InstitutionEditieren },
+  { path: '/projektEditieren/', component: ProjektEditieren },
+  { path: '/institutionVoucher/:id', component: InstitutionVoucher },
 ];
 
 const router = new VueRouter({

@@ -36,11 +36,23 @@
           </v-col>
         </v-row>
       </v-alert>
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+          class="loadingCircle"
+        />
+      </v-layout>
       <div v-if="(items.length === 0 && gotResponse)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Institutionen gefunden.
@@ -61,7 +73,7 @@
               <img
                 v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath"
+                :src="apiurl+'/file/'+item.picturePath"
               >
               <img
                 v-else
@@ -92,6 +104,18 @@
                   >
                     Website
                   </v-btn>
+                  <router-link
+                    :to="'/institutionVoucher/'+item.id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      class="ma-2"
+                      style="color: black"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                 </v-card-actions>
               </div>
             </v-card>
@@ -102,6 +126,7 @@
           v-model="overlay"
           absolute
           persistent
+          :fullscreen="smallScreenDialog"
         >
           <v-card>
             <v-card-title class="text-center">
@@ -143,8 +168,14 @@
                     </v-col>
                     <v-col cols="3">
                       <img
+                        v-if="editElement.picturePath"
                         class="elementImage"
-                        :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
+                        :src="apiurl+'/file/'+editElement.picturePath"
+                      >
+                      <img
+                        v-else
+                        class="elementImage"
+                        src="../../assets/placeholder.png"
                       >
                     </v-col>
                   </v-row>
@@ -239,7 +270,6 @@
                     </v-col>
                     <v-col
                       class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 6 : 4"
                     >
                       <l-map
                         ref="map"
@@ -267,9 +297,10 @@
                         v-model="editElement.longitude"
                         label="longitude"
                         :placeholder="String(editElement.longitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(null, editElement.longitude)"
                       />
                     </v-col>
                     <v-col>
@@ -277,9 +308,10 @@
                         v-model="editElement.latitude"
                         label="latitude"
                         :placeholder="String(editElement.latitude)"
-                        :rules="notEmpty"
+                        type="number"
+                        :rules="coordRules"
                         class="inputField"
-                        required
+                        @change="updateMap(editElement.latitude, null)"
                       />
                     </v-col>
                   </v-row>
@@ -306,6 +338,7 @@
                   color="success"
                   block
                   tile
+                  :loading="loadingChanges"
                   @click="changeInst()"
                 >
                   Bestätigen
@@ -324,7 +357,7 @@ import axios from 'axios';
 import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'InstitutionEditieren',
@@ -363,6 +396,9 @@ export default {
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
+    coordRules: [
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -376,12 +412,21 @@ export default {
       picErr: 0,
       normErr: 0,
     },
+    loading: true,
+    uploadingImage: false,
+    loadingChanges: false,
   }),
+  computed: {
+    smallScreenDialog() {
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+  },
   mounted() {
     this.load();
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get(`institutions?username=${window.user.username}`)
         .then((res) => {
           this.items = res.data;
@@ -392,12 +437,28 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     setMarkerPos(event) {
       this.marker = event.latlng;
       this.editElement.latitude = this.marker.lat;
       this.editElement.longitude = this.marker.lng;
+    },
+    updateMap(lat, long) {
+      try {
+        let newCoords = this.marker;
+        if (lat !== null) {
+          newCoords = latLng(lat, this.marker.lng);
+        }
+        if (long !== null) {
+          newCoords = latLng(this.marker.lat, long);
+        }
+        this.marker = newCoords;
+        this.center = newCoords;
+      } catch (e) {
+        // Do nothing if user input is not parseable
+      }
     },
     editClick(inst) {
       if (inst !== null && inst !== undefined) {
@@ -414,7 +475,17 @@ export default {
 
           this.instName = inst.name;
 
-          const coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          let coords = latLng(this.editElement.latitude, this.editElement.longitude);
+          if (coords === null) {
+            // Set MAP to center Germany
+            coords = latLng(51.1642292, 10.4541194);
+            if (this.editElement.latitude === null) {
+              this.editElement.latitude = '';
+            }
+            if (this.editElement.longitude === null) {
+              this.editElement.longitude = '';
+            }
+          }
           this.center = coords;
           this.marker = coords;
           this.overlay = true;
@@ -444,7 +515,7 @@ export default {
         delete this.editElement.picture;
 
         headers.description = window.btoa(this.editElement.description);
-
+        this.loadingChanges = true;
         axios.patch('institutions', null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -453,13 +524,16 @@ export default {
               this.postPic(authToken, newPic)
                 .then(() => {
                   this.sentStauts();
+                }).finally(() => {
+                  this.loadingChanges = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
@@ -470,10 +544,12 @@ export default {
       };
       const formData = new FormData();
       formData.append('file', pic);
-
+      this.uploadingImage = true;
       await axios.post('file', formData, { headers })
         .catch(() => {
           this.err.picErr = 1;
+        }).finally(() => {
+          this.uploadingImage = false;
         });
     },
     sentStauts() {
@@ -538,5 +614,9 @@ export default {
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
+  }
+
+  .loadingCircle {
+    margin-top: 50px;
   }
 </style>

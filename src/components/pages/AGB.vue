@@ -5,7 +5,7 @@
     </v-container>
     <v-container>
       <h4>§ 1 Geltungsbereich </h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Diese Verkaufsbedingungen gelten ausschließlich gegenüber Unternehmern,
@@ -29,11 +29,11 @@
         </ol>
       </p>
       <h4>§ 2 Angebot und Vertragsabschluss </h4>
-      <p>
+      <p class="text-left">
         Sofern eine Bestellung als Angebot gemäß § 145 BGB anzusehen ist, können wir diese innerhalb von zwei Wochen annehmen.
       </p>
       <h4>§ 3 Überlassene Unterlagen</h4>
-      <p>
+      <p class="text-left">
         An allen in Zusammenhang mit der Auftragserteilung dem Besteller überlassenen Unterlagen  –
         auch in elektronischer Form –, wie z. B. Kalkulationen, Zeichnungen etc., behalten wir uns
         Eigentums- und Urheberrechte vor. Diese Unterlagen dürfen Dritten nicht zugänglich gemacht werden,
@@ -42,7 +42,7 @@
         uns unverzüglich zurückzusenden.
       </p>
       <h4>§ 4 Preise und Zahlung</h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Sofern nichts Gegenteiliges schriftlich vereinbart wird, gelten unsere Preise ab Werk ausschließlich
@@ -66,12 +66,12 @@
         </ol>
       </p>
       <h4>§ 5 Zurückbehaltungsrechte</h4>
-      <p>
+      <p class="text-left">
         Zur Ausübung eines Zurückbehaltungsrechts ist der Besteller nur insoweit befugt, als sein Gegenanspruch
         auf dem gleichen Vertragsverhältnis beruht.
       </p>
       <h4>§ 6 Lieferzeit</h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Der Beginn der von uns angegebenen Lieferzeit setzt die rechtzeitige und ordnungsgemäße Erfüllung
@@ -97,7 +97,7 @@
         </ol>
       </p>
       <h4>§ 7 Gefahrübergang bei Versendung</h4>
-      <p>
+      <p class="text-left">
         Wird die Ware auf Wunsch des Bestellers an diesen versandt, so geht mit der Absendung an den Besteller,
         spätestens mit Verlassen des Werks/Lagers die Gefahr des zufälligen Untergangs oder der zufälligen
         Verschlechterung der Ware auf den Besteller über. Dies gilt unabhängig davon, ob die Versendung der Ware
@@ -106,7 +106,7 @@
 
 
       <h4>§ 8 Eigentumsvorbehalt </h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Wir behalten uns das Eigentum an der gelieferten Sache bis zur vollständigen Zahlung
@@ -161,7 +161,7 @@
 
 
       <h4>§ 9 Gewährleistung und Mängelrüge sowie Rückgriff/Herstellerregress</h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Gewährleistungsrechte des Bestellers setzen voraus, dass dieser seinen nach § 377 HGB geschuldeten
@@ -217,7 +217,7 @@
 
 
       <h4>§ 10 Sonstiges</h4>
-      <p>
+      <p class="text-left">
         <ol>
           <li>
             Dieser Vertrag und die gesamten Rechtsbeziehungen der Parteien unterliegen dem Recht der

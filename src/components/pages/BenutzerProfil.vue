@@ -1,6 +1,6 @@
 <template>
   <div
-    class="ma-5"
+    class="pa-5 gradientBackground"
   >
     <v-container>
       <div>
@@ -14,7 +14,19 @@
           ({{ item.username }})
         </p>
       </div>
-      <v-row v-if="!errorMessage">
+      <v-layout
+        v-if="loading == true"
+        justify-center
+        class="loadingCircle"
+      >
+        <v-progress-circular
+          :size="70"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
+      <v-row v-if="!errorMessage && loading == false">
         <v-col
           sm="6"
           class="text-left pageBox"
@@ -83,6 +95,7 @@
             :disabled="(!valid || !vForm)"
             color="success"
             class="mt-4"
+            :loading="processingChanges"
             @click="submit"
           >
             Änderungen bestätigen
@@ -96,17 +109,34 @@
           >
             {{ userFeedback }}
             <v-btn
-              color="white"
-              text
-              @click="snackbar = false"
+              :disabled="(!valid || !vForm)"
+              color="success"
+              class="mt-4"
+              @click="submit"
             >
-              Close
+              Bestätigen
             </v-btn>
+            <v-snackbar
+              v-model="snackbar"
+              multi-line
+              :color="snackbarType"
+              centered
+              :timeout="0"
+            >
+              {{ userFeedback }}
+              <v-btn
+                color="white"
+                text
+                @click="snackbar = false"
+              >
+                Close
+              </v-btn>
+            </v-snackbar>
           </v-snackbar>
         </v-col>
       </v-row>
       <v-alert
-        v-else
+        v-else-if="errorMessage"
         type="error"
         class="ma-10"
       >
@@ -118,27 +148,25 @@
           tag="span"
           class="link"
         >
-          <v-btn>
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Spenden und Gutscheine
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Spenden/Gutscheine
           </v-btn>
         </router-link>
+      </div>
+      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
         <router-link
           to="/InstitutionEditieren"
           tag="span"
           class="link"
         >
-          <v-btn class="mt-5">
-            <h1
-              class="display-1 font-weight-regular"
-              style="text-align:center"
-            >
-              Meine Institutionen
-            </h1>
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Institutionen
           </v-btn>
         </router-link>
       </div>
@@ -148,12 +176,14 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'BenutzerProfil',
 
   data: () => ({
+    loading: true,
+    processingChanges: false,
     item: {
       username: 'username',
       firstname: 'firstname',
@@ -186,6 +216,7 @@ export default {
   },
   methods: {
     loadData() {
+      this.loading = true;
       axios.get(`users?username=${window.user.username}`)
         .then((res) => {
           if (res.data.length === 0) {
@@ -202,6 +233,7 @@ export default {
         })
         .finally(() => {
           this.gotResponse = true;
+          this.loading = false;
         });
     },
     reset() {
@@ -230,7 +262,7 @@ export default {
         } else {
           headers.email = this.item.email;
         }
-
+        this.processingChanges = true;
         axios.put('users', {}, { headers })
           .then(() => {
             this.snackSucc();
@@ -240,6 +272,8 @@ export default {
           .catch((err) => {
             this.snackErr();
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.processingChanges = false;
           });
       }
     },
@@ -260,11 +294,10 @@ export default {
 </script>
 
 <style scoped>
-
-    .inputField ::placeholder{
-        color: black!important;
-        opacity: 1;
-    }
+  .inputField ::placeholder{
+    color: black!important;
+    opacity: 1;
+  }
 
   .pageBox{
     position:relative;
@@ -272,7 +305,18 @@ export default {
   }
 
   .linkToDonate {
-      width: 100%;
-      bottom: 40px;
+    width: 100%;
+    bottom: 40px;
+  }
+
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(230, 255, 242), rgb(200, 245, 255));
+    height: 100%;
+    width: 100%;
+  }
+
+  .loadingCircle {
+    margin-top: 100px;
+    margin-bottom: 100px;
   }
 </style>
