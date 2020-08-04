@@ -36,11 +36,23 @@
           </v-col>
         </v-row>
       </v-alert>
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+          class="loadingCircle"
+        />
+      </v-layout>
       <div v-if="(items.length === 0 && gotResponse)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Institutionen gefunden.
@@ -61,7 +73,7 @@
               <img
                 v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath"
+                :src="apiurl+'/file/'+item.picturePath"
               >
               <img
                 v-else
@@ -92,6 +104,18 @@
                   >
                     Website
                   </v-btn>
+                  <router-link
+                    :to="'/institutionVoucher/'+item.id"
+                    tag="span"
+                    class="link"
+                  >
+                    <v-btn
+                      class="ma-2"
+                      style="color: black"
+                    >
+                      Zu den Gutscheinen
+                    </v-btn>
+                  </router-link>
                 </v-card-actions>
               </div>
             </v-card>
@@ -144,8 +168,14 @@
                     </v-col>
                     <v-col cols="3">
                       <img
+                        v-if="editElement.picturePath"
                         class="elementImage"
-                        :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
+                        :src="apiurl+'/file/'+editElement.picturePath"
+                      >
+                      <img
+                        v-else
+                        class="elementImage"
+                        src="../../assets/placeholder.png"
                       >
                     </v-col>
                   </v-row>
@@ -306,6 +336,7 @@
                   color="success"
                   block
                   tile
+                  :loading="loadingChanges"
                   @click="changeInst()"
                 >
                   Bestätigen
@@ -376,6 +407,9 @@ export default {
       picErr: 0,
       normErr: 0,
     },
+    loading: true,
+    uploadingImage: false,
+    loadingChanges: false,
   }),
   computed: {
     smallScreenDialog() {
@@ -387,6 +421,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get(`institutions?username=${window.user.username}`)
         .then((res) => {
           this.items = res.data;
@@ -397,6 +432,7 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     setMarkerPos(event) {
@@ -449,7 +485,7 @@ export default {
         delete this.editElement.picture;
 
         headers.description = window.btoa(this.editElement.description);
-
+        this.loadingChanges = true;
         axios.patch('institutions', null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -458,13 +494,16 @@ export default {
               this.postPic(authToken, newPic)
                 .then(() => {
                   this.sentStauts();
+                }).finally(() => {
+                  this.loadingChanges = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
@@ -475,10 +514,12 @@ export default {
       };
       const formData = new FormData();
       formData.append('file', pic);
-
+      this.uploadingImage = true;
       await axios.post('file', formData, { headers })
         .catch(() => {
           this.err.picErr = 1;
+        }).finally(() => {
+          this.uploadingImage = false;
         });
     },
     sentStauts() {
@@ -543,5 +584,9 @@ export default {
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
+  }
+
+  .loadingCircle {
+    margin-top: 50px;
   }
 </style>

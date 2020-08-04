@@ -36,11 +36,23 @@
           </v-col>
         </v-row>
       </v-alert>
-      <div v-if="(gotResponse && userProjects.length === 0)">
+      <v-layout
+        v-if="loading == true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+          class="loadingCircle"
+        />
+      </v-layout>
+      <div v-else-if="(gotResponse && userProjects.length === 0)">
         <v-card
           class="pa-10 ma-7"
           elevation="5"
-          color="red lighten-2"
+          color="red lighten-4"
         >
           <h2>
             Es wurden keine Projekte gefunden.
@@ -378,6 +390,7 @@
                   color="success"
                   block
                   tile
+                  :loading="changingProject"
                   @click="changeProject()"
                 >
                   Bestätigen
@@ -415,6 +428,8 @@ export default {
     alertType: null,
     userFeedback: '',
     form: false,
+    loading: true,
+    changingProject: false,
     tableHeaders: [
       {
         text: 'Meilensteinname',
@@ -497,6 +512,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       setTimeout(() => {
         axios.get(`projects?username=${window.user.username}`)
           .then((res) => {
@@ -510,6 +526,7 @@ export default {
           .finally(() => {
             this.gotResponse = true;
             this.resultList = this.userProjects;
+            this.loading = false;
           });
       }, 400);
     },
@@ -624,7 +641,7 @@ export default {
             });
           headers.milestones = JSON.stringify(headers.milestones);
         }
-
+        this.changingProject = true;
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -633,13 +650,16 @@ export default {
               this.postPic(authToken, this.editElement.picture)
                 .then(() => {
                   this.sentStauts();
+                  this.changingProject = false;
+                  this.load();
+                  this.overlay = false;
                 });
             } else {
               this.sentStauts();
+              this.changingProject = false;
+              this.load();
+              this.overlay = false;
             }
-
-            this.load();
-            this.overlay = false;
           });
       }
     },
@@ -720,5 +740,9 @@ export default {
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
+  }
+
+   .loadingCircle {
+    margin-top: 50px;
   }
 </style>

@@ -347,22 +347,27 @@
           <p class="ml-2 text-left font-weight-light">
             Mit * markierte Felder müssen ausgefüllt werden
           </p>
+        <v-layout
+          justify-center
+        >
           <v-btn
             :disabled="!form"
             color="success"
             class="font-weight-medium ma-2"
             elevation="2"
             large
+            :loading="loading"
             @click="calcMainUntil()"
           >
             Spendenprojekt anlegen
           </v-btn>
         </v-col>
+        </v-layout>
       </v-row>
     </v-form>
     <v-snackbar
       v-model="dialog.successful"
-      bottom
+      top
       color="success"
     >
       Spendenprojekt erstellt!
@@ -488,6 +493,7 @@ export default {
       zoomSnap: 0.5,
       minZoom: 1,
     },
+    loading: false,
   }),
   computed: {
     smallDevice() {
@@ -630,6 +636,7 @@ export default {
       }
     },
     createSpendenProjekt() {
+      this.loading = true;
       const headers = {
         authToken: this.userData.authResponseToken,
         name: this.project.title,
@@ -667,6 +674,8 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
+        }).finally(() => {
+          this.loading = false;
         });
     },
   },

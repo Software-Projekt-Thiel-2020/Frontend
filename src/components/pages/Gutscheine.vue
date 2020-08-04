@@ -136,6 +136,7 @@
                 class="mt-1"
                 :color="locationButton"
                 label="Mich finden"
+                :loading="loadLocation"
                 @click="getOwnLocation"
               >
                 <v-icon>mdi-crosshairs-gps</v-icon>
@@ -176,18 +177,19 @@
     </v-container>
     <v-container>
       <h2>Ergebnisse:</h2>
+      <v-layout
+        v-if="loading==true"
+        justify-center
+      >
+        <v-progress-circular
+          :size="50"
+          :width="7"
+          color="green"
+          indeterminate
+        />
+      </v-layout>
       <div v-if="!gotResponse">
-        <v-skeleton-loader>
-          <!-- Anzahl an Skeleton-loadern muss hard-coded sein,
-           da Anzahl an gefundenen Institutionen beim Laden
-            nicht herauszufinden ist -->
-          v-for="index in 7"
-          :key="index"
-          class="my-10"
-          type="list-item-avatar"
-          tile
-          />
-        </v-skeleton-loader>
+        <v-skeleton-loader />
       </div>
       <v-alert
         v-if="errorMessage"
@@ -212,8 +214,14 @@
               elevation="5"
             >
               <img
+                v-if="item.picturePath"
                 class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                :src="apiurl+'/file/'+item.picturePath"
+              >
+              <img
+                v-else
+                class="elementImage"
+                src="../../assets/placeholder.png"
               >
               <div
                 class="companyData"
@@ -224,7 +232,7 @@
                 </h2>
                 <h4 class="ma-3">
                   Zur Website:
-                  <a :href="item.webpage">{{ item.webpage }}</a>
+                  <a :href="'//'+item.webpage">{{ item.webpage }}</a>
                 </h4>
               </div>
               <v-card-actions>
@@ -248,6 +256,8 @@ import axios from 'axios';
 export default {
   name: 'Gutscheine',
   data: () => ({
+    loadLocation: false,
+    loading: false,
     items: [],
     gotResponse: false,
     errorMessage: '',
@@ -280,6 +290,7 @@ export default {
   },
   methods: {
     load() {
+      this.loading = true;
       axios.get('institutions?has_vouchers=1')
         .then((res) => {
           this.items = res.data;
@@ -290,6 +301,7 @@ export default {
         .finally(() => {
           this.gotResponse = true;
           this.resultList = this.items;
+          this.loading = false;
         });
     },
     getOwnLocation() {
@@ -297,11 +309,14 @@ export default {
         this.errorMessage = 'Geolocation ist nicht verfügbar';
         return;
       }
+      this.loadLocation = true;
       navigator.geolocation.getCurrentPosition((pos) => {
         this.location = pos;
         this.longitude = pos.coords.longitude;
         this.latitude = pos.coords.latitude;
+        this.loadLocation = false;
       }, (err) => {
+        this.loadLocation = false;
         this.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
       });
     },
@@ -312,6 +327,7 @@ export default {
       this.latitude = -1;
       this.radius = 10;
       this.errorMessage = '';
+      this.gotResponse = false;
       this.load();
     },
     loadInstitutions() {
@@ -333,11 +349,19 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
+      } else {
+        this.gotResponse = true;
+        this.loading = false;
       }
     },
     suchen() {
       this.errorMessage = '';
+      this.gotResponse = false;
+      this.loading = true;
       if (this.searchPlace && this.searchCode) {
         let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
         if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
@@ -359,6 +383,9 @@ export default {
           })
           .catch((err) => {
             this.errorMessage = err.toString();
+          }).finally(() => {
+            this.gotResponse = true;
+            this.loading = false;
           });
       } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
         this.loadInstitutions();

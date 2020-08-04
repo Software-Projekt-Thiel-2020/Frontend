@@ -78,8 +78,22 @@
             elevation="4"
             width="100%"
           >
-            <v-row>
-              <v-col>
+            <v-layout
+              v-if="loadingProject == true"
+              justify-center
+            >
+              <v-progress-circular
+                :size="50"
+                :width="7"
+                color="green"
+                indeterminate
+              />
+            </v-layout>
+            <div
+              v-else
+              class="d-flex flex-no-wrap justify-space-between"
+            >
+              <div>
                 <v-card-title class="font-weight-light display-1">
                   <span v-if="customBreak">
                     Informationen
@@ -144,15 +158,16 @@
                 align="right"
                 justify="top"
               >
-                <v-img
-                  class="mt-4"
-                  max-height="300"
-                  max-width="300"
-                  contain
-                  :src="image"
-                />
-              </v-col>
-            </v-row>
+                <img
+                  v-if="project[0].picturePath"
+                  :src="apiurl+'/file/'+project[0].picturePath"
+                >
+                <img
+                  v-else
+                  src="../../assets/placeholder.png"
+                >
+              </v-avatar>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -214,7 +229,7 @@
                   <h4>
                     Gültigkeit:
                   </h4>
-                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahre
+                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
                 </v-col>
               </v-row>
               <v-row>
@@ -309,6 +324,7 @@ export default {
     customBreak: false,
     pictureBreak: false,
     dialogBreak: false,
+    apiurl: window.apiurl,
     userSession: null,
     userData: null,
     institutionId: null,
@@ -321,6 +337,7 @@ export default {
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
     loadingVouchers: true,
+    loadingProject: true,
     dialogVoucher: {
       errorMessage: '',
       error: false,
@@ -394,12 +411,15 @@ export default {
         .catch((err) => {
           this.dialogProject.errorMessage = err.toString();
           this.dialogProject.error = true;
+        }).finally(() => {
+          this.loadingProject = false;
         });
     },
     loadVouchers() {
       let url = 'vouchers/institution?idInstitution=';
       url += this.institutionId;
       url += '&available=1';
+      this.loadingVouchers = true;
       axios.get(url)
         .then((res) => {
           this.vouchers = res.data;
@@ -456,6 +476,7 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.$confetti.stop();
+      this.loadVouchers();
     },
   },
 };
