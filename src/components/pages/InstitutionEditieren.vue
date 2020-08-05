@@ -234,18 +234,11 @@
                   </h4>
                 </v-col>
                 <v-col>
-                  <v-textarea
-                    v-model="editElement.description"
-                    :value="editElement.description"
-                    clearable
-                    counter
-                    no-resize
-                    outlined
-                    :rules="textRule"
-                    required
-                    class="inputField"
-                    height="120"
-                    background-color="grey lighten-4"
+                  <Editor
+                    ref="toastuiEditor"
+                    :initial-value="editElement.description"
+                    :options="editorOptions"
+                    height="500px"
                   />
                 </v-col>
               </v-row>
@@ -366,6 +359,10 @@ import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/vue-editor';
+
 import MyDialog from '../MyDialog.vue';
 
 export default {
@@ -375,8 +372,13 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
+    Editor,
   },
   data: () => ({
+    editorOptions: {
+      usageStatistics: false,
+      language: 'de-DE',
+    },
     items: [],
     gotResponse: false,
     apiurl: window.apiurl,
@@ -503,6 +505,7 @@ export default {
       this.showAlert('Institution konnte nicht ausgewählt werden', 'error');
     },
     async changeInst() {
+      this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
       if (userSession.isUserSignedIn()) {
         const headers = this.editElement;
         const authToken = userSession.loadUserData().authResponseToken;
