@@ -547,7 +547,10 @@ export default {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
               if (v > this.minWei || v === null) {
-                return true;
+                if (v < this.editElement.goal || v === null) {
+                  return true;
+                }
+                return `Ziel muss unter ${this.editElement.goal} liegen`;
               }
               return `Ziel muss über ${this.minWei} liegen`;
             }
@@ -742,13 +745,13 @@ export default {
             if (this.editElement.picture !== null) {
               this.postPic(authToken, this.editElement.picture)
                 .then(() => {
-                  this.sentStauts();
+                  this.sentStatus();
                   this.changingProject = false;
                   this.load();
                   this.overlay = false;
                 });
             } else {
-              this.sentStauts();
+              this.sentStatus();
               this.changingProject = false;
               this.load();
               this.overlay = false;
@@ -769,7 +772,7 @@ export default {
           this.err.picErr = 1;
         });
     },
-    sentStauts() {
+    sentStatus() {
       if (this.err.normErr === 1) {
         this.showAlert('Das Ändern war nicht erfolgreich', 'error');
       } else if (this.err.picErr === 1) {

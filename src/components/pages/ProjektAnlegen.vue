@@ -306,7 +306,7 @@
                               min="1"
                               outlined
                               clearable
-                              :rules="weiRule"
+                              :rules="milestoneWeiRule"
                             />
                           </v-col>
                           <v-col>
@@ -546,7 +546,26 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              return true;
+              if (v < 9e32) {
+                return true;
+              }
+              return 'Zahl muss kleiner als 9e32 sein';
+            }
+            return 'Bitte nur ganze Zahlen eingeben';
+          }
+          return 'Feld muss ausgefüllt werden';
+        },
+      ];
+    },
+    milestoneWeiRule() {
+      return [
+        (v) => {
+          if (!!v || v === null) {
+            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
+              if (this.project.goal > v || v === null) {
+                return true;
+              }
+              return `Ziel muss unter ${this.project.goal} liegen`;
             }
             return 'Bitte nur ganze Zahlen eingeben';
           }
