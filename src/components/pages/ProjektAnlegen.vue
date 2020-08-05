@@ -109,6 +109,7 @@
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
             outlined
+            type="number"
             clearable
             :rules="weiRule"
           />
@@ -304,6 +305,7 @@
                               v-model="editedItem.goal"
                               label="Spendenziel* (WEI)"
                               min="1"
+                              type="number"
                               outlined
                               clearable
                               :rules="milestoneWeiRule"
@@ -546,7 +548,7 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (v < 9e32) {
+              if (parseInt(v, 10) < 9e32) {
                 return true;
               }
               return 'Zahl muss kleiner als 9e32 sein';
@@ -562,7 +564,7 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (this.project.goal > v || v === null) {
+              if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
                 return true;
               }
               return `Ziel muss unter ${this.project.goal} liegen`;
@@ -626,8 +628,14 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.project.milestones.indexOf(item);
-      this.editedItem = { ...item };
-      this.preEditedItem = { ...item };
+
+      const copy = JSON.parse(JSON.stringify(item));
+      // in this case "5.9.2020" --> 2020-9-5
+      const [day, month, year] = copy.until.split('.');
+      copy.until = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+      this.editedItem = copy;
+      this.preEditedItem = copy;
       this.deleteItem(item);
       this.dialog2 = true;
     },
