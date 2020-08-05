@@ -45,7 +45,7 @@
           :width="7"
           color="green"
           indeterminate
-          class="loadingCircle"
+          class="mt-24"
         />
       </v-layout>
       <div v-if="(items.length === 0 && gotResponse)">
@@ -64,24 +64,33 @@
           <v-col
             v-for="item in items"
             :key="item.name"
-            class="ma-4"
           >
             <v-card
-              class="institution"
+              class="institution pa-4"
               elevation="5"
             >
-              <img
-                v-if="item.picturePath"
-                class="elementImage"
-                :src="apiurl+'/file/'+item.picturePath"
+              <v-img
+                class="white--text align-end grey lighten-2"
+                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
+                max-height="200px"
+                max-width="200px"
+                contain
               >
-              <img
-                v-else
-                class="elementImage"
-                src="../../assets/placeholder.png"
-              >
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey darken-5"
+                    />
+                  </v-row>
+                </template>
+              </v-img>
               <div
-                class="companyData"
+                class="ml-2"
                 style="border:0;"
               >
                 <h2 class="ma-3 ml-4 font-weight-regular">
@@ -133,164 +142,95 @@
             <v-form
               v-model="form"
             >
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Name:
-                  </h4>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="editElement.name"
-                    :value="editElement.name"
-                    :rules="notEmpty"
-                    class="inputField"
-                    clearable
-                    required
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Bild:
-                  </h4>
-                </v-col>
-                <v-col cols="9">
-                  <v-img
-                    class="white--text align-end grey lighten-2"
-                    :src="editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`)"
-                    height="300px"
-                    contain
-                  >
-                    <template v-slot:placeholder>
-                      <v-row
-                        class="fill-height ma-0"
-                        align="center"
-                        justify="center"
-                      >
-                        <v-progress-circular
-                          indeterminate
-                          color="grey darken-5"
-                        />
-                      </v-row>
-                    </template>
-                  </v-img>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
+              <MyFormRow title="Name">
+                <v-text-field
+                  v-model="editElement.name"
+                  :value="editElement.name"
+                  :rules="notEmpty"
+                  clearable
+                  required
                 />
-                <v-col>
-                  <v-file-input
-                    v-model="editElement.picture"
-                    prepend-icon=""
-                    prepend-inner-icon="mdi-camera"
-                    clearable
-                    label="Bild hochladen"
-                    accept="image/*"
+              </MyFormRow>
+
+              <MyFormRow title="Bild">
+                <v-img
+                  class="white--text grey lighten-2 mx-auto"
+                  :src="previewImage ? previewImage : (editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`))"
+                  height="300px"
+                  aspect-ratio="1"
+                  contain
+                >
+                  <template v-slot:placeholder>
+                    <v-row
+                      class="fill-height ma-0"
+                      align="center"
+                      justify="center"
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        color="grey darken-5"
+                      />
+                    </v-row>
+                  </template>
+                </v-img>
+              </MyFormRow>
+
+              <MyFormRow title="">
+                <v-file-input
+                  v-model="editElement.picture"
+                  prepend-icon=""
+                  prepend-inner-icon="mdi-camera"
+                  clearable
+                  label="Bild hochladen"
+                  accept="image/*"
+                  @change="previewImageUpdate()"
+                />
+              </MyFormRow>
+
+              <MyFormRow title="Website">
+                <v-text-field
+                  v-model="editElement.webpage"
+                  :placeholder="editElement.webpage"
+                  :rules="notEmpty"
+                  required
+                />
+              </MyFormRow>
+
+              <MyFormRow title="Beschreibung">
+                <Editor
+                  ref="toastuiEditor"
+                  :initial-value="editElement.description"
+                  :options="editorOptions"
+                  height="500px"
+                />
+              </MyFormRow>
+
+              <MyFormRow title="Addresse">
+                <v-text-field
+                  v-model="editElement.address"
+                  :placeholder="editElement.address"
+                  :rules="notEmpty"
+                  required
+                />
+              </MyFormRow>
+
+              <MyFormRow title="Koordinaten">
+                <l-map
+                  ref="map"
+                  :zoom="zoom"
+                  :center="center"
+                  :options="mapOptions"
+                  style="height: 300px; width: 100%; position:relative; z-index: 0"
+                  @click="setMarkerPos"
+                >
+                  <l-tile-layer
+                    :url="url"
+                    :attribution="attribution"
                   />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Website:
-                  </h4>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="editElement.webpage"
-                    :placeholder="editElement.webpage"
-                    :rules="notEmpty"
-                    class="inputField"
-                    required
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Beschreibung:
-                  </h4>
-                </v-col>
-                <v-col>
-                  <Editor
-                    ref="toastuiEditor"
-                    :initial-value="editElement.description"
-                    :options="editorOptions"
-                    height="500px"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Adresse:
-                  </h4>
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="editElement.address"
-                    :placeholder="editElement.address"
-                    :rules="notEmpty"
-                    class="inputField"
-                    required
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                >
-                  <h4 class="font-weight-medium fromField">
-                    Koordinaten:
-                  </h4>
-                </v-col>
-                <v-col
-                  class="mt-5"
-                >
-                  <l-map
-                    ref="map"
-                    :zoom="zoom"
-                    :center="center"
-                    :options="mapOptions"
-                    style="height: 300px; width: 100%; position:relative; z-index: 0"
-                    @click="setMarkerPos"
-                  >
-                    <l-tile-layer
-                      :url="url"
-                      :attribution="attribution"
-                    />
-                    <l-marker :lat-lng="marker" />
-                  </l-map>
-                </v-col>
-              </v-row>
+                  <l-marker :lat-lng="marker" />
+                </l-map>
+              </MyFormRow>
+
               <v-row>
                 <v-col
                   class="mt-5"
@@ -304,7 +244,6 @@
                     :placeholder="String(editElement.longitude)"
                     type="number"
                     :rules="coordRules"
-                    class="inputField"
                     @change="updateMap(null, editElement.longitude)"
                   />
                 </v-col>
@@ -315,7 +254,6 @@
                     :placeholder="String(editElement.latitude)"
                     type="number"
                     :rules="coordRules"
-                    class="inputField"
                     @change="updateMap(editElement.latitude, null)"
                   />
                 </v-col>
@@ -364,11 +302,13 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/vue-editor';
 
 import MyDialog from '../MyDialog.vue';
+import MyFormRow from '../MyFormRow.vue';
 
 export default {
   name: 'InstitutionEditieren',
   components: {
     MyDialog,
+    MyFormRow,
     LMap,
     LTileLayer,
     LMarker,
@@ -427,11 +367,18 @@ export default {
     loading: true,
     uploadingImage: false,
     loadingChanges: false,
+    previewImage: false,
   }),
   mounted() {
     this.load();
   },
   methods: {
+    previewImageUpdate() {
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+      }
+      this.previewImage = URL.createObjectURL(this.editElement.picture);
+    },
     load() {
       this.loading = true;
       axios.get(`institutions?username=${window.user.username}`)
@@ -595,36 +542,11 @@ export default {
   .institution {
     display: flex;
     flex-direction: row;
-    margin-bottom: 25px;
-    padding: 20px;
     background-color: rgba(255, 255, 255, 0.8);
-  }
-
-  .elementImage{
-    max-width: 200px;
-    max-height: 200px;
-  }
-
-  .companyData {
-    margin-left: 15px;
-    flex-basis: 55%
-  }
-
-  .inputField ::placeholder{
-    color: black!important;
-    opacity: 1;
-  }
-
-  .fromField {
-    font-size: 1.13em;
   }
 
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
     height: 100%;
-  }
-
-  .loadingCircle {
-    margin-top: 50px;
   }
 </style>
