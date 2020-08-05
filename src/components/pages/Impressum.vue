@@ -31,7 +31,7 @@
       <a href="https://ec.europa.eu/consumers/odr">https://ec.europa.eu/consumers/odr.</a><br>
       Unsere E-Mail-Adresse finden Sie oben im Impressum.
     </p>
-    <h3>Verbraucherstreitbeilegung/Universalschlichtungsstelle</h3>
+    <h3>Verbraucherstreitbeilegung / Universalschlichtungsstelle</h3>
     <p class="text-left">
       Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
     </p>

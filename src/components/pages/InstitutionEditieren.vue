@@ -192,7 +192,6 @@
                         clearable
                         label="Bild hochladen"
                         accept="image/*"
-                        class=""
                       />
                     </v-col>
                   </v-row>
