@@ -208,6 +208,29 @@
                       :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
                     >
                       <h4 class="font-weight-medium fromField">
+                        Kurz-Beschreibung:
+                      </h4>
+                    </v-col>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="editElement.short"
+                          label="Kurz-Beschreibung"
+                          outlined
+                          counter
+                          maxlength="140"
+                          clearable
+                          :rules="textRule"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-row>
+                  <v-row gutters>
+                    <v-col
+                      class="mt-5"
+                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
+                    >
+                      <h4 class="font-weight-medium fromField">
                         Beschreibung:
                       </h4>
                     </v-col>
@@ -330,6 +353,7 @@
                                         label="Meilensteinname"
                                         outlined
                                         clearable
+                                        :rules="milestoneNameRule"
                                       />
                                     </v-col>
                                   </v-row>
@@ -349,7 +373,7 @@
                                     <v-col align="center">
                                       <v-date-picker
                                         v-model="newMile.until"
-                                        :min="today"
+                                        :min="minDate"
                                         :max="editElement.until"
                                       />
                                     </v-col>
@@ -381,14 +405,12 @@
                           <div
                             v-if="isNewMilestone(item)"
                           >
-                            <!-- Zunächst nicht implementiert
                             <v-icon
                               small
                               @click="editMilestone(item)"
                             >
                               mdi-pencil
                             </v-icon>
-                            -->
                             <v-icon
                               small
                               @click="deleteMilestone(item)"
@@ -464,25 +486,20 @@ export default {
     loading: true,
     changingProject: false,
     tableHeaders: [
-      {
-        text: 'Meilensteinname',
-        align: 'start',
-        sortable: false,
-        value: 'milestoneName',
-      },
+      { text: 'Meilensteinname', align: 'start', value: 'milestoneName' },
       { text: 'Spendenziel', value: 'goal' },
-      { text: 'Meilensteinende', value: 'until' },
+      { text: 'Meilensteinende', value: 'until', sortable: false },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     newMilestones: [],
     newMile: {
-      milestoneName: '',
+      milestoneName: null,
       goal: null,
       until: null,
     },
-    today: null,
+    minDate: null,
     milestoneDialog: false,
-    editMilestoneDialog: false,
+    editFlag: false,
     minWei: 1,
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -497,6 +514,11 @@ export default {
     ],
     coordRules: [
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    milestoneNameRule: [
+      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -531,7 +553,10 @@ export default {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
               if (v > this.minWei || v === null) {
-                return true;
+                if (v < this.editElement.goal || v === null) {
+                  return true;
+                }
+                return `Ziel muss unter ${this.editElement.goal} liegen`;
               }
               return `Ziel muss über ${this.minWei} liegen`;
             }
@@ -544,7 +569,7 @@ export default {
   },
   mounted() {
     this.load();
-    this.getTodaysDate();
+    this.getMinDate();
   },
   methods: {
     load() {
@@ -566,24 +591,20 @@ export default {
           });
       }, 400);
     },
-    getTodaysDate() {
-      this.today = new Date().toISOString().substring(0, 10);
+    getMinDate() {
+      this.minDate = new Date();
+      // Smart Contracts: min: today + 1 day
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
-    closeDialog() {
-      this.newMile.milestoneName = '';
-      this.newMile.goal = null;
-      this.newMile.until = null;
-
-      this.milestoneDialog = false;
-    },
-    // Noch nicht volständig implementiert
     editMilestone(milestone) {
-      this.newMile = milestone;
-      // in this case "5.9.2020" -> "5-9-2020" -> 2020-9-5
-      let newTime = JSON.parse(JSON.stringify(this.newMile));
-      newTime = newTime.until.split('.').reverse().join('-');
-      this.newMile.until = new Date(newTime).toISOString().substring(0, 10);
-      this.editMilestoneDialog = true;
+      this.newMile = JSON.parse(JSON.stringify(milestone));
+      // in this case "5.9.2020" --> 2020-9-5
+      const [day, month, year] = this.newMile.until.split('.');
+      this.newMile.until = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+      this.editFlag = true;
+      this.milestoneDialog = true;
     },
     isNewMilestone(item) {
       try {
@@ -602,11 +623,25 @@ export default {
         // Do nothing (or print err msg)
       }
     },
+    closeDialog() {
+      this.newMile.milestoneName = null;
+      this.newMile.goal = null;
+      this.newMile.until = null;
+
+      this.editFlag = false;
+      this.milestoneDialog = false;
+    },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
       // until / 1000 --> s auf ms umrechnen
       dateStone.until = new Date(dateStone.until).getTime() / 1000;
+
+      if (this.editFlag) {
+        this.newMilestones.splice(this.newMile.newIndex, 1);
+      }
+      delete this.newMilestones.newIndex;
       this.newMilestones.push(dateStone);
+
       this.closeDialog();
     },
     setMarkerPos(event) {
@@ -632,6 +667,8 @@ export default {
     editClick(itemId) {
       let projectId = -1;
       try {
+        this.err.picErr = 0;
+        this.err.normErr = 0;
         projectId = parseInt(itemId, 10);
       } catch (e) {
         return;
@@ -642,6 +679,7 @@ export default {
           .then((res) => {
             this.editElement = res.data;
             this.editElement.description = window.atob(res.data.description);
+            this.editElement.short = window.atob(res.data.short);
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
             // until * 1000 --> s auf ms
@@ -685,6 +723,7 @@ export default {
           authToken,
         };
         if (this.editElement.webpage) headers.webpage = this.editElement.webpage;
+        if (this.editElement.short) headers.short = window.btoa(this.editElement.short);
         if (this.editElement.description) headers.description = window.btoa(this.editElement.description);
         if (this.editElement.latitude) headers.latitude = this.editElement.latitude;
         if (this.editElement.longitude) headers.longitude = this.editElement.longitude;
@@ -710,13 +749,13 @@ export default {
             if (this.editElement.picture !== null) {
               this.postPic(authToken, this.editElement.picture)
                 .then(() => {
-                  this.sentStauts();
+                  this.sentStatus();
                   this.changingProject = false;
                   this.load();
                   this.overlay = false;
                 });
             } else {
-              this.sentStauts();
+              this.sentStatus();
               this.changingProject = false;
               this.load();
               this.overlay = false;
@@ -737,14 +776,12 @@ export default {
           this.err.picErr = 1;
         });
     },
-    sentStauts() {
+    sentStatus() {
       if (this.err.normErr === 1) {
         this.showAlert('Das Ändern war nicht erfolgreich', 'error');
-      }
-      if (this.err.picErr === 1) {
+      } else if (this.err.picErr === 1) {
         this.showAlert('Das Ändern des Bilds war nicht erfolgreich', 'warning');
-      }
-      if (this.err.normErr === 0 && this.err.picErr === 0) {
+      } else if (this.err.normErr === 0 && this.err.picErr === 0) {
         this.showAlert('Das Ändern war erfolgreich', 'success');
       }
       this.newMilestones = [];

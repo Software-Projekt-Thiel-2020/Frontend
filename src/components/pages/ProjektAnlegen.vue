@@ -26,7 +26,7 @@
         </v-col>
         <v-col cols="6">
           <v-text-field
-            v-model="project.website"
+            v-model="project.webpage"
             label="Website"
             :rules="websiteRule"
             outlined
@@ -109,6 +109,7 @@
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
             outlined
+            type="number"
             clearable
             :rules="weiRule"
           />
@@ -139,7 +140,7 @@
             </template>
             <v-date-picker
               v-model="date"
-              :min="today"
+              :min="minDate"
               @input="afterDayInput"
             />
           </v-menu>
@@ -173,6 +174,19 @@
               @input="afterTimeInput"
             />
           </v-menu>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="project.short"
+            label="Kurz-Beschreibung*"
+            outlined
+            counter
+            maxlength="140"
+            clearable
+            :rules="textRule"
+          />
         </v-col>
       </v-row>
       <v-row>
@@ -283,7 +297,7 @@
                               label="Meilensteinname"
                               outlined
                               clearable
-                              :rules="textRule"
+                              :rules="milestoneNameRule"
                             />
                           </v-col>
                           <v-col cols="12">
@@ -291,15 +305,16 @@
                               v-model="editedItem.goal"
                               label="Spendenziel* (WEI)"
                               min="1"
+                              type="number"
                               outlined
                               clearable
-                              :rules="weiRule"
+                              :rules="milestoneWeiRule"
                             />
                           </v-col>
                           <v-col>
                             <v-date-picker
                               v-model="editedItem.until"
-                              :min="today"
+                              :min="minDate"
                               :max="date"
                             />
                           </v-col>
@@ -417,7 +432,18 @@ export default {
   data: () => ({
     form: false,
     milestonesDate: [],
+    shortRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^[\x00-\x7F]+$/is.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
     textRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
+    milestoneNameRule: [
+      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
@@ -457,19 +483,19 @@ export default {
     ],
     editedIndex: -1,
     preEditedItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
     },
     editedItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
     },
     defaultItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
@@ -480,13 +506,14 @@ export default {
     dateMenu: false,
     timeMenu: false,
     date: '',
-    today: '',
+    minDate: '',
     time: '',
     allInstitutions: [],
     allInstitutionsSortedNameId: [],
     project: {
       title: null,
-      website: '',
+      webpage: '',
+      short: '',
       description: '',
       idInstitution: null,
       requiredVotes: 1,
@@ -526,7 +553,26 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              return true;
+              if (parseInt(v, 10) < 9e32 || v === null) {
+                return true;
+              }
+              return 'Zahl muss kleiner als 9e32 sein';
+            }
+            return 'Bitte nur ganze Zahlen eingeben';
+          }
+          return 'Feld muss ausgefüllt werden';
+        },
+      ];
+    },
+    milestoneWeiRule() {
+      return [
+        (v) => {
+          if (!!v || v === null) {
+            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
+              if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
+                return true;
+              }
+              return `Ziel muss unter ${this.project.goal} liegen`;
             }
             return 'Bitte nur ganze Zahlen eingeben';
           }
@@ -545,7 +591,7 @@ export default {
       this.dialog.notloggedIn = true;
     }
     this.$refs.map.mapObject.invalidateSize();
-    this.getTodaysDate();
+    this.getMinDate();
     this.getUserInstitutions();
     this.get_user();
   },
@@ -587,8 +633,14 @@ export default {
     },
     editItem(item) {
       this.editedIndex = this.project.milestones.indexOf(item);
-      this.editedItem = { ...item };
-      this.preEditedItem = { ...item };
+
+      const copy = JSON.parse(JSON.stringify(item));
+      // in this case "5.9.2020" --> 2020-9-5
+      const [day, month, year] = copy.until.split('.');
+      copy.until = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+      this.editedItem = copy;
+      this.preEditedItem = copy;
       this.deleteItem(item);
       this.dialog2 = true;
     },
@@ -636,8 +688,11 @@ export default {
       this.milestonesDate.push(cpy);
       this.close();
     },
-    getTodaysDate() {
-      this.today = new Date().toJSON().slice(0, 10);
+    getMinDate() {
+      this.minDate = new Date();
+      // Smart Contracts: min: today + 1 day
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     getUserInstitutions() {
       axios.get(`institutions?username=${window.user.username}`)
@@ -668,12 +723,11 @@ export default {
         goal: this.project.goal,
         // until / 1000 --> Umrechnen von ms auf s
         until: this.project.until / 1000,
+        short: window.btoa(this.project.short),
         description: window.btoa(this.project.description),
-        // ist required, wird aber nicht verwendet !
-        requiredVotes: 1337,
       };
-      if (this.project.website !== '') {
-        headers.website = this.project.website;
+      if (this.project.webpage !== '') {
+        headers.webpage = this.project.webpage;
       }
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
