@@ -53,6 +53,7 @@
         </v-col>
         <v-row>
           <v-col
+            v-if="backend_userdata.length && backend_userdata[0].group === 'support'"
             class="mb-2 mt-0 pt-0"
             align="center"
           >
@@ -64,7 +65,7 @@
                 class="ml-1"
                 style="text-transform: none"
               >
-                neue Institution erstellen
+                Neue Institution erstellen
               </v-btn>
             </router-link>
           </v-col>
