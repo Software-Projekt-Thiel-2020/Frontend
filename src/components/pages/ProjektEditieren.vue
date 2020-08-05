@@ -353,6 +353,7 @@
                                         label="Meilensteinname"
                                         outlined
                                         clearable
+                                        :rules="milestoneNameRule"
                                       />
                                     </v-col>
                                   </v-row>
@@ -492,7 +493,7 @@ export default {
     ],
     newMilestones: [],
     newMile: {
-      milestoneName: '',
+      milestoneName: null,
       goal: null,
       until: null,
     },
@@ -513,6 +514,11 @@ export default {
     ],
     coordRules: [
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    milestoneNameRule: [
+      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -618,7 +624,7 @@ export default {
       }
     },
     closeDialog() {
-      this.newMile.milestoneName = '';
+      this.newMile.milestoneName = null;
       this.newMile.goal = null;
       this.newMile.until = null;
 
@@ -672,9 +678,7 @@ export default {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
-            // TODO: revert this.editElement.description = window.atob(res.data.description);
-            this.editElement.description = res.data.description;
-            // TODO: revert this.editElement.short = res.data.short;
+            this.editElement.description = window.atob(res.data.description);
             this.editElement.short = window.atob(res.data.short);
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;

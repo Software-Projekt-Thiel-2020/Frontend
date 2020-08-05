@@ -26,7 +26,7 @@
         </v-col>
         <v-col cols="6">
           <v-text-field
-            v-model="project.website"
+            v-model="project.webpage"
             label="Website"
             :rules="websiteRule"
             outlined
@@ -297,7 +297,7 @@
                               label="Meilensteinname"
                               outlined
                               clearable
-                              :rules="textRule"
+                              :rules="milestoneNameRule"
                             />
                           </v-col>
                           <v-col cols="12">
@@ -442,6 +442,11 @@ export default {
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
+    milestoneNameRule: [
+      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      // eslint-disable-next-line no-control-regex
+      (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
+    ],
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
@@ -478,19 +483,19 @@ export default {
     ],
     editedIndex: -1,
     preEditedItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
     },
     editedItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
     },
     defaultItem: {
-      name: '',
+      name: null,
       goal: null,
       requiredVotes: 1,
       until: null,
@@ -507,7 +512,7 @@ export default {
     allInstitutionsSortedNameId: [],
     project: {
       title: null,
-      website: '',
+      webpage: '',
       short: '',
       description: '',
       idInstitution: null,
@@ -548,7 +553,7 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(v, 10) < 9e32) {
+              if (parseInt(v, 10) < 9e32 || v === null) {
                 return true;
               }
               return 'Zahl muss kleiner als 9e32 sein';
@@ -721,8 +726,8 @@ export default {
         short: window.btoa(this.project.short),
         description: window.btoa(this.project.description),
       };
-      if (this.project.website !== '') {
-        headers.website = this.project.website;
+      if (this.project.webpage !== '') {
+        headers.webpage = this.project.webpage;
       }
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
