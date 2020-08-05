@@ -24,6 +24,7 @@ import ProjectGutschein from './components/pages/ProjectGutschein.vue';
 import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
 import ProjektEditieren from './components/pages/ProjektEditieren.vue';
 import InstitutionVoucher from './components/pages/InstitutionVoucher.vue';
+import './registerServiceWorker';
 
 // eslint-disable-next-line no-underscore-dangle
 delete L.Icon.Default.prototype._getIconUrl;
