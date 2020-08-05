@@ -2,8 +2,8 @@
   <v-dialog
     ref="myDialog"
     :value="value"
-    :persistent="!persistent"
-    :fullscreen="$vuetify.breakpoint.xsOnly"
+    :persistent="persistent"
+    :fullscreen="$vuetify.breakpoint.smAndDown"
     @input="update($event)"
   >
     <v-card>
