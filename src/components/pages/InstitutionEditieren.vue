@@ -121,232 +121,241 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-dialog
-          v-if="overlay"
-          v-model="overlay"
-          absolute
-          persistent
-          :fullscreen="smallScreenDialog"
-        >
-          <v-card>
-            <v-card-title class="text-center">
-              Institution bearbeiten
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-form
-                  v-model="form"
-                >
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Name:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.name"
-                        :value="editElement.name"
-                        :rules="notEmpty"
-                        class="inputField"
-                        clearable
-                        required
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Bild:
-                      </h4>
-                    </v-col>
-                    <v-col cols="3">
-                      <img
-                        v-if="editElement.picturePath"
-                        class="elementImage"
-                        :src="apiurl+'/file/'+editElement.picturePath"
-                      >
-                      <img
-                        v-else
-                        class="elementImage"
-                        src="../../assets/placeholder.png"
-                      >
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    />
-                    <v-col cols="3">
-                      <v-file-input
-                        v-model="editElement.picture"
-                        prepend-icon=""
-                        prepend-inner-icon="mdi-camera"
-                        clearable
-                        label="Bild hochladen"
-                        accept="image/*"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Website:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.webpage"
-                        :placeholder="editElement.webpage"
-                        :rules="notEmpty"
-                        class="inputField"
-                        required
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Beschreibung:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-textarea
-                        v-model="editElement.description"
-                        :value="editElement.description"
-                        clearable
-                        counter
-                        no-resize
-                        outlined
-                        :rules="textRule"
-                        required
-                        class="inputField"
-                        height="120"
-                        background-color="grey lighten-4"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Adresse:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.address"
-                        :placeholder="editElement.address"
-                        :rules="notEmpty"
-                        class="inputField"
-                        required
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Koordinaten:
-                      </h4>
-                    </v-col>
-                    <v-col
-                      class="mt-5"
-                    >
-                      <l-map
-                        ref="map"
-                        :zoom="zoom"
-                        :center="center"
-                        :options="mapOptions"
-                        style="height: 300px; width: 100%; position:relative; z-index: 0"
-                        @click="setMarkerPos"
-                      >
-                        <l-tile-layer
-                          :url="url"
-                          :attribution="attribution"
-                        />
-                        <l-marker :lat-lng="marker" />
-                      </l-map>
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    />
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.longitude"
-                        label="longitude"
-                        :placeholder="String(editElement.longitude)"
-                        type="number"
-                        :rules="coordRules"
-                        class="inputField"
-                        @change="updateMap(null, editElement.longitude)"
-                      />
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.latitude"
-                        label="latitude"
-                        :placeholder="String(editElement.latitude)"
-                        type="number"
-                        :rules="coordRules"
-                        class="inputField"
-                        @change="updateMap(editElement.latitude, null)"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </v-container>
-            </v-card-text>
-            <v-card-actions
-              class="ma-0 pa-0"
-            >
-              <v-btn-toggle
-                borderless
-                style="width: 50%"
-              >
-                <v-btn
-                  color="error"
-                  block
-                  tile
-                  @click="closeOverlay()"
-                >
-                  Schließen
-                </v-btn>
-                <v-btn
-                  :disabled="!form"
-                  color="success"
-                  block
-                  tile
-                  :loading="loadingChanges"
-                  @click="changeInst()"
-                >
-                  Bestätigen
-                </v-btn>
-              </v-btn-toggle>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </div>
+
+      <MyDialog v-model="overlay">
+        <template v-slot:title>
+          Institution bearbeiten
+        </template>
+
+        <template v-slot:text>
+          <v-container>
+            <v-form
+              v-model="form"
+            >
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Name:
+                  </h4>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="editElement.name"
+                    :value="editElement.name"
+                    :rules="notEmpty"
+                    class="inputField"
+                    clearable
+                    required
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Bild:
+                  </h4>
+                </v-col>
+                <v-col cols="9">
+                  <v-img
+                    class="white--text align-end grey lighten-2"
+                    :src="editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`)"
+                    height="300px"
+                    contain
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
+                      >
+                        <v-progress-circular
+                          indeterminate
+                          color="grey darken-5"
+                        />
+                      </v-row>
+                    </template>
+                  </v-img>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                />
+                <v-col>
+                  <v-file-input
+                    v-model="editElement.picture"
+                    prepend-icon=""
+                    prepend-inner-icon="mdi-camera"
+                    clearable
+                    label="Bild hochladen"
+                    accept="image/*"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Website:
+                  </h4>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="editElement.webpage"
+                    :placeholder="editElement.webpage"
+                    :rules="notEmpty"
+                    class="inputField"
+                    required
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Beschreibung:
+                  </h4>
+                </v-col>
+                <v-col>
+                  <v-textarea
+                    v-model="editElement.description"
+                    :value="editElement.description"
+                    clearable
+                    counter
+                    no-resize
+                    outlined
+                    :rules="textRule"
+                    required
+                    class="inputField"
+                    height="120"
+                    background-color="grey lighten-4"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Adresse:
+                  </h4>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="editElement.address"
+                    :placeholder="editElement.address"
+                    :rules="notEmpty"
+                    class="inputField"
+                    required
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                >
+                  <h4 class="font-weight-medium fromField">
+                    Koordinaten:
+                  </h4>
+                </v-col>
+                <v-col
+                  class="mt-5"
+                >
+                  <l-map
+                    ref="map"
+                    :zoom="zoom"
+                    :center="center"
+                    :options="mapOptions"
+                    style="height: 300px; width: 100%; position:relative; z-index: 0"
+                    @click="setMarkerPos"
+                  >
+                    <l-tile-layer
+                      :url="url"
+                      :attribution="attribution"
+                    />
+                    <l-marker :lat-lng="marker" />
+                  </l-map>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  class="mt-5"
+                  cols="12"
+                  sm="3"
+                />
+                <v-col>
+                  <v-text-field
+                    v-model="editElement.longitude"
+                    label="longitude"
+                    :placeholder="String(editElement.longitude)"
+                    type="number"
+                    :rules="coordRules"
+                    class="inputField"
+                    @change="updateMap(null, editElement.longitude)"
+                  />
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="editElement.latitude"
+                    label="latitude"
+                    :placeholder="String(editElement.latitude)"
+                    type="number"
+                    :rules="coordRules"
+                    class="inputField"
+                    @change="updateMap(editElement.latitude, null)"
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </template>
+
+        <template v-slot:actions>
+          <v-row class="mx-0">
+            <v-col>
+              <v-btn
+                color="error"
+                block
+                @click="closeOverlay()"
+              >
+                Schließen
+              </v-btn>
+            </v-col>
+            <v-col>
+              <v-btn
+                block
+                :disabled="!form"
+                color="success"
+                :loading="loadingChanges"
+                @click="changeInst()"
+              >
+                Bestätigen
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+      </MyDialog>
     </v-container>
   </div>
 </template>
@@ -357,10 +366,12 @@ import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
+import MyDialog from '../MyDialog.vue';
 
 export default {
   name: 'InstitutionEditieren',
   components: {
+    MyDialog,
     LMap,
     LTileLayer,
     LMarker,
@@ -415,11 +426,6 @@ export default {
     uploadingImage: false,
     loadingChanges: false,
   }),
-  computed: {
-    smallScreenDialog() {
-      return this.$vuetify.breakpoint.xsOnly;
-    },
-  },
   mounted() {
     this.load();
   },
@@ -608,7 +614,6 @@ export default {
 
   .fromField {
     font-size: 1.13em;
-    color: black
   }
 
   .gradientBackground {
