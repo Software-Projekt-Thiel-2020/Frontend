@@ -103,7 +103,7 @@
             >
               <img
                 class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
+                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require('../../assets/placeholder.png')"
               >
               <div
                 class="companyData"
@@ -162,7 +162,7 @@
                     <v-col cols="3">
                       <img
                         class="elementImage"
-                        :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
+                        :src="editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require('@/assets/placeholder.png')"
                       >
                     </v-col>
                   </v-row>
