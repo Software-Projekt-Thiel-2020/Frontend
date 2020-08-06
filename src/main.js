@@ -24,6 +24,7 @@ import ProjectGutschein from './components/pages/ProjectGutschein.vue';
 import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
 import ProjektEditieren from './components/pages/ProjektEditieren.vue';
 import InstitutionVoucher from './components/pages/InstitutionVoucher.vue';
+import Github from './components/pages/github.vue';
 
 // eslint-disable-next-line no-underscore-dangle
 delete L.Icon.Default.prototype._getIconUrl;
@@ -63,6 +64,7 @@ const routes = [
   { path: '/InstitutionEditieren/', component: InstitutionEditieren },
   { path: '/projektEditieren/', component: ProjektEditieren },
   { path: '/institutionVoucher/:id', component: InstitutionVoucher },
+  { path: '/github', component: Github },
 ];
 
 const router = new VueRouter({
