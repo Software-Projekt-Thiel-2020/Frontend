@@ -1,79 +1,146 @@
 <template>
-  <div class="gradientBackground">
-    <v-container>
-      <h4
-        class="ma-5 display-1 text-center font-weight-medium white--text"
-      >
-        Deine Institutionen
-      </h4>
-      <v-divider class="mt-5" />
-
-      <v-alert
-        v-if="alert"
-        :type="alertType"
-        prominent
-        dense
-      >
-        <v-row align="center">
-          <v-col
-            v-for="line in userFeedback.split('\n')"
-            :key="line"
-            class="grow"
-          >
-            {{ line }}<br>
-          </v-col>
-          <v-col
-            class="shrink"
-          >
-            <v-btn
-              left
-              :color="alertType"
-              depressed
-              @click="closeAlert"
-            >
-              Schließen
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-alert>
-      <v-layout
-        v-if="loading == true"
-        justify-center
-      >
-        <v-progress-circular
-          :size="50"
-          :width="7"
-          color="green"
-          indeterminate
-          class="mt-24"
-        />
-      </v-layout>
-      <div v-if="(items.length === 0 && gotResponse)">
-        <v-card
-          class="pa-10 ma-7"
-          elevation="5"
-          color="red lighten-4"
+  <Default title="Deine Institutionen">
+    <v-alert
+      v-if="alert"
+      :type="alertType"
+      prominent
+      dense
+    >
+      <v-row align="center">
+        <v-col
+          v-for="line in userFeedback.split('\n')"
+          :key="line"
+          class="grow"
         >
-          <h2>
-            Es wurden keine Institutionen gefunden.
-          </h2>
-        </v-card>
-      </div>
-      <div v-else-if="gotResponse">
-        <v-row>
-          <v-col
-            v-for="item in items"
-            :key="item.name"
+          {{ line }}<br>
+        </v-col>
+        <v-col
+          class="shrink"
+        >
+          <v-btn
+            left
+            :color="alertType"
+            depressed
+            @click="closeAlert"
           >
-            <v-card
-              class="institution pa-4"
-              elevation="5"
+            Schließen
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-layout
+      v-if="loading == true"
+      justify-center
+    >
+      <v-progress-circular
+        :size="50"
+        :width="7"
+        color="green"
+        indeterminate
+        class="mt-24"
+      />
+    </v-layout>
+    <div v-if="(items.length === 0 && gotResponse)">
+      <v-card
+        class="pa-10 ma-7"
+        elevation="5"
+        color="red lighten-4"
+      >
+        <h2>
+          Es wurden keine Institutionen gefunden.
+        </h2>
+      </v-card>
+    </div>
+    <div v-else-if="gotResponse">
+      <v-row>
+        <v-col
+          v-for="item in items"
+          :key="item.name"
+        >
+          <v-card
+            class="institution pa-4"
+            elevation="5"
+          >
+            <v-img
+              class="white--text align-end grey lighten-2"
+              :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
+              max-height="200px"
+              max-width="200px"
+              contain
             >
+              <template #placeholder>
+                <img-placeholder />
+              </template>
+            </v-img>
+            <div
+              class="ml-2"
+              style="border:0;"
+            >
+              <h2 class="ma-3 ml-4 font-weight-regular">
+                {{ item.name }}
+              </h2>
+              <v-card-actions
+                class="mb-0"
+              >
+                <v-btn
+                  class="ma-2"
+                  style="color: black"
+                  @click="editClick(item)"
+                >
+                  Editieren
+                </v-btn>
+                <v-btn
+                  class="ma-2"
+                  style="color: black"
+                  :href="item.webpage"
+                >
+                  Website
+                </v-btn>
+                <router-link
+                  :to="'/institutionVoucher/'+item.id"
+                  tag="span"
+                  class="link"
+                >
+                  <v-btn
+                    class="ma-2"
+                    style="color: black"
+                  >
+                    Zu den Gutscheinen
+                  </v-btn>
+                </router-link>
+              </v-card-actions>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+
+    <MyDialog v-model="overlay">
+      <template #title>
+        Institution bearbeiten
+      </template>
+
+      <template #text>
+        <v-container>
+          <v-form
+            v-model="form"
+          >
+            <MyFormRow title="Name">
+              <v-text-field
+                v-model="editElement.name"
+                :value="editElement.name"
+                :rules="notEmpty"
+                clearable
+                required
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Bild">
               <v-img
-                class="white--text align-end grey lighten-2"
-                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
-                max-height="200px"
-                max-width="200px"
+                class="white--text grey lighten-2 mx-auto"
+                :src="previewImage ? previewImage : (editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`))"
+                height="300px"
+                aspect-ratio="1"
                 contain
               >
                 <template #placeholder>
@@ -89,206 +156,121 @@
                   </v-row>
                 </template>
               </v-img>
-              <div
-                class="ml-2"
-                style="border:0;"
+            </MyFormRow>
+
+            <MyFormRow title="">
+              <v-file-input
+                v-model="editElement.picture"
+                prepend-icon=""
+                prepend-inner-icon="mdi-camera"
+                clearable
+                label="Bild hochladen"
+                accept="image/*"
+                @change="previewImageUpdate()"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Website">
+              <v-text-field
+                v-model="editElement.webpage"
+                :placeholder="editElement.webpage"
+                :rules="notEmpty"
+                required
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Beschreibung">
+              <Editor
+                ref="toastuiEditor"
+                :initial-value="editElement.description"
+                :options="editorOptions"
+                height="500px"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Addresse">
+              <v-text-field
+                v-model="editElement.address"
+                :placeholder="editElement.address"
+                :rules="notEmpty"
+                required
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Koordinaten">
+              <l-map
+                ref="map"
+                :zoom="zoom"
+                :center="center"
+                :options="mapOptions"
+                style="height: 300px; width: 100%; position:relative; z-index: 0"
+                @click="setMarkerPos"
               >
-                <h2 class="ma-3 ml-4 font-weight-regular">
-                  {{ item.name }}
-                </h2>
-                <v-card-actions
-                  class="mb-0"
-                >
-                  <v-btn
-                    class="ma-2"
-                    style="color: black"
-                    @click="editClick(item)"
-                  >
-                    Editieren
-                  </v-btn>
-                  <v-btn
-                    class="ma-2"
-                    style="color: black"
-                    :href="item.webpage"
-                  >
-                    Website
-                  </v-btn>
-                  <router-link
-                    :to="'/institutionVoucher/'+item.id"
-                    tag="span"
-                    class="link"
-                  >
-                    <v-btn
-                      class="ma-2"
-                      style="color: black"
-                    >
-                      Zu den Gutscheinen
-                    </v-btn>
-                  </router-link>
-                </v-card-actions>
-              </div>
-            </v-card>
+                <l-tile-layer
+                  :url="url"
+                  :attribution="attribution"
+                />
+                <l-marker :lat-lng="marker" />
+              </l-map>
+            </MyFormRow>
+
+            <v-row>
+              <v-col
+                class="mt-5"
+                cols="12"
+                sm="3"
+              />
+              <v-col>
+                <v-text-field
+                  v-model="editElement.longitude"
+                  label="longitude"
+                  :placeholder="String(editElement.longitude)"
+                  type="number"
+                  :rules="coordRules"
+                  @change="updateMap(null, editElement.longitude)"
+                />
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="editElement.latitude"
+                  label="latitude"
+                  :placeholder="String(editElement.latitude)"
+                  type="number"
+                  :rules="coordRules"
+                  @change="updateMap(editElement.latitude, null)"
+                />
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-container>
+      </template>
+
+      <template #actions>
+        <v-row class="mx-0">
+          <v-col>
+            <v-btn
+              color="error"
+              block
+              @click="closeOverlay()"
+            >
+              Schließen
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              block
+              :disabled="!form"
+              color="success"
+              :loading="loadingChanges"
+              @click="changeInst()"
+            >
+              Bestätigen
+            </v-btn>
           </v-col>
         </v-row>
-      </div>
-
-      <MyDialog v-model="overlay">
-        <template #title>
-          Institution bearbeiten
-        </template>
-
-        <template #text>
-          <v-container>
-            <v-form
-              v-model="form"
-            >
-              <MyFormRow title="Name">
-                <v-text-field
-                  v-model="editElement.name"
-                  :value="editElement.name"
-                  :rules="notEmpty"
-                  clearable
-                  required
-                />
-              </MyFormRow>
-
-              <MyFormRow title="Bild">
-                <v-img
-                  class="white--text grey lighten-2 mx-auto"
-                  :src="previewImage ? previewImage : (editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`))"
-                  height="300px"
-                  aspect-ratio="1"
-                  contain
-                >
-                  <template #placeholder>
-                    <v-row
-                      class="fill-height ma-0"
-                      align="center"
-                      justify="center"
-                    >
-                      <v-progress-circular
-                        indeterminate
-                        color="grey darken-5"
-                      />
-                    </v-row>
-                  </template>
-                </v-img>
-              </MyFormRow>
-
-              <MyFormRow title="">
-                <v-file-input
-                  v-model="editElement.picture"
-                  prepend-icon=""
-                  prepend-inner-icon="mdi-camera"
-                  clearable
-                  label="Bild hochladen"
-                  accept="image/*"
-                  @change="previewImageUpdate()"
-                />
-              </MyFormRow>
-
-              <MyFormRow title="Website">
-                <v-text-field
-                  v-model="editElement.webpage"
-                  :placeholder="editElement.webpage"
-                  :rules="notEmpty"
-                  required
-                />
-              </MyFormRow>
-
-              <MyFormRow title="Beschreibung">
-                <Editor
-                  ref="toastuiEditor"
-                  :initial-value="editElement.description"
-                  :options="editorOptions"
-                  height="500px"
-                />
-              </MyFormRow>
-
-              <MyFormRow title="Addresse">
-                <v-text-field
-                  v-model="editElement.address"
-                  :placeholder="editElement.address"
-                  :rules="notEmpty"
-                  required
-                />
-              </MyFormRow>
-
-              <MyFormRow title="Koordinaten">
-                <l-map
-                  ref="map"
-                  :zoom="zoom"
-                  :center="center"
-                  :options="mapOptions"
-                  style="height: 300px; width: 100%; position:relative; z-index: 0"
-                  @click="setMarkerPos"
-                >
-                  <l-tile-layer
-                    :url="url"
-                    :attribution="attribution"
-                  />
-                  <l-marker :lat-lng="marker" />
-                </l-map>
-              </MyFormRow>
-
-              <v-row>
-                <v-col
-                  class="mt-5"
-                  cols="12"
-                  sm="3"
-                />
-                <v-col>
-                  <v-text-field
-                    v-model="editElement.longitude"
-                    label="longitude"
-                    :placeholder="String(editElement.longitude)"
-                    type="number"
-                    :rules="coordRules"
-                    @change="updateMap(null, editElement.longitude)"
-                  />
-                </v-col>
-                <v-col>
-                  <v-text-field
-                    v-model="editElement.latitude"
-                    label="latitude"
-                    :placeholder="String(editElement.latitude)"
-                    type="number"
-                    :rules="coordRules"
-                    @change="updateMap(editElement.latitude, null)"
-                  />
-                </v-col>
-              </v-row>
-            </v-form>
-          </v-container>
-        </template>
-
-        <template #actions>
-          <v-row class="mx-0">
-            <v-col>
-              <v-btn
-                color="error"
-                block
-                @click="closeOverlay()"
-              >
-                Schließen
-              </v-btn>
-            </v-col>
-            <v-col>
-              <v-btn
-                block
-                :disabled="!form"
-                color="success"
-                :loading="loadingChanges"
-                @click="changeInst()"
-              >
-                Bestätigen
-              </v-btn>
-            </v-col>
-          </v-row>
-        </template>
-      </MyDialog>
-    </v-container>
-  </div>
+      </template>
+    </MyDialog>
+  </Default>
 </template>
 
 <script>
@@ -303,10 +285,12 @@ import { Editor } from '@toast-ui/vue-editor';
 
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
+import Default from '../Default.vue';
 
 export default {
   name: 'InstitutionEditieren',
   components: {
+    Default,
     MyDialog,
     MyFormRow,
     LMap,
@@ -543,10 +527,5 @@ export default {
     display: flex;
     flex-direction: row;
     background-color: rgba(255, 255, 255, 0.8);
-  }
-
-  .gradientBackground {
-    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-    height: 100%;
   }
 </style>
