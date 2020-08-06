@@ -141,37 +141,14 @@
             lg="4"
             xl="3"
           >
-            <v-card elevation="10">
-              <v-img
-                class="white--text align-end grey lighten-2"
-                height="300px"
-                width="100%"
-                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
-              >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey darken-5"
-                    />
-                  </v-row>
-                </template>
-              </v-img>
-
-              <v-card-title>
+            <MyCard :img-src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : null">
+              <template #title>
                 {{ item.name }}
-              </v-card-title>
-              <v-card-subtitle />
-              <v-card-text class="text--primary">
+              </template>
+              <template #text>
                 {{ item.short }}
-              </v-card-text>
-
-
-              <v-card-actions>
+              </template>
+              <template #actions>
                 <v-btn
                   color="rgba(0, 0, 0, 0.54)"
                   text
@@ -187,8 +164,8 @@
                 >
                   <v-icon>mdi-bookmark</v-icon>
                 </v-btn>
-              </v-card-actions>
-            </v-card>
+              </template>
+            </MyCard>
           </v-col>
         </v-row>
       </div>
@@ -198,9 +175,13 @@
 
 <script>
 import axios from 'axios';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'Gutscheine',
+  components: {
+    MyCard,
+  },
   data: () => ({
     loadLocation: false,
     loading: false,
