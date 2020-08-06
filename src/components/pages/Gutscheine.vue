@@ -4,8 +4,8 @@
       <h1>Gutscheine kaufen</h1>
       <h3>Suche nach Institutionen in deiner Nähe!</h3>
       <MySearch
-        placeholder="der Institution"
         v-model="searchModel"
+        placeholder="der Institution"
         @search="suchen"
         @reset="reset"
       />

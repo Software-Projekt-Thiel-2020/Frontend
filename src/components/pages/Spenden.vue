@@ -4,8 +4,8 @@
       <h1>Spenden</h1>
       <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
       <MySearch
-        placeholder="des Projekts"
         v-model="searchModel"
+        placeholder="des Projekts"
         @search="suchen"
         @reset="reset"
       />
