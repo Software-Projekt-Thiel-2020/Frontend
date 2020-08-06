@@ -76,7 +76,7 @@
                 max-width="200px"
                 contain
               >
-                <template v-slot:placeholder>
+                <template #placeholder>
                   <v-row
                     class="fill-height ma-0"
                     align="center"
@@ -133,11 +133,11 @@
       </div>
 
       <MyDialog v-model="overlay">
-        <template v-slot:title>
+        <template #title>
           Institution bearbeiten
         </template>
 
-        <template v-slot:text>
+        <template #text>
           <v-container>
             <v-form
               v-model="form"
@@ -160,7 +160,7 @@
                   aspect-ratio="1"
                   contain
                 >
-                  <template v-slot:placeholder>
+                  <template #placeholder>
                     <v-row
                       class="fill-height ma-0"
                       align="center"
@@ -262,7 +262,7 @@
           </v-container>
         </template>
 
-        <template v-slot:actions>
+        <template #actions>
           <v-row class="mx-0">
             <v-col>
               <v-btn

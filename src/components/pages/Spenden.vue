@@ -3,101 +3,12 @@
     <v-container no-gutters>
       <h1>Spenden</h1>
       <h3>Suche nach Spendenprojekte in deiner Nähe!</h3>
-      <v-form>
-        <v-container fluid>
-          <v-row dense>
-            <v-col
-              cols="12"
-              sm="6"
-              lg="3"
-            >
-              <v-text-field
-                v-model="searchName"
-                prepend-inner-icon="mdi-magnify"
-                label="Name des Projekts"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-              lg="3"
-            >
-              <v-select
-                v-model="searchCode"
-                :items="lCodes"
-                label="Ländercode"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-              lg="3"
-            >
-              <v-text-field
-                v-model="searchPlace"
-                prepend-inner-icon="mdi-magnify"
-                label="Stadt/PLZ"
-              />
-            </v-col>
-            <v-col
-              cols="8"
-              sm="5"
-              lg="2"
-            >
-              <v-text-field
-                v-model="radius"
-                prepend-inner-icon="mdi-radius-outline"
-                label="Radius(km)"
-              />
-            </v-col>
-            <v-col
-              cols="4"
-              sm="1"
-              lg="1"
-            >
-              <v-btn
-                fab
-                :color="locationButton"
-                label="Mich finden"
-                :loading="loadLocation"
-                @click="getOwnLocation"
-              >
-                <v-icon>mdi-crosshairs-gps</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              cols="12"
-              sm="6"
-              lg="3"
-            >
-              <v-btn
-                color="success"
-                :disabled="searchButton"
-                min-width="15em"
-                @click="suchen"
-              >
-                Suchen
-              </v-btn>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-              lg="3"
-            >
-              <v-btn
-                color="error"
-                min-width="15em"
-                @click="reset"
-              >
-                Zurücksetzten
-              </v-btn>
-            </v-col>
-            <v-col />
-          </v-row>
-        </v-container>
-      </v-form>
+      <MySearch
+        v-model="searchModel"
+        placeholder="des Projekts"
+        @search="suchen"
+        @reset="reset"
+      />
     </v-container>
 
 
@@ -117,12 +28,12 @@
         <v-skeleton-loader />
       </div>
       <v-alert
-        v-if="errorMessage"
+        v-if="errorMessage || searchModel.errorMessage"
         :value="true"
         type="error"
       >
         <div
-          v-for="line in errorMessage.split('\n')"
+          v-for="line in `${errorMessage ? errorMessage+'\n' : ''}${searchModel.errorMessage}`.split('\n')"
           :key="line"
         >
           {{ line }}<br>
@@ -142,39 +53,17 @@
             lg="4"
             xl="3"
           >
-            <v-card elevation="10">
-              <v-img
-                class="white--text align-end grey lighten-2"
-                height="300px"
-                width="100%"
-                :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
-              >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey darken-5"
-                    />
-                  </v-row>
-                </template>
-              </v-img>
-
-              <v-card-title>
+            <MyCard :img-src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : null">
+              <template #title>
                 {{ item.name }}
-              </v-card-title>
-              <v-card-subtitle>
+              </template>
+              <template #subtitle>
                 Bis zum: {{ new Date(item.until * 1000).toLocaleDateString() }}
-              </v-card-subtitle>
-
-              <v-card-text class="text--primary">
+              </template>
+              <template #text>
                 {{ item.short }}
-              </v-card-text>
-
-              <v-card-actions>
+              </template>
+              <template #actions>
                 <v-btn
                   color="rgba(0, 0, 0, 0.54)"
                   text
@@ -190,8 +79,8 @@
                 >
                   <v-icon>mdi-bookmark</v-icon>
                 </v-btn>
-              </v-card-actions>
-            </v-card>
+              </template>
+            </MyCard>
           </v-col>
         </v-row>
       </div>
@@ -201,36 +90,34 @@
 
 <script>
 import axios from 'axios';
+import MyCard from '../MyCard.vue';
+import MySearch from '../MySearch.vue';
 
 export default {
   name: 'Spenden',
+  components: {
+    MySearch,
+    MyCard,
+  },
   data: () => ({
     loadLocation: false,
     loading: false,
     items: [],
     gotResponse: false,
     errorMessage: '',
-    searchName: '',
-    searchPlace: '',
     resultList: [],
-    longitude: -1,
-    latitude: -1,
-    radius: 10,
-    lCodes: ['DE', 'AT', 'CH'],
-    searchCode: 'DE',
     apiurl: window.apiurl,
+    searchModel: {
+      name: '',
+      place: '',
+      lCodes: ['DE', 'AT', 'CH'],
+      code: 'DE',
+      radius: 10,
+      latitude: -1,
+      longitude: -1,
+      errorMessage: '',
+    },
   }),
-  computed: {
-    locationButton() {
-      if (this.latitude !== -1 && this.longitude !== -1) {
-        return 'success';
-      }
-      return 'primary';
-    },
-    searchButton() {
-      return !(this.searchName !== '' || (this.longitude !== -1 && this.latitude !== -1) || (this.searchPlace !== '' && this.searchCode !== ''));
-    },
-  },
   mounted() {
     this.load();
   },
@@ -250,41 +137,20 @@ export default {
           this.loading = false;
         });
     },
-    getOwnLocation() {
-      if (!('geolocation' in navigator)) {
-        this.errorMessage = 'Geolocation ist nicht verfügbar';
-        return;
-      }
-      this.loadLocation = true;
-      navigator.geolocation.getCurrentPosition((pos) => {
-        this.location = pos;
-        this.longitude = pos.coords.longitude;
-        this.latitude = pos.coords.latitude;
-        this.loadLocation = false;
-      }, (err) => {
-        this.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
-        this.loadLocation = false;
-      });
-    },
     reset() {
-      this.searchName = '';
-      this.searchPlace = '';
-      this.longitude = -1;
-      this.latitude = -1;
-      this.radius = 10;
       this.errorMessage = '';
       this.gotResponse = false;
       this.load();
     },
     loadProjects() {
-      if (this.searchName || (this.longitude !== -1 && this.latitude !== -1)) {
+      if (this.searchModel.name || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
         let url = '';
         url = 'projects?name=';
-        if (this.searchName) {
-          url = url.concat(`${this.searchName}`);
+        if (this.searchModel.name) {
+          url = url.concat(`${this.searchModel.name}`);
         }
-        if (this.longitude !== -1 && this.latitude !== -1) {
-          url = url.concat(`&longitude=${this.longitude}&latitude=${this.latitude}&radius=${this.radius}`);
+        if (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1) {
+          url = url.concat(`&longitude=${this.searchModel.longitude}&latitude=${this.searchModel.latitude}&radius=${this.searchModel.radius}`);
         }
         axios.get(url)
           .then((res) => {
@@ -308,20 +174,20 @@ export default {
       this.errorMessage = '';
       this.gotResponse = false;
       this.loading = true;
-      if (this.searchPlace && this.searchCode) {
-        let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchCode}&format=json&limit=1`;
-        if (typeof this.searchPlace === 'number' || (this.searchPlace % 1) === 0) {
-          url = url.concat(`&postalcode=${this.searchPlace}`);
+      if (this.searchModel.place && this.searchModel.code) {
+        let url = `https://nominatim.openstreetmap.org/search?countrycodes=${this.searchModel.code}&format=json&limit=1`;
+        if (typeof this.searchModel.place === 'number' || (this.searchModel.place % 1) === 0) {
+          url = url.concat(`&postalcode=${this.searchModel.place}`);
         } else {
-          url = url.concat(`&city=${this.searchPlace}`);
+          url = url.concat(`&city=${this.searchModel.place}`);
         }
         axios.get(url)
           .then((res) => {
             if (res.data.length !== 0) {
-              this.longitude = res.data[0].lon;
-              this.latitude = res.data[0].lat;
+              this.searchModel.longitude = res.data[0].lon;
+              this.searchModel.latitude = res.data[0].lat;
             }
-            if (this.latitude === -1 || this.longitude === -1) {
+            if (this.searchModel.latitude === -1 || this.searchModel.longitude === -1) {
               this.errorMessage = 'Es konnten keine Projekte gefunden werden';
             } else {
               this.loadProjects();
@@ -333,7 +199,7 @@ export default {
             this.gotResponse = true;
             this.loading = false;
           });
-      } else if (this.errorMessage === '' || (this.longitude !== -1 && this.latitude !== -1)) {
+      } else if (this.searchModel.errorMessage === '' || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
         this.loadProjects();
       }
     },
