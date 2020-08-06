@@ -678,7 +678,7 @@ export default {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
-            this.editElement.description = window.atob(res.data.description);
+            this.editElement.description = res.data.description;
             this.editElement.short = window.atob(res.data.short);
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
