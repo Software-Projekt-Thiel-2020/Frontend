@@ -90,6 +90,7 @@
                   class="text-center"
                 >
                   <v-system-bar
+                    v-if="project.milestones.length > 0"
                     color="secondary"
                     height="40px"
                   >
