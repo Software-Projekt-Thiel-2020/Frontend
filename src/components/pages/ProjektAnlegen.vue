@@ -15,7 +15,10 @@
       class="mt-2"
     >
       <v-row>
-        <v-col cols="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-text-field
             v-model="project.title"
             label="Projektname*"
@@ -24,7 +27,10 @@
             :rules="notEmpty"
           />
         </v-col>
-        <v-col cols="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-text-field
             v-model="project.webpage"
             label="Website"
@@ -34,75 +40,48 @@
           />
         </v-col>
       </v-row>
-      <v-row
-        v-if="smallDevice"
-      >
-        <v-col class="pb-0 mb-0">
-          <v-overflow-btn
-            v-model="project.idInstitution"
-            label="Institution*"
-            target="#dropdown-institution"
-            :items="allInstitutionsSortedNameId"
-            item-text="name"
-            item-value="id"
-            auto-select-first
-            outlined
-            clearable
-            :rules="notEmpty"
-          />
-        </v-col>
-        <v-row>
-          <v-col
-            class="mb-2 mt-0 pt-0"
-            align="center"
-          >
-            <router-link
-              to="/institution"
-              tag="span"
-            >
-              <v-btn
-                class="ml-1"
-                style="text-transform: none"
-              >
-                neue Institution erstellen
-              </v-btn>
-            </router-link>
-          </v-col>
-        </v-row>
-      </v-row>
-      <v-row
-        v-else
-      >
-        <v-col cols="6">
-          <v-overflow-btn
-            v-model="project.idInstitution"
-            label="Institution*"
-            target="#dropdown-institution"
-            :items="allInstitutionsSortedNameId"
-            item-text="name"
-            item-value="id"
-            auto-select-first
-            outlined
-            clearable
-            :rules="notEmpty"
-          />
-        </v-col>
-        <v-col v-if="backend_userdata.length && backend_userdata[0].group === 'support'">
-          <router-link
-            to="/institution"
-            tag="span"
-          >
-            <v-btn
-              class="mt-2 ml-1"
-              style="text-transform: none"
-            >
-              Neue Institution erstellen
-            </v-btn>
-          </router-link>
-        </v-col>
-      </v-row>
+
+
       <v-row>
-        <v-col>
+        <v-col
+          cols="12"
+          :md="(backend_userdata.length && backend_userdata[0].group === 'support') ? 9 : 12"
+        >
+          <v-overflow-btn
+            v-model="project.idInstitution"
+            label="Institution*"
+            target="#dropdown-institution"
+            :items="allInstitutionsSortedNameId"
+            item-text="name"
+            item-value="id"
+            auto-select-first
+            outlined
+            clearable
+            :rules="notEmpty"
+          />
+        </v-col>
+        <v-col
+          v-if="backend_userdata.length && backend_userdata[0].group === 'support'"
+          cols="12"
+          md="3"
+        >
+          <v-btn
+            class="mt-2 ml-1"
+            style="text-transform: none"
+            to="/institution"
+            block
+          >
+            Neue Institution erstellen
+          </v-btn>
+        </v-col>
+      </v-row>
+
+
+      <v-row>
+        <v-col
+          cols="12"
+          sm="4"
+        >
           <v-text-field
             v-model="project.goal"
             min="1"
@@ -114,10 +93,9 @@
             :rules="weiRule"
           />
         </v-col>
-      </v-row>
-      <v-row>
         <v-col
-          :cols="smallDevice ? 6 : 4"
+          cols="12"
+          sm="4"
         >
           <v-menu
             v-model="dateMenu"
@@ -146,7 +124,8 @@
           </v-menu>
         </v-col>
         <v-col
-          :cols="smallDevice ? 6 : 4"
+          cols="12"
+          sm="4"
         >
           <v-menu
             v-model="timeMenu"
@@ -176,6 +155,8 @@
           </v-menu>
         </v-col>
       </v-row>
+
+
       <v-row>
         <v-col cols="12">
           <v-text-field
@@ -203,14 +184,19 @@
           />
         </v-col>
       </v-row>
+
+
       <v-row>
-        <v-col cols="7">
+        <v-col
+          cols="12"
+          md="7"
+        >
           <l-map
             ref="map"
+            style="height: 300px; width: 100%; position:relative; z-index: 0"
             :zoom="zoom"
             :center="center"
             :options="mapOptions"
-            style="height: 300px; width: 100%; position:relative; z-index: 0"
             @click="setMarkerPos"
           >
             <l-tile-layer
@@ -247,6 +233,8 @@
           </v-row>
         </v-col>
       </v-row>
+
+
       <v-row>
         <v-col cols="12">
           <v-data-table
