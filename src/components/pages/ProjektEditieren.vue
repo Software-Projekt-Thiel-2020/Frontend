@@ -1,35 +1,16 @@
 <template>
   <Default title="Deine Projekte">
-    <router-link
-      v-if="!$vuetify.breakpoint.smAndDown"
-      to="/projektanlegen"
-      tag="span"
-      class="newProject"
+    <v-layout
+      class="mb-3"
+      :justify-center="$vuetify.breakpoint.smAndDown"
+      :class="!$vuetify.breakpoint.smAndDown ? 'newProject' : ''"
     >
       <v-btn
-        class="mt-5"
-        style="color: black"
+        to="/projektanlegen"
         color="success"
       >
         Projekt anlegen
       </v-btn>
-    </router-link>
-    <v-layout
-      v-else
-      justify-center
-    >
-      <router-link
-        to="/projektanlegen"
-        tag="span"
-      >
-        <v-btn
-          class="mt-5"
-          style="color: black"
-          color="success"
-        >
-          Projekt anlegen
-        </v-btn>
-      </router-link>
     </v-layout>
 
     <v-alert
@@ -761,7 +742,7 @@ export default {
 <style scoped>
   .newProject {
     position: absolute;
-    top: 5px;
-    right:10px;
+    top: 38px;
+    right:50px;
   }
 </style>
