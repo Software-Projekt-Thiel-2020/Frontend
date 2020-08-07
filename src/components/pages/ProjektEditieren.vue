@@ -88,43 +88,37 @@
         <v-col
           v-for="item in userProjects"
           :key="item.id"
-          class="ma-4"
+          sm="12"
+          md="6"
+          lg="4"
+          xl="3"
         >
-          <v-card
-            class="institution"
-            elevation="5"
-          >
-            <img
-              class="elementImage"
-              :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
-            >
-            <div
-              class="companyData"
-              style="border:0;"
-            >
-              <h2 class="ma-3 ml-4 font-weight-regular">
-                {{ item.name }}
-              </h2>
-              <v-card-actions
-                class="mb-0"
+          <MyCard :img-src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : null">
+            <template #title>
+              {{ item.name }}
+            </template>
+            <template #text>
+              {{ item.short }}
+            </template>
+            <template #actions>
+              <v-btn
+                color="rgba(0, 0, 0, 0.54)"
+                text
+                width="80%"
+                @click="editClick(item.id)"
               >
-                <v-btn
-                  class="ma-2"
-                  style="color: black"
-                  @click="editClick(item.id)"
-                >
-                  Editieren
-                </v-btn>
-                <v-btn
-                  class="ma-2"
-                  style="color: black"
-                  :href="item.webpage"
-                >
-                  Website
-                </v-btn>
-              </v-card-actions>
-            </div>
-          </v-card>
+                Editieren
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                icon
+                :href="item.webpage"
+              >
+                <v-icon>mdi-bookmark</v-icon>
+              </v-btn>
+            </template>
+          </MyCard>
+
         </v-col>
       </v-row>
     </div>
@@ -406,10 +400,12 @@ import { Editor } from '@toast-ui/vue-editor';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'ProjektEditieren',
   components: {
+    MyCard,
     Default,
     MyDialog,
     MyFormRow,
