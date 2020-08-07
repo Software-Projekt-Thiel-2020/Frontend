@@ -94,7 +94,6 @@
               </v-btn>
             </template>
           </MyCard>
-
         </v-col>
       </v-row>
     </div>
@@ -169,6 +168,17 @@
                 :initial-value="editElement.description"
                 :options="editorOptions"
                 height="500px"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Kurz-Beschreibung">
+              <v-text-field
+                v-model="editElement.short"
+                label="Kurz-Beschreibung"
+                counter
+                maxlength="140"
+                clearable
+                :rules="textRule"
               />
             </MyFormRow>
 
@@ -396,6 +406,7 @@ export default {
           this.editElement.address = inst.address;
           this.editElement.longitude = inst.longitude;
           this.editElement.latitude = inst.latitude;
+          this.editElement.short = inst.short;
 
           this.instName = inst.name;
 
