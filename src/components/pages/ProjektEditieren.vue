@@ -118,7 +118,6 @@
               </v-btn>
             </template>
           </MyCard>
-
         </v-col>
       </v-row>
     </div>
@@ -760,24 +759,6 @@ export default {
 </script>
 
 <style scoped>
-  .institution {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 25px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.8);
-  }
-
-  .elementImage{
-    max-width: 200px;
-    max-height: 200px;
-  }
-
-  .companyData {
-    margin-left: 15px;
-    flex-basis: 55%
-  }
-
   .newProject {
     position: absolute;
     top: 5px;
