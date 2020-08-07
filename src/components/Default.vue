@@ -7,7 +7,7 @@
       >
         {{ title }}
       </h1>
-      <v-divider class="mt-5" />
+      <v-divider class="my-5" />
 
       <slot />
     </v-container>
