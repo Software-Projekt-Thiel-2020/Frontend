@@ -42,7 +42,7 @@
       </v-row>
     </v-alert>
     <v-layout
-      v-if="loading == true"
+      v-if="loading"
       justify-center
     >
       <v-progress-circular
@@ -144,7 +144,7 @@
                 clearable
                 label="Bild hochladen"
                 accept="image/*"
-                class=""
+                @change="previewImageUpdate()"
               />
             </MyFormRow>
 
@@ -160,9 +160,9 @@
             <MyFormRow title="Beschreibung">
               <Editor
                 ref="toastuiEditor"
-                :initial-value="editElement.description"
                 :options="editorOptions"
                 height="500px"
+                initial-edit-type="wysiwyg"
               />
             </MyFormRow>
 
@@ -455,6 +455,7 @@ export default {
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
+      minZoom: 1,
     },
     err: {
       picErr: 0,
@@ -632,6 +633,7 @@ export default {
             this.overlay = true;
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
+              this.$refs.map.setZoom(this.zoom);
             }, 100);
 
             // Set min WEI amount for new milestones
@@ -640,6 +642,10 @@ export default {
                 this.minWei = mile.goal;
               }
             });
+            this.$nextTick(() => {
+              this.$refs.toastuiEditor.invoke('reset');
+              this.$refs.toastuiEditor.invoke('setMarkdown', this.editElement.description);
+            });
           })
           .catch((err) => {
             this.showAlert(`Das Projekt konnte nicht geladen werden: ${err.toString()}`, 'error');
@@ -647,6 +653,7 @@ export default {
       }
     },
     async changeProject() {
+      this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
       if (userSession.isUserSignedIn()) {
         const authToken = userSession.loadUserData().authResponseToken;
         const headers = {
@@ -664,10 +671,6 @@ export default {
               const formattedMile = JSON.parse(JSON.stringify(mile));
               formattedMile.name = formattedMile.milestoneName;
               delete formattedMile.milestoneName;
-
-              // required Votes muss man mitsenden, wird aber nicht verwendet
-              formattedMile.requiredVotes = 1337;
-
               return formattedMile;
             });
           headers.milestones = JSON.stringify(headers.milestones);

@@ -29,7 +29,7 @@
       </v-row>
     </v-alert>
     <v-layout
-      v-if="loading == true"
+      v-if="loading"
       justify-center
     >
       <v-progress-circular
@@ -157,7 +157,7 @@
               <v-text-field
                 v-model="editElement.webpage"
                 :placeholder="editElement.webpage"
-                :rules="notEmpty"
+                :rules="websiteRule"
                 required
               />
             </MyFormRow>
@@ -168,6 +168,7 @@
                 :initial-value="editElement.description"
                 :options="editorOptions"
                 height="500px"
+                initial-edit-type="wysiwyg"
               />
             </MyFormRow>
 
@@ -328,6 +329,9 @@ export default {
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
+    websiteRule: [
+      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+    ],
     coordRules: [
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
@@ -339,6 +343,7 @@ export default {
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
+      minZoom: 1,
     },
     err: {
       picErr: 0,
@@ -426,7 +431,12 @@ export default {
           this.overlay = true;
           setTimeout(() => {
             this.$refs.map.mapObject.invalidateSize();
+            this.$refs.map.setZoom(this.zoom);
           }, 100);
+          this.$nextTick(() => {
+            this.$refs.toastuiEditor.invoke('reset');
+            this.$refs.toastuiEditor.invoke('setMarkdown', this.editElement.description);
+          });
           return;
         }
       }
