@@ -56,61 +56,45 @@
         <v-col
           v-for="item in items"
           :key="item.name"
+          sm="12"
+          md="6"
+          lg="4"
+          xl="3"
         >
-          <v-card
-            class="institution pa-4"
-            elevation="5"
-          >
-            <v-img
-              class="white--text align-end grey lighten-2"
-              :src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : require(`@/assets/placeholder.png`)"
-              max-height="200px"
-              max-width="200px"
-              contain
-            >
-              <template #placeholder>
-                <img-placeholder />
-              </template>
-            </v-img>
-            <div
-              class="ml-2"
-              style="border:0;"
-            >
-              <h2 class="ma-3 ml-4 font-weight-regular">
-                {{ item.name }}
-              </h2>
-              <v-card-actions
-                class="mb-0"
+          <MyCard :img-src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : null">
+            <template #title>
+              {{ item.name }}
+            </template>
+            <template #text>
+              {{ item.short }}
+            </template>
+            <template #actions>
+              <v-btn
+                color="rgba(0, 0, 0, 0.54)"
+                text
+                width="40%"
+                @click="editClick(item)"
               >
-                <v-btn
-                  class="ma-2"
-                  style="color: black"
-                  @click="editClick(item)"
-                >
-                  Editieren
-                </v-btn>
-                <v-btn
-                  class="ma-2"
-                  style="color: black"
-                  :href="item.webpage"
-                >
-                  Website
-                </v-btn>
-                <router-link
-                  :to="'/institutionVoucher/'+item.id"
-                  tag="span"
-                  class="link"
-                >
-                  <v-btn
-                    class="ma-2"
-                    style="color: black"
-                  >
-                    Zu den Gutscheinen
-                  </v-btn>
-                </router-link>
-              </v-card-actions>
-            </div>
-          </v-card>
+                Editieren
+              </v-btn>
+              <v-btn
+                color="rgba(0, 0, 0, 0.54)"
+                text
+                width="40%"
+                :to="'/institutionVoucher/'+item.id"
+              >
+                Gutscheine
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                icon
+                :href="item.webpage"
+              >
+                <v-icon>mdi-bookmark</v-icon>
+              </v-btn>
+            </template>
+          </MyCard>
+
         </v-col>
       </v-row>
     </div>
@@ -286,10 +270,12 @@ import { Editor } from '@toast-ui/vue-editor';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'InstitutionEditieren',
   components: {
+    MyCard,
     Default,
     MyDialog,
     MyFormRow,
