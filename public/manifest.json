@@ -1,10 +1,22 @@
 {
-  "name": "Spenderschlender",
-  "start_url": "http://spenderschlender.3ef.de/",
-  "description": "A blockchain donation and voucher project",
-  "icons": [{
-    "src": "http://blockstack-todos.appartisan.com/logo.png",
-    "sizes": "400x400",
-    "type": "image/png"
-  }]
+  "name":"Spenderschlender",
+  "short_name":"Spenderschlender",
+  "start_url":"http://localhost/#/",
+  "description":"A blockchain donation and voucher project",
+  "display":"minimal-ui",
+  "background_color":"#3779c4",
+  "theme_color":"#abeeff",
+  "icons":[
+    {
+      "src":"/favicon.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    },
+    {
+      "src":"/maskable_icon.png",
+      "sizes":"682x682",
+      "type":"image/png",
+      "purpose":"any maskable"
+    }
+  ]
 }
