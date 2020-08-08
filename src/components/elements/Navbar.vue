@@ -106,6 +106,12 @@
         </v-btn>
       </router-link>
 
+      <v-icon
+        v-if="isOffline"
+      >
+        mdi-wifi-off
+      </v-icon>
+
       <v-btn
         v-if="userSession.isUserSignedIn()"
         class="d-flex align-center text-none ma-0"
@@ -235,159 +241,167 @@
       </v-menu>
     </v-app-bar>
 
-
-    <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-      style="position: fixed"
-    >
-      <v-list
-        nav
-        dense
+    <div>
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+        style="position: fixed"
       >
-        <v-list-item-group
-          active-class="deep-purple--text text--accent-4"
+        <v-list
+          nav
+          dense
         >
-          <router-link
-            to="/"
-            tag="span"
+          <v-list-item-group
+            active-class="deep-purple--text text--accent-4"
           >
-            <v-list-item>
+            <router-link
+              to="/"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-home</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Home</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              to="/spenden"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-gift-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Spenden</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              to="/gutscheine"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-wallet-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Gutscheine</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              to="/ueberuns"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-information-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Über uns</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <v-spacer />
+
+            <router-link
+              v-if="userSession.isUserSignedIn()"
+              to="/portfolio"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-wallet</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Mein Portfolio</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              v-if="userSession.isUserSignedIn()"
+              to="/profil"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-wrench</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Mein Profil</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <v-list-item
+              v-if="!userSession.isUserSignedIn()"
+              color="accent"
+              @click="signIn"
+            >
               <v-list-item-icon>
-                <v-icon>mdi-home</v-icon>
+                <v-icon>mdi-run</v-icon>
               </v-list-item-icon>
-              <v-list-item-title>Home</v-list-item-title>
+              <v-list-item-title>Anmelden</v-list-item-title>
             </v-list-item>
-          </router-link>
 
-          <router-link
-            to="/spenden"
-            tag="span"
-          >
-            <v-list-item>
+            <router-link
+              v-if="userSession.isUserSignedIn()"
+              to="/InstitutionEditieren"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-bank</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Meine Institutionen</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              v-if="backend_userdata && backend_userdata.group === 'support'"
+              to="/institution"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-bank-plus</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Institution erstellen</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <router-link
+              v-if="userSession.isUserSignedIn()"
+              to="/ProjektEditieren"
+              tag="span"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-alpha-p-box</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Meine Projekte</v-list-item-title>
+              </v-list-item>
+            </router-link>
+
+            <v-list-item
+              v-if="userSession.isUserSignedIn()"
+              color="accent"
+              @click="signOut"
+            >
               <v-list-item-icon>
-                <v-icon>mdi-gift-outline</v-icon>
+                <v-icon>mdi-run</v-icon>
               </v-list-item-icon>
-              <v-list-item-title>Spenden</v-list-item-title>
+              <v-list-item-title>Abmelden</v-list-item-title>
             </v-list-item>
-          </router-link>
-
-          <router-link
-            to="/gutscheine"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-wallet-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Gutscheine</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <router-link
-            to="/ueberuns"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-information-outline</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Über uns</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <v-spacer />
-
-          <router-link
-            v-if="userSession.isUserSignedIn()"
-            to="/portfolio"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-wallet</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Mein Portfolio</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <router-link
-            v-if="userSession.isUserSignedIn()"
-            to="/profil"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-wrench</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Mein Profil</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <v-list-item
-            v-if="!userSession.isUserSignedIn()"
-            color="accent"
-            @click="signIn"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-run</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Anmelden</v-list-item-title>
-          </v-list-item>
-
-          <router-link
-            v-if="userSession.isUserSignedIn()"
-            to="/InstitutionEditieren"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-bank</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Meine Institutionen</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <router-link
-            v-if="backend_userdata && backend_userdata.group === 'support'"
-            to="/institution"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-bank-plus</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Institution erstellen</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <router-link
-            v-if="userSession.isUserSignedIn()"
-            to="/ProjektEditieren"
-            tag="span"
-          >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon>mdi-alpha-p-box</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Meine Projekte</v-list-item-title>
-            </v-list-item>
-          </router-link>
-
-          <v-list-item
-            v-if="userSession.isUserSignedIn()"
-            color="accent"
-            @click="signOut"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-run</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Abmelden</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-navigation-drawer>
+          </v-list-item-group>
+        </v-list>
+      </v-navigation-drawer>
+      <v-spacer />
+      <v-icon
+        v-if="isOffline"
+        style="visibility: hidden"
+      >
+        mdi-wifi-off
+      </v-icon>
+    </div>
 
     <v-dialog
       v-if="user && (gotResponse && !error) && (!register_dialog.successful) && (!backend_userdata)"
@@ -512,7 +526,7 @@
 <script>
 import * as blockstack from 'blockstack';
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'Navbar',
@@ -621,12 +635,12 @@ export default {
 </script>
 
 <style scoped>
-    .blockstack-logo{
-      color: white;
-      width: 24px;
-    }
+.blockstack-logo{
+  color: white;
+  width: 24px;
+}
 
-    .clickable {
-        cursor: pointer
-    }
+.clickable {
+  cursor: pointer
+}
 </style>

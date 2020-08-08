@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mt-12">
+  <div style="height: 0">
     <v-snackbar
       top
       app
@@ -16,23 +16,42 @@
         Aktualisieren
       </v-btn>
     </v-snackbar>
-    <p
-      v-if="isOnline"
-      class="offline"
+    <v-snackbar
+      top
+      app
+      :value="onlineNotification"
+      :timeout="4000"
+      color="success"
+      style="z-index: 1000"
     >
-      This part will be visible only if user is online
-    </p>
-    <p v-if="isOffline">
-      This part will be visible only if user is offline
-    </p>
-    <p>
-      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    </p>
-  </v-container>
+      <span class="text-center"> Sie sind wieder online!</span>
+    </v-snackbar>
+    <v-dialog
+      v-model="isOffline"
+      no-click-animation
+      max-width="400"
+    >
+      <v-card
+        shaped
+        elevation="8"
+        max-width="400"
+      >
+        <v-card-title>
+          <span class="text-center">Sie sind Offline</span>
+        </v-card-title>
+        <v-card-text class="text-left">
+          Im Offline-Modus können Sie noch auf unsere Seite navigieren,
+          aber keine Spenden tätigen oder sonstigen Aktivitäten nachgehen.
+          Damit Sie den vollen Umfang von SpenderSchlender genießen können,
+          gehen Sie bitte wieder online.
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
-// File in Anlehnung an 'https://dev.to/drbragg/handling-service-worker-updates-in-your-vue-pwa-1pip'
+// Datei in Anlehnung an 'https://dev.to/drbragg/handling-service-worker-updates-in-your-vue-pwa-1pip'
 
 export default {
   name: 'ContentManager',
@@ -40,10 +59,11 @@ export default {
     refreshing: false,
     registration: null,
     updateExists: false,
+    onlineNotification: false,
   }),
   mounted() {
-    this.$on('offline', () => {
-      alert('You are offline! The website will not work');
+    this.$on('online', () => {
+      this.onlineNotification = true;
     });
   },
   created() {
