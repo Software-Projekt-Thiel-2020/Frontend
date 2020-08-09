@@ -37,17 +37,13 @@
             >
               Mit unserem transparenten Verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem Du gerne helfen möchtest.
             </p>
-            <router-link
+            <v-btn
               to="/spenden"
-              tag="span"
+              class="title btn-hover white--text color-9"
+              style="text-transform: none"
             >
-              <v-btn
-                class="title btn-hover white--text color-9"
-                style="text-transform: none"
-              >
-                Jetzt spenden!
-              </v-btn>
-            </router-link>
+              Jetzt spenden!
+            </v-btn>
           </v-col>
           <v-divider
             style="border-color:rgba(255,255,255,0.4);z-index: 5; height: 70vh"
@@ -75,17 +71,13 @@
             >
               Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich da zu sein.
             </p>
-            <router-link
+            <v-btn
               to="/gutscheine"
-              tag="span"
+              class="title btn-hover white--text color-9"
+              style="text-transform: none"
             >
-              <v-btn
-                class="title btn-hover white--text color-9"
-                style="text-transform: none"
-              >
-                Gutscheine kaufen!
-              </v-btn>
-            </router-link>
+              Gutscheine kaufen!
+            </v-btn>
           </v-col>
         </v-row>
       </div>
