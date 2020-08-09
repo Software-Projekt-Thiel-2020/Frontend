@@ -1,5 +1,7 @@
 <template>
-  <div style="height: 0">
+  <div
+    style="height: 0"
+  >
     <v-snackbar
       top
       app
