@@ -5,7 +5,7 @@
       app
       :value="updateExists"
       :timeout="0"
-      color="primary"
+      color="orange darken-2"
       style="z-index: 1000"
     >
       Ein Update ist verfügbar.
