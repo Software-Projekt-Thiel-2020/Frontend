@@ -620,6 +620,7 @@ export default {
       this.calcUntil();
     },
     editItem(item) {
+      console.log(item);
       this.editedIndex = this.project.milestones.indexOf(item);
 
       const copy = JSON.parse(JSON.stringify(item));
@@ -639,7 +640,6 @@ export default {
       this.milestonesDate.splice(displayIndex, 1);
     },
     cancel() {
-      this.editedItem = { ...this.preEditedItem };
       if (this.editedItem.goal === this.defaultItem.goal
           && this.editedItem.name === this.defaultItem.name
           && this.editedItem.requiredVotes === this.defaultItem.requiredVotes
