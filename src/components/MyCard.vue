@@ -1,7 +1,7 @@
 <template>
   <v-card elevation="10">
     <v-img
-      v-if="this.$props.imgSrc"
+      v-if="'imgSrc' in this.$options.propsData"
       class="white--text align-end grey lighten-2"
       height="300px"
       width="100%"
