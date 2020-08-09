@@ -3,9 +3,10 @@
   "short_name":"Spenderschlender",
   "start_url":"https://spenderschlender.3ef.de/#/",
   "description":"A blockchain donation and voucher project",
-  "display":"minimal-ui",
-  "background_color":"#3779c4",
-  "theme_color":"#abeeff",
+  "display":"standalone",
+  "background_color":"#3f51b5",
+  "lang": "de-DE",
+  "theme_color":"#3f51b5",
   "icons":[
     {
       "src":"/favicon.png",
