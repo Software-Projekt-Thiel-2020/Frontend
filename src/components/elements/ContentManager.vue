@@ -1,7 +1,5 @@
 <template>
-  <div
-    style="height: 0"
-  >
+  <div>
     <v-snackbar
       top
       app
@@ -9,6 +7,7 @@
       :timeout="0"
       color="orange darken-2"
       style="z-index: 1000"
+      class="mt-12"
     >
       Ein Update ist verfügbar.
       <v-btn
@@ -25,6 +24,7 @@
       :timeout="4000"
       color="success"
       style="z-index: 1000"
+      class="mt-12"
     >
       <span class="text-center"> Sie sind wieder online!</span>
     </v-snackbar>
