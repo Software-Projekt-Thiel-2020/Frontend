@@ -282,7 +282,7 @@
                           <v-col cols="12">
                             <v-text-field
                               v-model="editedItem.name"
-                              label="Meilensteinname"
+                              label="Meilensteinname*"
                               outlined
                               clearable
                               :rules="milestoneNameRule"
@@ -627,8 +627,8 @@ export default {
       const [day, month, year] = copy.until.split('.');
       copy.until = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 
-      this.editedItem = copy;
-      this.preEditedItem = copy;
+      this.editedItem = { ...copy };
+      this.preEditedItem = { ...copy };
       this.deleteItem(item);
       this.dialog2 = true;
     },
