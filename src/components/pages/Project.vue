@@ -100,7 +100,7 @@
                       Meilensteine
                     </v-card-text>
                   </v-system-bar>
-                  <v-card-text v-if="project.milestones.length == 0">
+                  <v-card-text v-if="project.milestones.length === 0">
                     Keine Meilensteine vorhanden
                   </v-card-text>
                   <div>
