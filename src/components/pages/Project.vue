@@ -1,5 +1,5 @@
 <template>
-  <div class="gradientBackground">
+  <Default :title="project ? project.name : 'Projekt'">
     <v-dialog
       v-model="dialog"
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
@@ -63,14 +63,6 @@
       />
     </v-layout>
     <div v-else-if="project">
-      <div class="titleHeader text-center">
-        <h1
-          :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
-          class="font-weight-thin white--text"
-        >
-          {{ project ? project.name : "Projekt" }}
-        </h1>
-      </div>
       <v-container>
         <v-card
           v-if="project"
@@ -292,7 +284,7 @@
     >
       Spende konnte nicht getätigt werden: {{ errorMessage }}
     </v-snackbar>
-  </div>
+  </Default>
 </template>
 
 <script>
@@ -300,8 +292,13 @@ import axios from 'axios';
 import marked from 'marked';
 import DOMPurify from 'dompurify';
 
+import Default from '../Default.vue';
+
 export default {
   name: 'Project',
+  components: {
+    Default,
+  },
   data: () => ({
     project: undefined,
     projectid: 0,
@@ -458,16 +455,6 @@ export default {
 </script>
 
 <style scoped>
-  .titleHeader {
-    padding-bottom: 15px;
-    padding-top: 10px;
-    backdrop-filter: blur(15px) brightness(0.5);
-  }
-  .gradientBackground {
-    background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-    background-color: rgb(255, 255, 255);
-    min-height: 100%;
-  }
   input {
     border: 1px lightgrey solid;
     text-align: center;

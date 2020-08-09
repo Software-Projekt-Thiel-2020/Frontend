@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <Default title="Gutscheine kaufen">
     <v-container no-gutters>
-      <h1>Gutscheine kaufen</h1>
-      <h3>Suche nach Institutionen in deiner Nähe!</h3>
+      <h3 class="font-weight-light">
+        Suche nach Institutionen in deiner Nähe!
+      </h3>
       <MySearch
         v-model="searchModel"
         placeholder="der Institution"
@@ -78,17 +79,20 @@
         </v-row>
       </div>
     </v-container>
-  </div>
+  </Default>
 </template>
 
 <script>
 import axios from 'axios';
+
+import Default from '../Default.vue';
 import MyCard from '../MyCard.vue';
 import MySearch from '../MySearch.vue';
 
 export default {
   name: 'Gutscheine',
   components: {
+    Default,
     MySearch,
     MyCard,
   },
