@@ -633,7 +633,7 @@ export default {
             this.overlay = true;
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
-              this.$refs.map.setZoom(this.zoom);
+              this.$refs.map.mapObject.setView(this.center, this.zoom, { animation: true });
             }, 100);
 
             // Set min WEI amount for new milestones
