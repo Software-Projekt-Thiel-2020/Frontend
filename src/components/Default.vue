@@ -48,3 +48,11 @@ export default {
     height: 100%;
   }
 </style>
+
+<style>
+  .btnTitleLeft {
+    position: absolute;
+    top: 38px;
+    right:50px;
+  }
+</style>
