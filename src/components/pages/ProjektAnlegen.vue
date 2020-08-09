@@ -320,7 +320,7 @@
                         Cancel
                       </v-btn>
                       <v-btn
-                        :disabled="editedItem.name === '' || editedItem.goal === '' || editedItem.until === null"
+                        :disabled="editedItem.name === null || editedItem.goal === null || editedItem.until === null"
                         color="blue darken-1"
                         text
                         @click="save"
