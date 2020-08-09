@@ -8,6 +8,9 @@
         {{ title }}
       </h1>
       <v-divider class="my-5" />
+      <MyAlertSystem
+        ref="alertSystem"
+      />
 
       <v-layout
         v-if="loading"
@@ -27,8 +30,13 @@
 </template>
 
 <script>
+import MyAlertSystem from './MyAlertSystem.vue';
+
 export default {
   name: 'DefaultVue',
+  components: {
+    MyAlertSystem,
+  },
   props: {
     title: {
       type: String,
