@@ -1,34 +1,23 @@
 <template>
-  <div class="gradientBackground">
-    <v-container>
-      <h4
-        class="ma-5 display-1 text-center font-weight-medium white--text"
-      >
-        Eingestellte Gutscheine
-      </h4>
+  <Default
+    title="Eingestellte Gutscheine"
+    :loading="loadingVouchers"
+  >
+    <v-layout
+      class="mb-3"
+      :justify-center="$vuetify.breakpoint.smAndDown"
+      :class="!$vuetify.breakpoint.smAndDown ? 'newProject' : ''"
+    >
       <v-btn
-        class="addVoucher"
         color="success"
         @click="openDialog"
       >
-        <v-icon class="plus">
-          mdi-plus-thick
-        </v-icon>
+        Gutschein anlegen
       </v-btn>
-      <v-divider class="mt-5" />
-      <v-layout
-        v-if="loadingVouchers === true"
-        justify-center
-      >
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          color="green"
-          indeterminate
-          class="loadingCircle"
-        />
-      </v-layout>
-      <div v-else>
+    </v-layout>
+
+    <v-container>
+      <div>
         <v-row>
           <v-col
             v-for="voucher in vouchers"
@@ -97,7 +86,7 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row v-if="vouchers.length === 0">
+        <v-row v-if="vouchers && vouchers.length === 0">
           <v-col class="noVouchers">
             <h3>
               Keine Gutscheine vorhanden
@@ -123,6 +112,7 @@
       </v-layout>
       <v-container />
     </v-container>
+
     <v-dialog
       v-if="overlay"
       v-model="overlay"
@@ -370,15 +360,20 @@
     >
       Etherum Wechselkurs konnte nicht geladen werden {{ dialogEth.errorMessage }}
     </v-snackbar>
-  </div>
+  </Default>
 </template>
 
 <script>
 import axios from 'axios';
 import { userSession } from '@/userSession';
 
+import Default from '../Default.vue';
+
 export default {
   name: 'InstitutionVoucher',
+  components: {
+    Default,
+  },
   data: () => ({
     userSession: null,
     userData: null,
@@ -612,45 +607,34 @@ export default {
 
 
 <style scoped>
-    .gradientBackground {
-        background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        height: 100%;
-    }
-    .voucherData {
-    text-align: left;
-    margin-left: 25px;
-    }
+  .newProject {
+    position: absolute;
+    top: 38px;
+    right:50px;
+  }
 
-    .voucherData h5 {
-        font-style: italic;
-    }
+  .voucherData {
+  text-align: left;
+  margin-left: 25px;
+  }
 
-    .noVouchers {
-        text-align: center;
-        color: red;
-    }
+  .voucherData h5 {
+      font-style: italic;
+  }
+
+  .noVouchers {
+      text-align: center;
+      color: red;
+  }
 
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
   }
 
-  .addVoucher {
-      position: fixed;
-      top: 80px;
-      right: 10px;
-      width: 10px;
-      height: 10px;
-      z-index: 2;
-      border: 1px solid black;
-  }
-
-    .loadingCircle {
-    margin-top: 50px;
-    margin-bottom: 50px;
-  }
-
-  .wrongInput {
-    color: red;
+  .newVoucher {
+    position: absolute;
+    top: 38px;
+    right:50px;
   }
 </style>
