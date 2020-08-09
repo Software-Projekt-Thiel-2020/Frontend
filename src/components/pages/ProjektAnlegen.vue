@@ -620,7 +620,6 @@ export default {
       this.calcUntil();
     },
     editItem(item) {
-      console.log(item);
       this.editedIndex = this.project.milestones.indexOf(item);
 
       const copy = JSON.parse(JSON.stringify(item));
