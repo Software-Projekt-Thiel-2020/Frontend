@@ -52,7 +52,7 @@ export default {
 
 <style scoped>
   .gradientBackground {
-    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+    background: rgb(255, 255, 255) linear-gradient(to right, rgba(199, 255, 212, 0.45), rgba(176, 218, 255, 0.9));
     height: 100%;
   }
 </style>
