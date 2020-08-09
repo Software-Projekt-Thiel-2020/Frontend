@@ -88,7 +88,7 @@
             min-width="15em"
             @click="reset"
           >
-            Zurücksetzten
+            Zurücksetzen
           </v-btn>
         </v-col>
         <v-col />

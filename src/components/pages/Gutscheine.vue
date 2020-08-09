@@ -40,9 +40,7 @@
       <div
         v-else-if="gotResponse"
       >
-        <v-row
-          dense
-        >
+        <v-row>
           <v-col
             v-for="item in resultList"
             :key="item.id"
