@@ -35,7 +35,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Mit unserem Transparenten verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem du gerne helfen möchtest.
+              Mit unserem transparenten Verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem Du gerne helfen möchtest.
             </p>
             <router-link
               to="/spenden"
@@ -73,7 +73,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich dazusein.
+              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich da zu sein.
             </p>
             <router-link
               to="/gutscheine"
@@ -116,7 +116,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Mit unserem Transparenten verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem du gerne helfen möchtest.
+              Mit unserem transparenten Verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem Du gerne helfen möchtest.
             </p>
             <router-link
               to="/spenden"
@@ -149,7 +149,7 @@
               align="justify"
               style="margin-left: 15%; margin-right: 15%"
             >
-              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich dazusein.
+              Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich da zu sein.
             </p>
             <router-link
               to="/gutscheine"

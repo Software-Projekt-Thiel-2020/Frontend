@@ -152,7 +152,7 @@
             style="text-align:center"
             class="ma-1"
           >
-            Meine Spenden/Gutscheine
+            Meine Spenden / Gutscheine
           </v-btn>
         </router-link>
       </div>
