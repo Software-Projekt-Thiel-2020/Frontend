@@ -84,7 +84,6 @@
                 </v-btn>
               </template>
             </MyCard>
-
           </v-col>
         </v-row>
         <v-row v-if="vouchers && vouchers.length === 0">
