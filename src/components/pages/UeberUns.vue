@@ -10,9 +10,9 @@
           Was ist Spenderschlender
         </h2>
         <p class="text-left" />
-        Wir wollen Unternehmern und Geschäftsinhabern in besonders schwierigen Zeiten (aktuell das Covid-19-Virus) eine Platform bieten, auf der Sie Spendenprojekte erstellen und Gutscheine für Ihre Artikel und Dienstleistungen verkaufen können, um die immensen Gewinneinbußen auszugleichen.
-        Für Kunden bietet unsere Seite die Möglichkeit Ihrem lieblingsrestaurant mit einer Spende zu helfen, für das Kino um die Ecke schonmal Gutscheine zu kaufen oder einfach eine gute Tat zu leisten. Mit unserem transparenten Konzept können sie sich sicher sein, dass am Ende auch das Geld da ankommt, wo es auch benötigt wird.<br>
-        Unser Partner Blockstacks sorgt für eine sichere Autentifikation und bietet Ihnen gleichzeitig ein zentrales Konto für diverse andere Dienste im Internet.<br>
+        Wir wollen Unternehmern und Geschäftsinhabern in besonders schwierigen Zeiten (aktuell das Covid-19-Virus) eine Plattform bieten, auf der sie Spendenprojekte erstellen und Gutscheine für Ihre Artikel und Dienstleistungen verkaufen können, um die immensen Gewinneinbußen auszugleichen.
+        Für Kunden bietet unsere Seite die Möglichkeit ihrem Lieblingsrestaurant mit einer Spende zu helfen, für das Kino um die Ecke schonmal Gutscheine zu kaufen oder einfach eine gute Tat zu leisten. Mit unserem transparenten Konzept können Sie sich sicher sein, dass am Ende das Geld da ankommt, wo es auch benötigt wird.<br>
+        Unser Partner Blockstacks sorgt für eine sichere Authentifikation und bietet Ihnen gleichzeitig ein zentrales Konto für diverse andere Dienste im Internet.<br>
         <h2>Warum Sie uns vertrauen können</h2>
         <h3>Transparenz</h3>
         Um ein Maximum an Transparenz zu gewährleisten, verwenden wir eine Blockchain. Mit dieser ist es möglich, jede Transaktion nachzuverfolgen und sowohl den Empfänger als auch den überwiesenen Betrag einzusehen.<br>
@@ -20,8 +20,8 @@
         <a href="https://www.cryptolist.de/was-ist-blockchain">Mehr zum Thema Blockchain (externer Link)</a>
         <h3>Ethereum</h3>
         Ethereum und die damit enthaltene Kryptowährung Ether basiert auf einer sog. Blockchain, ählich wie das bekannteste Beispiel Bitcoin. Im Gegensatz zu Bitcoin bietet Ethereum mehr als nur eine Kryptowährung, denn es können Smart Contracts, dezentrale Anwendungen und Initial Coin Offerings(ICOs), wie bei unserer Seite, verwendet werden.<br>
-        Da eine Blockchain dezentral, also auf verschiedene Orte verteilt ( Gegensatz dazu ein zentraler Server), arbeitet, werden auf jedem teilnehmenden Client alle Daten und Transaktionen gespeichert und ständig aktualisiert.<br>
-        <a href="https://www.cryptolist.de/ethereum">Auch hier verweisen wir gerne zu einer Ausführlichen Erklärung.(externer Link)</a>
+        Da eine Blockchain dezentral - also auf verschiedene Orte verteilt ( Gegensatz dazu ein zentraler Server) - arbeitet, werden auf jedem teilnehmenden Client alle Daten und Transaktionen gespeichert und ständig aktualisiert.<br>
+        <a href="https://www.cryptolist.de/ethereum">Auch hier verweisen wir gerne zu einer ausführlichen Erklärung. (externer Link)</a>
       </v-col>
     </v-row>
     <br><br>
@@ -70,7 +70,7 @@
               <span class="font-weight-bold">A:</span>
             </div>
             <v-col class="pa-0 pl-1">
-              Zuerst müssen sie sich bei Blockstack registrieren und anschließend bei uns einloggen. Danach erstellen Sie einfach ein neues Spendenprojekt und schon kann es losgehen.
+              Zuerst müssen Sie sich bei Blockstack registrieren und anschließend bei uns einloggen. Danach erstellen Sie einfach ein neues Spendenprojekt und schon kann es losgehen.
             </v-col>
           </v-row>
         </v-expansion-panel-content>
@@ -90,7 +90,7 @@
               <span class="font-weight-bold">A:</span>
             </div>
             <v-col class="pa-0 pl-1">
-              Zuerst registrierst oder loggst du dich bei uns ein.Wenn du bereits weißt, für wen du spenden möchtest, kannst du ganz einfach danach suchen und dann eine Spende tätigen. Andernfalls kannst du mit den Filteroptionen deine Suche verfeinern und ein passendes Unternehmen oder eine Spendenaktion zu finden.
+              Zuerst registrieren Sie sich bei uns oder loggen Sie sich ein. Wenn Sie bereits wissen, für wen Sie spenden möchten, können Sie ganz einfach danach suchen und dann eine Spende tätigen. Andernfalls können Sie mit den Filteroptionen Ihre Suche verfeinern und ein passendes Unternehmen oder eine Spendenaktion zu finden.
             </v-col>
           </v-row>
         </v-expansion-panel-content>
