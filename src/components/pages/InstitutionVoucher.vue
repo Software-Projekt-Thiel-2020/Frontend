@@ -6,7 +6,7 @@
     <v-layout
       class="mb-3"
       :justify-center="$vuetify.breakpoint.smAndDown"
-      :class="!$vuetify.breakpoint.smAndDown ? 'newProject' : ''"
+      :class="!$vuetify.breakpoint.smAndDown ? 'btnTitleLeft' : ''"
     >
       <v-btn
         color="success"
@@ -22,68 +22,69 @@
           <v-col
             v-for="voucher in vouchers"
             :key="voucher.id"
-            cols="6"
+            cols="12"
+            sm="12"
+            md="6"
+            lg="4"
+            xl="3"
           >
-            <v-card
-              elevation="7"
-              class="py-6 text-center"
-            >
-              <v-row>
-                <v-col>
-                  <h3 class="headline">
-                    {{ voucher.title }}
-                  </h3>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h4>
-                    Beschreibung:
-                  </h4>
-                  {{ voucher.subject }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h4>
-                    Preis:
-                  </h4>
-                  {{ getETHValue(voucher.price) }}€
-                </v-col>
-                <v-col class="voucherData">
-                  <h4>
-                    Gültigkeit:
-                  </h4>
-                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="voucherData">
-                  <h4>
-                    Verfügbarkeit:
-                  </h4>
-                  <div v-if="voucher.available">
-                    Verfügbar
-                  </div>
-                  <div v-else>
-                    Nicht verfügbar
-                  </div>
-                </v-col>
-                <v-col class="voucherData">
-                  <h4>
-                    Verkauft:
-                  </h4>
-                  {{ voucher.amount }} mal verkauft
-                </v-col>
-              </v-row>
-              <v-btn
-                class="mt-2 btn-hover color-9"
-                dark
-                @click="editVoucher(voucher)"
-              >
-                <span v-if="!$vuetify.breakpoint.xsOnly"> Gutschein editieren </span> <span v-else> editieren </span>
-              </v-btn>
-            </v-card>
+            <MyCard>
+              <template #title>
+                {{ voucher.title }}
+              </template>
+
+              <template #subtitle>
+                {{ voucher.subject }}
+              </template>
+
+              <template #text>
+                <v-row>
+                  <v-col>
+                    <h4>
+                      Preis:
+                    </h4>
+                    {{ getETHValue(voucher.price) }}€
+                  </v-col>
+                  <v-col>
+                    <h4>
+                      Gültigkeit:
+                    </h4>
+                    {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <h4>
+                      Verfügbarkeit:
+                    </h4>
+                    <div v-if="voucher.available">
+                      Verfügbar
+                    </div>
+                    <div v-else>
+                      Nicht verfügbar
+                    </div>
+                  </v-col>
+                  <v-col>
+                    <h4>
+                      Verkauft:
+                    </h4>
+                    {{ voucher.amount }} mal verkauft
+                  </v-col>
+                </v-row>
+              </template>
+
+              <template #actions>
+                <v-btn
+                  color="rgba(0, 0, 0, 0.54)"
+                  text
+                  block
+                  @click="editVoucher(voucher)"
+                >
+                  editieren
+                </v-btn>
+              </template>
+            </MyCard>
+
           </v-col>
         </v-row>
         <v-row v-if="vouchers && vouchers.length === 0">
@@ -97,18 +98,12 @@
       <v-layout
         justify-center
       >
-        <router-link
+        <v-btn
           to="/InstitutionEditieren"
-          tag="span"
-          class="link"
+          class="mt-5"
         >
-          <v-btn
-            class="mt-5"
-            style="color: black"
-          >
-            Meine Institutionen
-          </v-btn>
-        </router-link>
+          Meine Institutionen
+        </v-btn>
       </v-layout>
       <v-container />
     </v-container>
@@ -368,11 +363,13 @@ import axios from 'axios';
 import { userSession } from '@/userSession';
 
 import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'InstitutionVoucher',
   components: {
     Default,
+    MyCard,
   },
   data: () => ({
     userSession: null,
@@ -502,7 +499,7 @@ export default {
     },
     subjectRules() {
       return [
-        (v) => (this.validate(this.window.btoa(v))) || 'Beschreibung muss Base64 encodedierbar sein',
+        (v) => (this.validate(window.btoa(v))) || 'Beschreibung muss Base64 encodedierbar sein',
       ];
     },
     validate(str) {
@@ -607,21 +604,6 @@ export default {
 
 
 <style scoped>
-  .newProject {
-    position: absolute;
-    top: 38px;
-    right:50px;
-  }
-
-  .voucherData {
-  text-align: left;
-  margin-left: 25px;
-  }
-
-  .voucherData h5 {
-      font-style: italic;
-  }
-
   .noVouchers {
       text-align: center;
       color: red;
@@ -630,11 +612,5 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
-  }
-
-  .newVoucher {
-    position: absolute;
-    top: 38px;
-    right:50px;
   }
 </style>
