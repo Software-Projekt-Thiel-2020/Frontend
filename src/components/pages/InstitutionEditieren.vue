@@ -461,6 +461,7 @@ export default {
         delete this.editElement.picture;
 
         headers.description = window.btoa(this.editElement.description);
+        headers.short = window.btoa(this.editElement.short);
         this.loadingChanges = true;
         axios.patch('institutions', null, { headers })
           .catch(() => {
