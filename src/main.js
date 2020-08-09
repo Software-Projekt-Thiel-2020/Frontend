@@ -3,6 +3,7 @@ import VueConfetti from 'vue-confetti';
 import VueCurrencyInput from 'vue-currency-input';
 import VueRouter from 'vue-router';
 import axios from 'axios';
+import VueOffline from 'vue-offline';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import App from './App.vue';
@@ -24,6 +25,7 @@ import ProjectGutschein from './components/pages/ProjectGutschein.vue';
 import InstitutionEditieren from './components/pages/InstitutionEditieren.vue';
 import ProjektEditieren from './components/pages/ProjektEditieren.vue';
 import InstitutionVoucher from './components/pages/InstitutionVoucher.vue';
+import './registerServiceWorker';
 
 // eslint-disable-next-line no-underscore-dangle
 delete L.Icon.Default.prototype._getIconUrl;
@@ -43,6 +45,7 @@ Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(VueCurrencyInput);
 Vue.use(VueConfetti);
+Vue.use(VueOffline, { mixin: true });
 window.blockstack = require('blockstack');
 
 const routes = [

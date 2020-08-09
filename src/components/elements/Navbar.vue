@@ -106,6 +106,12 @@
         </v-btn>
       </router-link>
 
+      <v-icon
+        v-if="isOffline"
+      >
+        mdi-wifi-off
+      </v-icon>
+
       <v-btn
         v-if="userSession.isUserSignedIn()"
         class="d-flex align-center text-none ma-0"
@@ -234,7 +240,6 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
 
     <v-navigation-drawer
       v-model="drawer"
@@ -388,6 +393,7 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
+    <v-spacer />
 
     <v-dialog
       v-if="user && (gotResponse && !error) && (!register_dialog.successful) && (!backend_userdata)"
@@ -512,7 +518,7 @@
 <script>
 import * as blockstack from 'blockstack';
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'Navbar',
@@ -621,12 +627,12 @@ export default {
 </script>
 
 <style scoped>
-    .blockstack-logo{
-      color: white;
-      width: 24px;
-    }
+.blockstack-logo{
+  color: white;
+  width: 24px;
+}
 
-    .clickable {
-        cursor: pointer
-    }
+.clickable {
+  cursor: pointer
+}
 </style>
