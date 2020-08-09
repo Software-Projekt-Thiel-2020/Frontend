@@ -1,462 +1,372 @@
 <template>
-  <div class="gradientBackground">
-    <v-container>
-      <h4
-        class="ma-5 display-1 text-center font-weight-medium white--text"
-      >
-        Deine Projekte
-      </h4>
-      <router-link
-        v-if="!$vuetify.breakpoint.smAndDown"
+  <Default title="Deine Projekte">
+    <v-layout
+      class="mb-3"
+      :justify-center="$vuetify.breakpoint.smAndDown"
+      :class="!$vuetify.breakpoint.smAndDown ? 'newProject' : ''"
+    >
+      <v-btn
         to="/projektanlegen"
-        tag="span"
-        class="newProject"
+        color="success"
       >
-        <v-btn
-          class="mt-5"
-          style="color: black"
-          color="success"
+        Projekt anlegen
+      </v-btn>
+    </v-layout>
+
+    <v-alert
+      v-if="alert"
+      :type="alertType"
+      prominent
+      dense
+    >
+      <v-row align="center">
+        <v-col
+          v-for="line in userFeedback.split('\n')"
+          :key="line"
+          class="grow"
         >
-          Projekt anlegen
-        </v-btn>
-      </router-link>
-      <v-layout
-        v-else
-        justify-center
-      >
-        <router-link
-          to="/projektanlegen"
-          tag="span"
+          {{ line }}<br>
+        </v-col>
+        <v-col
+          class="shrink"
         >
           <v-btn
-            class="mt-5"
-            style="color: black"
-            color="success"
+            left
+            :color="alertType"
+            depressed
+            @click="closeAlert"
           >
-            Projekt anlegen
+            Schließen
           </v-btn>
-        </router-link>
-      </v-layout>
-      <v-divider class="mt-5" />
-
-      <v-alert
-        v-if="alert"
-        :type="alertType"
-        prominent
-        dense
+        </v-col>
+      </v-row>
+    </v-alert>
+    <v-layout
+      v-if="loading"
+      justify-center
+    >
+      <v-progress-circular
+        :size="50"
+        :width="7"
+        color="green"
+        indeterminate
+        class="mt-24"
+      />
+    </v-layout>
+    <div v-else-if="(gotResponse && userProjects.length === 0)">
+      <v-card
+        class="pa-10 ma-7"
+        elevation="5"
+        color="red lighten-4"
       >
-        <v-row align="center">
-          <v-col
-            v-for="line in userFeedback.split('\n')"
-            :key="line"
-            class="grow"
+        <h2>
+          Es wurden keine Projekte gefunden.
+        </h2>
+      </v-card>
+    </div>
+    <div v-else-if="gotResponse">
+      <v-row>
+        <v-col
+          v-for="item in userProjects"
+          :key="item.id"
+          sm="12"
+          md="6"
+          lg="4"
+          xl="3"
+        >
+          <MyCard :img-src="item.picturePath ? (apiurl+'/file/'+item.picturePath) : null">
+            <template #title>
+              {{ item.name }}
+            </template>
+            <template #text>
+              {{ item.short }}
+            </template>
+            <template #actions>
+              <v-btn
+                color="rgba(0, 0, 0, 0.54)"
+                text
+                width="80%"
+                @click="editClick(item.id)"
+              >
+                Editieren
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                icon
+                :href="item.webpage"
+              >
+                <v-icon>mdi-bookmark</v-icon>
+              </v-btn>
+            </template>
+          </MyCard>
+        </v-col>
+      </v-row>
+    </div>
+
+    <MyDialog v-model="overlay">
+      <template #title>
+        Projekt {{ editElement ? editElement.name : '' }} bearbeiten
+      </template>
+
+      <template #text>
+        <v-container>
+          <v-form
+            v-model="form"
           >
-            {{ line }}<br>
-          </v-col>
-          <v-col
-            class="shrink"
-          >
+            <MyFormRow title="Bild">
+              <v-img
+                class="white--text grey lighten-2 mx-auto"
+                :src="previewImage ? previewImage : (editElement.picturePath ? (apiurl+'/file/'+editElement.picturePath) : require(`@/assets/placeholder.png`))"
+                height="300px"
+                aspect-ratio="1"
+                contain
+              >
+                <template #placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey darken-5"
+                    />
+                  </v-row>
+                </template>
+              </v-img>
+            </MyFormRow>
+
+            <MyFormRow title="">
+              <v-file-input
+                v-model="editElement.picture"
+                prepend-icon=""
+                prepend-inner-icon="mdi-camera"
+                clearable
+                label="Bild hochladen"
+                accept="image/*"
+                @change="previewImageUpdate()"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Website">
+              <v-text-field
+                v-model="editElement.webpage"
+                :placeholder="editElement.webpage"
+                :rules="websiteRule"
+                required
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Beschreibung">
+              <Editor
+                ref="toastuiEditor"
+                :options="editorOptions"
+                height="500px"
+                initial-edit-type="wysiwyg"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Kurz-Beschreibung">
+              <v-text-field
+                v-model="editElement.short"
+                label="Kurz-Beschreibung"
+                counter
+                maxlength="140"
+                clearable
+                :rules="textRule"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Koordinaten">
+              <l-map
+                ref="map"
+                :zoom="zoom"
+                :center="center"
+                :options="mapOptions"
+                style="height: 300px; width: 100%; position:relative; z-index: 0"
+                @click="setMarkerPos"
+              >
+                <l-tile-layer
+                  :url="url"
+                  :attribution="attribution"
+                />
+                <l-marker :lat-lng="marker" />
+              </l-map>
+            </MyFormRow>
+
+            <v-row>
+              <v-col
+                class="mt-5"
+                cols="12"
+                sm="3"
+              />
+              <v-col>
+                <v-text-field
+                  v-model="editElement.longitude"
+                  label="longitude"
+                  :placeholder="String(editElement.longitude)"
+                  type="number"
+                  :rules="coordRules"
+                  @change="updateMap(null, editElement.longitude)"
+                />
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-model="editElement.latitude"
+                  label="latitude"
+                  :placeholder="String(editElement.latitude)"
+                  type="number"
+                  :rules="coordRules"
+                  @change="updateMap(editElement.latitude, null)"
+                />
+              </v-col>
+            </v-row>
+
+
+            <v-col cols="12">
+              <p class="mr-1">
+                Es können nur Meilensteine mit höherem Ziel hinzugefügt werden!
+              </p>
+              <v-data-table
+                :headers="tableHeaders"
+                :items="allMilestones"
+                sort-by="until"
+                class="elevation-2"
+              >
+                <template v-slot:top>
+                  <v-toolbar flat>
+                    <v-toolbar-title>Meilensteine</v-toolbar-title>
+                    <v-spacer />
+                    <v-btn
+                      color="primary"
+                      dark
+                      @click="milestoneDialog = true"
+                    >
+                      <v-icon
+                        v-if="$vuetify.breakpoint.xsOnly"
+                      >
+                        mdi-plus-thick
+                      </v-icon>
+                      <span
+                        v-else
+                      >
+                        Meilenstein hinzufügen
+                      </span>
+                    </v-btn>
+                    <v-dialog
+                      v-model="milestoneDialog"
+                      max-width="400"
+                    >
+                      <v-card>
+                        <v-card-title>
+                          <span class="headline"> Neuer Meilenstein</span>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-row justify="center">
+                            <v-col>
+                              <v-text-field
+                                v-model="newMile.milestoneName"
+                                label="Meilensteinname"
+                                outlined
+                                clearable
+                                :rules="milestoneNameRule"
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row justify="center">
+                            <v-col>
+                              <v-text-field
+                                v-model="newMile.goal"
+                                label="Spendenziel in Wei"
+                                min="1"
+                                outlined
+                                clearable
+                                :rules="weiRule"
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col align="center">
+                              <v-date-picker
+                                v-model="newMile.until"
+                                :min="minDate"
+                                :max="editElement.until"
+                              />
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer />
+                          <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="closeDialog"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null"
+                            color="blue darken-1"
+                            text
+                            @click="saveMilestone"
+                          >
+                            Save
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-toolbar>
+                </template>
+                <template v-slot:item.actions="{ item }">
+                  <div
+                    v-if="isNewMilestone(item)"
+                  >
+                    <v-icon
+                      small
+                      @click="editMilestone(item)"
+                    >
+                      mdi-pencil
+                    </v-icon>
+                    <v-icon
+                      small
+                      @click="deleteMilestone(item)"
+                    >
+                      mdi-delete
+                    </v-icon>
+                  </div>
+                </template>
+              </v-data-table>
+            </v-col>
+          </v-form>
+        </v-container>
+      </template>
+
+      <template #actions>
+        <v-row class="mx-0">
+          <v-col>
             <v-btn
-              left
-              :color="alertType"
-              depressed
-              @click="closeAlert"
+              color="error"
+              block
+              @click="closeOverlay()"
             >
               Schließen
             </v-btn>
           </v-col>
-        </v-row>
-      </v-alert>
-      <v-layout
-        v-if="loading == true"
-        justify-center
-      >
-        <v-progress-circular
-          :size="50"
-          :width="7"
-          color="green"
-          indeterminate
-          class="loadingCircle"
-        />
-      </v-layout>
-      <div v-else-if="(gotResponse && userProjects.length === 0)">
-        <v-card
-          class="pa-10 ma-7"
-          elevation="5"
-          color="red lighten-4"
-        >
-          <h2>
-            Es wurden keine Projekte gefunden.
-          </h2>
-        </v-card>
-      </div>
-      <div v-else-if="gotResponse">
-        <v-row>
-          <v-col
-            v-for="item in userProjects"
-            :key="item.id"
-            class="ma-4"
-          >
-            <v-card
-              class="institution"
-              elevation="5"
+          <v-col>
+            <v-btn
+              block
+              :disabled="!form"
+              color="success"
+              :loading="changingProject"
+              @click="changeProject()"
             >
-              <img
-                class="elementImage"
-                :src="item.picturePath ? apiurl+'/file/'+item.picturePath : '../../assets/placeholder.png'"
-              >
-              <div
-                class="companyData"
-                style="border:0;"
-              >
-                <h2 class="ma-3 ml-4 font-weight-regular">
-                  {{ item.name }}
-                </h2>
-                <v-card-actions
-                  class="mb-0"
-                >
-                  <v-btn
-                    class="ma-2"
-                    style="color: black"
-                    @click="editClick(item.id)"
-                  >
-                    Editieren
-                  </v-btn>
-                  <v-btn
-                    class="ma-2"
-                    style="color: black"
-                    :href="item.webpage"
-                  >
-                    Website
-                  </v-btn>
-                </v-card-actions>
-              </div>
-            </v-card>
+              Bestätigen
+            </v-btn>
           </v-col>
         </v-row>
-        <v-dialog
-          v-if="overlay"
-          v-model="overlay"
-          :fullscreen="smallScreen"
-          absolute
-          persistent
-        >
-          <v-card>
-            <v-card-title class="text-center overflow-hidden">
-              Projekt {{ editElement.name }} bearbeiten
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-form
-                  v-model="form"
-                >
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Bild:
-                      </h4>
-                    </v-col>
-                    <v-col cols="3">
-                      <img
-                        class="elementImage"
-                        :src="editElement.picturePath ? apiurl+'/file/'+editElement.picturePath : '../../assets/placeholder.png'"
-                      >
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    />
-                    <v-col cols="3">
-                      <v-file-input
-                        v-model="editElement.picture"
-                        prepend-icon=""
-                        prepend-inner-icon="mdi-camera"
-                        clearable
-                        label="Bild hochladen"
-                        accept="image/*"
-                        class=""
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Website:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.webpage"
-                        :placeholder="editElement.webpage"
-                        :rules="websiteRule"
-                        class="inputField"
-                        required
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Kurz-Beschreibung:
-                      </h4>
-                    </v-col>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                          v-model="editElement.short"
-                          label="Kurz-Beschreibung"
-                          outlined
-                          counter
-                          maxlength="140"
-                          clearable
-                          :rules="textRule"
-                        />
-                      </v-col>
-                    </v-row>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Beschreibung:
-                      </h4>
-                    </v-col>
-                    <v-col>
-                      <v-textarea
-                        v-model="editElement.description"
-                        :value="editElement.description"
-                        clearable
-                        counter
-                        no-resize
-                        outlined
-                        :rules="textRule"
-                        required
-                        class="inputField"
-                        height="120"
-                        background-color="grey lighten-4"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    >
-                      <h4 class="font-weight-medium fromField">
-                        Koordinaten:
-                      </h4>
-                    </v-col>
-                    <v-col
-                      class="mt-5"
-                    >
-                      <l-map
-                        ref="map"
-                        :zoom="zoom"
-                        :center="center"
-                        :options="mapOptions"
-                        style="height: 300px; width: 100%; position:relative; z-index: 0"
-                        @click="setMarkerPos"
-                      >
-                        <l-tile-layer
-                          :url="url"
-                          :attribution="attribution"
-                        />
-                        <l-marker :lat-lng="marker" />
-                      </l-map>
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col
-                      class="mt-5"
-                      :cols="$vuetify.breakpoint.mdAndDown ? 4 : 2"
-                    />
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.longitude"
-                        label="longitude"
-                        :placeholder="String(editElement.longitude)"
-                        type="number"
-                        :rules="coordRules"
-                        class="inputField"
-                        @change="updateMap(null, editElement.longitude)"
-                      />
-                    </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editElement.latitude"
-                        label="latitude"
-                        :placeholder="String(editElement.latitude)"
-                        type="number"
-                        :rules="coordRules"
-                        class="inputField"
-                        @change="updateMap(editElement.latitude, null)"
-                      />
-                    </v-col>
-                  </v-row>
-                  <v-row gutters>
-                    <v-col cols="12">
-                      <p class="mr-1">
-                        Es können nur Meilensteine mit höherem Ziel hinzugefügt werden!
-                      </p>
-                      <v-data-table
-                        :headers="tableHeaders"
-                        :items="allMilestones"
-                        sort-by="until"
-                        class="elevation-2"
-                      >
-                        <template v-slot:top>
-                          <v-toolbar flat>
-                            <v-toolbar-title>Meilensteine</v-toolbar-title>
-                            <v-spacer />
-                            <v-btn
-                              color="primary"
-                              dark
-                              @click="milestoneDialog = true"
-                            >
-                              <v-icon
-                                v-if="$vuetify.breakpoint.xsOnly"
-                              >
-                                mdi-plus-thick
-                              </v-icon>
-                              <span
-                                v-else
-                              >
-                                Meilenstein hinzufügen
-                              </span>
-                            </v-btn>
-                            <v-dialog
-                              v-model="milestoneDialog"
-                              max-width="400"
-                            >
-                              <v-card>
-                                <v-card-title>
-                                  <span class="headline"> Neuer Meilenstein</span>
-                                </v-card-title>
-                                <v-card-text>
-                                  <v-row justify="center">
-                                    <v-col>
-                                      <v-text-field
-                                        v-model="newMile.milestoneName"
-                                        label="Meilensteinname"
-                                        outlined
-                                        clearable
-                                        :rules="milestoneNameRule"
-                                      />
-                                    </v-col>
-                                  </v-row>
-                                  <v-row justify="center">
-                                    <v-col>
-                                      <v-text-field
-                                        v-model="newMile.goal"
-                                        label="Spendenziel in Wei"
-                                        min="1"
-                                        outlined
-                                        clearable
-                                        :rules="weiRule"
-                                      />
-                                    </v-col>
-                                  </v-row>
-                                  <v-row>
-                                    <v-col align="center">
-                                      <v-date-picker
-                                        v-model="newMile.until"
-                                        :min="minDate"
-                                        :max="editElement.until"
-                                      />
-                                    </v-col>
-                                  </v-row>
-                                </v-card-text>
-                                <v-card-actions>
-                                  <v-spacer />
-                                  <v-btn
-                                    color="blue darken-1"
-                                    text
-                                    @click="closeDialog"
-                                  >
-                                    Cancel
-                                  </v-btn>
-                                  <v-btn
-                                    :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null"
-                                    color="blue darken-1"
-                                    text
-                                    @click="saveMilestone"
-                                  >
-                                    Save
-                                  </v-btn>
-                                </v-card-actions>
-                              </v-card>
-                            </v-dialog>
-                          </v-toolbar>
-                        </template>
-                        <template v-slot:item.actions="{ item }">
-                          <div
-                            v-if="isNewMilestone(item)"
-                          >
-                            <v-icon
-                              small
-                              @click="editMilestone(item)"
-                            >
-                              mdi-pencil
-                            </v-icon>
-                            <v-icon
-                              small
-                              @click="deleteMilestone(item)"
-                            >
-                              mdi-delete
-                            </v-icon>
-                          </div>
-                        </template>
-                      </v-data-table>
-                    </v-col>
-                  </v-row>
-                </v-form>
-              </v-container>
-            </v-card-text>
-            <v-card-actions
-              class="ma-0 pa-0"
-            >
-              <v-btn-toggle
-                borderless
-                style="width: 50%"
-              >
-                <v-btn
-                  color="error"
-                  block
-                  tile
-                  @click="closeOverlay()"
-                >
-                  Schließen
-                </v-btn>
-                <v-btn
-                  :disabled="!form"
-                  color="success"
-                  block
-                  tile
-                  :loading="changingProject"
-                  @click="changeProject()"
-                >
-                  Bestätigen
-                </v-btn>
-              </v-btn-toggle>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-    </v-container>
-  </div>
+      </template>
+    </MyDialog>
+  </Default>
 </template>
 
 <script>
@@ -465,20 +375,37 @@ import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
+import { Editor } from '@toast-ui/vue-editor';
+
+import MyDialog from '../MyDialog.vue';
+import MyFormRow from '../MyFormRow.vue';
+import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'ProjektEditieren',
   components: {
+    MyCard,
+    Default,
+    MyDialog,
+    MyFormRow,
     LMap,
     LTileLayer,
     LMarker,
+    Editor,
   },
   data: () => ({
+    editorOptions: {
+      usageStatistics: false,
+      language: 'de-DE',
+    },
     userProjects: [],
     gotResponse: false,
     apiurl: window.apiurl,
     overlay: false,
-    editElement: null,
+    editElement: {
+      milestones: [],
+    },
     alert: false,
     alertType: null,
     userFeedback: '',
@@ -528,11 +455,13 @@ export default {
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
+      minZoom: 1,
     },
     err: {
       picErr: 0,
       normErr: 0,
     },
+    previewImage: false,
   }),
   computed: {
     allMilestones() {
@@ -543,9 +472,6 @@ export default {
         mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
         return mCopy;
       });
-    },
-    smallScreen() {
-      return this.$vuetify.breakpoint.smAndDown;
     },
     weiRule() {
       return [
@@ -572,6 +498,12 @@ export default {
     this.getMinDate();
   },
   methods: {
+    previewImageUpdate() {
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+      }
+      this.previewImage = URL.createObjectURL(this.editElement.picture);
+    },
     load() {
       this.loading = true;
       setTimeout(() => {
@@ -678,8 +610,8 @@ export default {
         axios.get(`projects/${projectId}`)
           .then((res) => {
             this.editElement = res.data;
-            this.editElement.description = window.atob(res.data.description);
-            this.editElement.short = window.atob(res.data.short);
+            this.editElement.description = res.data.description;
+            this.editElement.short = res.data.short;
             this.editElement.authToken = userSession.getAuthResponseToken();
             this.editElement.picture = null;
             // until * 1000 --> s auf ms
@@ -701,6 +633,7 @@ export default {
             this.overlay = true;
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
+              this.$refs.map.setZoom(this.zoom);
             }, 100);
 
             // Set min WEI amount for new milestones
@@ -709,6 +642,10 @@ export default {
                 this.minWei = mile.goal;
               }
             });
+            this.$nextTick(() => {
+              this.$refs.toastuiEditor.invoke('reset');
+              this.$refs.toastuiEditor.invoke('setMarkdown', this.editElement.description);
+            });
           })
           .catch((err) => {
             this.showAlert(`Das Projekt konnte nicht geladen werden: ${err.toString()}`, 'error');
@@ -716,6 +653,7 @@ export default {
       }
     },
     async changeProject() {
+      this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
       if (userSession.isUserSignedIn()) {
         const authToken = userSession.loadUserData().authResponseToken;
         const headers = {
@@ -733,10 +671,6 @@ export default {
               const formattedMile = JSON.parse(JSON.stringify(mile));
               formattedMile.name = formattedMile.milestoneName;
               delete formattedMile.milestoneName;
-
-              // required Votes muss man mitsenden, wird aber nicht verwendet
-              formattedMile.requiredVotes = 1337;
-
               return formattedMile;
             });
           headers.milestones = JSON.stringify(headers.milestones);
@@ -788,7 +722,9 @@ export default {
     },
     closeOverlay() {
       this.overlay = false;
-      this.editElement = {};
+      this.editElement = {
+        milestones: [],
+      };
       this.newMilestones = [];
     },
     showAlert(msg, type) {
@@ -807,46 +743,9 @@ export default {
 </script>
 
 <style scoped>
-  .institution {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 25px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.8);
-  }
-
-  .elementImage{
-    max-width: 200px;
-    max-height: 200px;
-  }
-
-  .companyData {
-    margin-left: 15px;
-    flex-basis: 55%
-  }
-
-  .inputField ::placeholder{
-    color: black!important;
-    opacity: 1;
-  }
-
-  .fromField {
-    font-size: 1.13em;
-    color: black
-  }
-
-  .gradientBackground {
-    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-    height: 100%;
-  }
-
-   .loadingCircle {
-    margin-top: 50px;
-  }
-
   .newProject {
     position: absolute;
-    top: 5px;
-    right:10px;
+    top: 38px;
+    right:50px;
   }
 </style>
