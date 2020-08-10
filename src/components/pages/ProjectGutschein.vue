@@ -69,6 +69,7 @@
       <v-system-bar
         color="secondary"
         height="40px"
+        class="text-center"
       >
         <v-card-text
           class="headline font-weight-thin"
