@@ -77,10 +77,30 @@
           class="headline font-weight-thin"
           style="color: white"
         >
-          Beschreibung - Institution {{ institution[0].name }}
+          {{ institution[0].name }}
         </v-card-text>
       </v-system-bar>
       <v-card-text>
+        <v-img
+          v-if="institution[0].picturePath"
+          class="mb-4"
+          max-height="300px"
+          contain
+          :src="institution[0].picturePath ? (apiurl+'/file/'+institution[0].picturePath) : require(`@/assets/placeholder.png`)"
+        >
+          <template v-slot:placeholder>
+            <v-row
+              class="fill-height ma-0"
+              align="center"
+              justify="center"
+            >
+              <v-progress-circular
+                indeterminate
+                color="grey darken-5"
+              />
+            </v-row>
+          </template>
+        </v-img>
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="compiledMarkdown" />
       </v-card-text>
