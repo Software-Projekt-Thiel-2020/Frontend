@@ -1,8 +1,96 @@
 <template>
   <Default
-    :title="project.length ? project[0].name : 'Institution'"
+    :title="institution ? institution[0].name : 'Institution'"
     :loading="loadingVouchers || loadingProject"
   >
+    <v-row>
+      <v-col
+        v-for="voucher in vouchers"
+        :key="voucher.id"
+        cols="12"
+        sm="12"
+        md="6"
+        lg="4"
+        xl="3"
+      >
+        <MyCard>
+          <template #title>
+            {{ voucher.title }}
+          </template>
+
+          <template #subtitle>
+            {{ voucher.subject }}
+          </template>
+
+          <template #text>
+            <v-row>
+              <v-col>
+                <h4>
+                  Preis:
+                </h4>
+                {{ '≈ ' + getETHValue(voucher.price) + '€' }}
+              </v-col>
+              <v-col class="mr-3">
+                <h4>
+                  Gültigkeit:
+                </h4>
+                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <h5>
+                  Wurde bereits {{ voucher.amount }} mal gekauft
+                </h5>
+              </v-col>
+            </v-row>
+
+            <div class=" text-center">
+              <v-btn
+                :id="voucher.id"
+                class="mt-2 btn-hover color-9"
+                dark
+                :loading="loading && indexClicked === voucher.id"
+                @click="buyVoucher(voucher)"
+              >
+                {{ `${!$vuetify.breakpoint.xsOnly ? 'Gutschein' : ''} Kaufen` }}
+              </v-btn>
+            </div>
+          </template>
+        </MyCard>
+      </v-col>
+    </v-row>
+
+    <v-card
+      v-if="institution"
+      class="mt-6 grey--text text--darken-2"
+      elevation="10"
+    >
+      <v-system-bar
+        color="secondary"
+        height="40px"
+      >
+        <v-card-text
+          class="headline font-weight-thin"
+          style="color: white"
+        >
+          Beschreibung - Institution {{ institution[0].name }}
+        </v-card-text>
+      </v-system-bar>
+      <v-card-text>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="compiledMarkdown" />
+      </v-card-text>
+      <v-btn
+        outlined
+        color="grey"
+        class="mb-4 mx-2"
+        :href="institution[0].webpage"
+      >
+        Webseite besuchen
+      </v-btn>
+    </v-card>
+
     <v-dialog
       v-if="boughtVoucher "
       v-model="dialog"
@@ -73,171 +161,13 @@
         </v-btn>
       </v-card>
     </v-dialog>
-
-    <v-container>
-      <v-row>
-        <v-col>
-          <v-card
-            class="projectBox"
-            elevation="4"
-            width="100%"
-          >
-            <div
-              class="d-flex flex-no-wrap justify-space-between"
-            >
-              <div>
-                <v-card-title class="font-weight-light display-1">
-                  <span v-if="customBreak">
-                    Informationen
-                  </span>
-                  <span v-else>
-                    Informationen über den Betrieb
-                  </span>
-                </v-card-title>
-                <v-card-text>
-                  <v-row
-                    class="font-weight-medium"
-                    style="font-size: larger"
-                  >
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Name:
-                    </v-col>
-                    <v-col>
-                      {{ project[0].name }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Adresse:
-                    </v-col>
-                    <v-col>
-                      {{ project[0].address }}
-                    </v-col>
-                  </v-row>
-                  <v-row
-                    v-if="pictureBreak"
-                  >
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Bild:
-                    </v-col>
-                    <v-col>
-                      <v-img
-                        max-height="160"
-                        max-width="160"
-                        contain
-                        :src="image"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <v-card-actions>
-                  <a :href="'//'+project[0].webpage">
-                    <v-btn outlined>
-                      Webseite besuchen
-                    </v-btn>
-                  </a>
-                </v-card-actions>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-        <v-col
-          v-if="!pictureBreak"
-          cols="4"
-          align="right"
-          justify="top"
-        >
-          <img
-            v-if="project[0].picturePath"
-            :src="apiurl+'/file/'+project[0].picturePath"
-          >
-          <img
-            v-else
-            src="../../assets/placeholder.png"
-          >
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-row>
-      <v-col class="titleHeader text-center">
-        <h1
-          :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
-          class="font-weight-thin white--text text-center"
-        >
-          Verfügbare Gutscheine
-        </h1>
-      </v-col>
-    </v-row>
-    <div>
-      <v-row>
-        <v-col
-          v-for="voucher in vouchers"
-          :key="voucher.id"
-          cols="12"
-          sm="12"
-          md="6"
-          lg="4"
-          xl="3"
-        >
-          <MyCard>
-            <template #title>
-              {{ voucher.title }}
-            </template>
-
-            <template #subtitle>
-              {{ voucher.subject }}
-            </template>
-
-            <template #text>
-              <v-row>
-                <v-col>
-                  <h4>
-                    Preis:
-                  </h4>
-                  {{ getETHValue(voucher.price) }}€
-                </v-col>
-                <v-col class="mr-3">
-                  <h4>
-                    Gültigkeit:
-                  </h4>
-                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <h5>
-                    Wurde bereits {{ voucher.amount }} mal gekauft
-                  </h5>
-                </v-col>
-              </v-row>
-
-              <div class=" text-center">
-                <v-btn
-                  :id="voucher.id"
-                  class="mt-2 btn-hover color-9"
-                  dark
-                  :loading="loading && indexClicked === voucher.id"
-                  @click="buyVoucher(voucher)"
-                >
-                  {{ `${!$vuetify.breakpoint.xsOnly ? 'Gutschein' : ''} Kaufen` }}
-                </v-btn>
-              </div>
-            </template>
-          </MyCard>
-        </v-col>
-      </v-row>
-    </div>
   </Default>
 </template>
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 import { userSession } from '@/userSession';
 import EventBus from '@/utils/eventBus';
 
@@ -259,11 +189,7 @@ export default {
     userData: null,
     institutionId: null,
     dialog: false,
-    project: [{
-      name: '',
-      webpage: '',
-      address: '',
-    }],
+    institution: undefined,
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
     loadingVouchers: true,
@@ -275,11 +201,8 @@ export default {
     boughtVoucher: null,
   }),
   computed: {
-    spaltenBreak() {
-      if (this.$vuetify.breakpoint.xsOnly) {
-        return 4;
-      }
-      return this.$vuetify.breakpoint.lgAndUp ? 2 : 3;
+    compiledMarkdown() {
+      return this.institution ? marked(DOMPurify.sanitize(this.institution[0].description)) : '';
     },
   },
   created() {
@@ -318,7 +241,7 @@ export default {
       url += this.institutionId;
       axios.get(url)
         .then((res) => {
-          this.project = res.data;
+          this.institution = res.data;
         })
         .catch((err) => {
           EventBus.$emit('new-snackbar', `Institution konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
@@ -391,17 +314,6 @@ export default {
 </script>
 
 <style scoped>
-    .titleHeader {
-        padding-bottom: 15px;
-        padding-top: 10px;
-        backdrop-filter: blur(15px) brightness(0.5);
-    }
-
-    .projectBox {
-        padding: 20px;
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
     a {
         text-decoration: none;
     }
