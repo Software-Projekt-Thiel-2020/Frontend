@@ -469,6 +469,10 @@ export default {
         headers.description = window.btoa(this.editElement.description);
         headers.short = window.btoa(this.editElement.short);
         this.loadingChanges = true;
+        if (this.previewImage) {
+          URL.revokeObjectURL(this.previewImage);
+          this.previewImage = null;
+        }
         axios.patch('institutions', null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -520,7 +524,10 @@ export default {
     closeOverlay() {
       this.overlay = false;
       this.editElement = {};
-      this.previewImage = null;
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+        this.previewImage = null;
+      }
     },
     showAlert(msg, type) {
       this.alert = true;
