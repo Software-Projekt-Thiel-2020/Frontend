@@ -162,6 +162,16 @@
               />
             </MyFormRow>
 
+            <MyFormRow title="Kurz-Beschreibung">
+              <v-text-field
+                v-model="editElement.short"
+                counter
+                maxlength="140"
+                clearable
+                :rules="textRule"
+              />
+            </MyFormRow>
+
             <MyFormRow title="Beschreibung">
               <Editor
                 ref="toastuiEditor"
@@ -169,17 +179,6 @@
                 :options="editorOptions"
                 height="500px"
                 initial-edit-type="wysiwyg"
-              />
-            </MyFormRow>
-
-            <MyFormRow title="Kurz-Beschreibung">
-              <v-text-field
-                v-model="editElement.short"
-                label="Kurz-Beschreibung"
-                counter
-                maxlength="140"
-                clearable
-                :rules="textRule"
               />
             </MyFormRow>
 
@@ -277,6 +276,7 @@ import { userSession } from '@/userSession';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/vue-editor';
+import EventBus from '@/utils/eventBus';
 
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
@@ -444,6 +444,12 @@ export default {
     },
     async changeInst() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
+      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+        EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
+          'warning', 4000, true);
+        return;
+      }
+
       if (userSession.isUserSignedIn()) {
         const headers = this.editElement;
         const authToken = userSession.loadUserData().authResponseToken;
@@ -461,6 +467,7 @@ export default {
         delete this.editElement.picture;
 
         headers.description = window.btoa(this.editElement.description);
+        headers.short = window.btoa(this.editElement.short);
         this.loadingChanges = true;
         axios.patch('institutions', null, { headers })
           .catch(() => {

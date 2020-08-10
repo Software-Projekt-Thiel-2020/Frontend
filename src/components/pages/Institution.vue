@@ -61,6 +61,21 @@
                 </v-row>
                 <v-row justify="center">
                   <v-col :cols="sizeField">
+                    <v-text-field
+                      v-model="short"
+                      clearable
+                      counter
+                      no-resize
+                      outlined
+                      :rules="textRule"
+                      label="Kurz-Beschreibung"
+                      background-color="grey lighten-4"
+                      maxlength="140"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
                     <v-textarea
                       v-model="description"
                       clearable
@@ -215,6 +230,7 @@ export default {
     publickey: '',
     name: '',
     description: '',
+    short: '',
     webpage: '',
     address: '',
     coords: {
@@ -291,6 +307,9 @@ export default {
       };
       if (this.description !== '') {
         headers.description = window.btoa(this.description);
+      }
+      if (this.short !== '') {
+        headers.short = window.btoa(this.short);
       }
       if (this.webpage !== '') {
         headers.webpage = this.webpage;
