@@ -26,7 +26,7 @@
           indeterminate
         />
       </v-layout>
-      <v-row v-if="!errorMessage && loading == false">
+      <v-row v-if="!errorMessage && loading === false">
         <v-col
           sm="6"
           class="text-left pageBox"
@@ -169,6 +169,18 @@
             Meine Institutionen
           </v-btn>
         </router-link>
+        <router-link
+          to="/ProjektEditieren"
+          tag="span"
+          class="link"
+        >
+          <v-btn
+            style="text-align:center"
+            class="ma-1"
+          >
+            Meine Projekte
+          </v-btn>
+        </router-link>
       </div>
     </v-container>
   </div>
@@ -197,7 +209,7 @@ export default {
     newFirstname: '',
     newLastname: '',
     emailRules: [
-      (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === ''),
+      (v) => (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === '')) || 'Bitt eine gültige E-Mail Adresse angeben',
     ],
     snackbar: false,
     userFeedback: '',
