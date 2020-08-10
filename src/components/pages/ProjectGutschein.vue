@@ -233,54 +233,13 @@
         </v-col>
       </v-row>
     </div>
-    <v-snackbar
-      v-model="dialogVoucher.error"
-      top
-      color="error"
-    >
-      Gutscheine konnten nicht geladen werden {{ dialogVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogProject.error"
-      top
-      color="error"
-    >
-      Institution konnten nicht geladen werden {{ dialogProject.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogEth.error"
-      top
-      color="error"
-    >
-      Etherum Wechselkurs konnte nicht geladen werden {{ dialogEth.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogBuyVoucher.error"
-      top
-      color="error"
-    >
-      Gutschein konnte nicht gekauft werden {{ dialogVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogBuyVoucher.successfull"
-      top
-      color="success"
-    >
-      Gutschein gekauft
-    </v-snackbar>
-    <v-snackbar
-      v-model="notLoggedin"
-      top
-      color="error"
-    >
-      Bitte melden Sie sich an
-    </v-snackbar>
   </Default>
 </template>
 
 <script>
 import axios from 'axios';
 import { userSession } from '@/userSession';
+import EventBus from '@/utils/eventBus';
 
 import Default from '../Default.vue';
 import MyCard from '../MyCard.vue';
@@ -309,24 +268,6 @@ export default {
     vouchers: [],
     loadingVouchers: true,
     loadingProject: true,
-    dialogVoucher: {
-      errorMessage: '',
-      error: false,
-    },
-    dialogProject: {
-      errorMessage: '',
-      error: false,
-    },
-    dialogBuyVoucher: {
-      errorMessage: '',
-      error: false,
-      successfull: false,
-    },
-    dialogEth: {
-      errorMessage: '',
-      error: false,
-    },
-    notLoggedin: false,
     exrate: 0,
     ethToEur: 0,
     loading: false,
@@ -380,8 +321,7 @@ export default {
           this.project = res.data;
         })
         .catch((err) => {
-          this.dialogProject.errorMessage = err.toString();
-          this.dialogProject.error = true;
+          EventBus.$emit('new-snackbar', `Institution konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         }).finally(() => {
           this.loadingProject = false;
         });
@@ -396,8 +336,7 @@ export default {
           this.vouchers = res.data;
         })
         .catch((err) => {
-          this.dialogVoucher.errorMessage = err.toString();
-          this.dialogVoucher.error = true;
+          EventBus.$emit('new-snackbar', `Gutscheine konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         }).finally(() => {
           this.loadingVouchers = false;
         });
@@ -408,13 +347,12 @@ export default {
           this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
-          this.dialogEth.errorMessage = err.toString();
-          this.dialogEth.error = true;
+          EventBus.$emit('new-snackbar', `Etherum Wechselkurs konnte nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         });
     },
     buyVoucher(voucher) {
       if (this.userData == null) {
-        this.notLoggedin = true;
+        EventBus.$emit('new-snackbar', 'Bitte melden Sie sich an', 'error', 10000, true);
       } else {
         const headers = {
           idVoucher: voucher.id,
@@ -428,8 +366,7 @@ export default {
             this.openDialog();
           })
           .catch((err) => {
-            this.dialogBuyVoucher.errorMessage = err.toString();
-            this.dialogBuyVoucher.error = true;
+            EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()}`, 'error', 10000, true);
           }).finally(() => {
             this.loading = false;
           });
