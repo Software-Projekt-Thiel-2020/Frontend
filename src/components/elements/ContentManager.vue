@@ -44,7 +44,7 @@
         <v-card-text class="text-left">
           Im Offline-Modus können Sie noch auf unsere Seite navigieren,
           aber keine Spenden tätigen oder sonstigen Aktivitäten nachgehen.
-          Damit Sie den vollen Umfang von SpenderSchlender genießen können,
+          Damit Sie den vollen Umfang von Spenderschlender genießen können,
           gehen Sie bitte wieder online.
         </v-card-text>
       </v-card>
