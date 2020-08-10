@@ -101,6 +101,11 @@
                       :key="milestone.id"
                     >
                       <v-row>
+                        <v-col cols="12">
+                          <h1>
+                            {{ milestone.milestoneName }}
+                          </h1>
+                        </v-col>
                         <v-col>
                           <h4 class="title">
                             Gesammelt
@@ -119,19 +124,20 @@
                         </v-col>
                         <v-col>
                           <h4 class="title">
-                            Votes
+                            Voting
                           </h4>
                           <h1 class="title font-weight-light">
-                            {{ milestone.currentVotes }} von {{ milestone.requiredVotes }} Stimmen
+                            {{ votePercentage(milestone.positiveVotes, milestone.negativeVotes) }}% (in {{ milestone.positiveVotes + milestone.negativeVotes }} Votes)
                           </h1>
                         </v-col>
                       </v-row>
-                      <h3>{{ (milestone.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100) }}%</h3>
+                      <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
                       <v-progress-linear
                         color="secondary"
-                        height="15"
-                        :value="(milestone.totalDonated/milestone.goal) * 100"
+                        height="16"
+                        :value="(project.totalDonated/milestone.goal) * 100"
                         striped
+                        class="mb-1"
                       />
                     </div>
                   </div>
@@ -347,6 +353,19 @@ export default {
     this.loadProject();
   },
   methods: {
+    votePercentage(pos, neg) {
+      let percentage;
+      if (pos + neg === 0) {
+        return '-';
+      }
+
+      if (neg > 0 || pos > 0) {
+        percentage = (pos / (pos + neg));
+      } else if (pos > 0 && neg === 0) {
+        percentage = 1;
+      }
+      return Math.round(percentage * 100 * 100) / 100;
+    },
     donate() {
       if (this.userData == null) {
         this.notLoggedin = true;
