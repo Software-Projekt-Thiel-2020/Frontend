@@ -61,6 +61,8 @@
       </v-col>
     </v-row>
 
+    <v-divider class="my-5" />
+
     <v-card
       v-if="institution"
       class="mt-6 grey--text text--darken-2"
