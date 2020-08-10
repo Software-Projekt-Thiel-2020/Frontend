@@ -101,6 +101,11 @@
                       :key="milestone.id"
                     >
                       <v-row>
+                        <v-col cols="12">
+                          <h1>
+                            {{ milestone.milestoneName }}
+                          </h1>
+                        </v-col>
                         <v-col>
                           <h4 class="title">
                             Gesammelt
@@ -122,16 +127,17 @@
                             Voting
                           </h4>
                           <h1 class="title font-weight-light">
-                            {{ votePercentage(milestone.positiveVotes, milestone.negativeVotes) }}%
+                            {{ votePercentage(milestone.positiveVotes, milestone.negativeVotes) }}% (in {{ milestone.positiveVotes + milestone.negativeVotes }} Votes)
                           </h1>
                         </v-col>
                       </v-row>
                       <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
                       <v-progress-linear
                         color="secondary"
-                        height="15"
+                        height="16"
                         :value="(project.totalDonated/milestone.goal) * 100"
                         striped
+                        class="mb-1"
                       />
                     </div>
                   </div>
