@@ -62,6 +62,9 @@
             <v-text-field
               v-model="newFirstname"
               class="inputField ma-0 pa-0"
+              counter
+              maxlength="45"
+              :rules="nameRules"
               :placeholder="item.firstname"
             />
           </MyFormRow>
@@ -69,6 +72,9 @@
             <v-text-field
               v-model="newLastname"
               class="inputField ma-0 pa-0"
+              counter
+              maxlength="45"
+              :rules="nameRules"
               :placeholder="item.lastname"
             />
           </MyFormRow>
@@ -76,6 +82,8 @@
             <v-text-field
               v-model="newEmail"
               class="inputField ma-0 pa-0"
+              counter
+              maxlength="45"
               :rules="emailRules"
               :placeholder="item.email"
             />
@@ -141,6 +149,9 @@ export default {
     newEmail: '',
     newFirstname: '',
     newLastname: '',
+    nameRules: [
+      (v) => /^[a-zA-Z -]*$/gs.test(v) || 'Bitte nur Buchstaben von A bis Z eingeben',
+    ],
     emailRules: [
       (v) => (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === '')) || 'Bitt eine gültige E-Mail Adresse angeben',
     ],
