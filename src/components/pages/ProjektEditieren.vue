@@ -685,6 +685,10 @@ export default {
           headers.milestones = JSON.stringify(headers.milestones);
         }
         this.changingProject = true;
+        if (this.previewImage) {
+          URL.revokeObjectURL(this.previewImage);
+          this.previewImage = null;
+        }
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -735,7 +739,10 @@ export default {
         milestones: [],
       };
       this.newMilestones = [];
-      this.previewImage = null;
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+        this.previewImage = null;
+      }
     },
     showAlert(msg, type) {
       this.alert = true;
