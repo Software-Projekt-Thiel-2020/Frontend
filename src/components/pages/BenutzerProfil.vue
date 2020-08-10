@@ -17,7 +17,7 @@
           block
           to="/portfolio"
         >
-          Meine Portfolio
+          Mein Portfolio
         </v-btn>
       </v-col>
       <v-col
@@ -52,58 +52,34 @@
     >
       <v-col
         cols="12"
-        sm="6"
         class="text-left"
       >
         <v-form
           ref="form"
           v-model="vForm"
         >
-          <v-row no-gutters>
-            <v-col>
-              <h4 class="mt-5">
-                Vorname:
-              </h4>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="newFirstname"
-                class="inputField"
-                :placeholder="item.firstname"
-              />
-            </v-col>
-          </v-row>
-
-          <v-row no-gutters>
-            <v-col>
-              <h4 class="mt-5">
-                Nachname:
-              </h4>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="newLastname"
-                class="inputField"
-                :placeholder="item.lastname"
-              />
-            </v-col>
-          </v-row>
-
-          <v-row no-gutters>
-            <v-col>
-              <h4 class="mt-5">
-                E-Mail:
-              </h4>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="newEmail"
-                class="inputField"
-                :rules="emailRules"
-                :placeholder="item.email"
-              />
-            </v-col>
-          </v-row>
+          <MyFormRow title="Vorname">
+            <v-text-field
+              v-model="newFirstname"
+              class="inputField ma-0 pa-0"
+              :placeholder="item.firstname"
+            />
+          </MyFormRow>
+          <MyFormRow title="Nachname">
+            <v-text-field
+              v-model="newLastname"
+              class="inputField ma-0 pa-0"
+              :placeholder="item.lastname"
+            />
+          </MyFormRow>
+          <MyFormRow title="E-Mail">
+            <v-text-field
+              v-model="newEmail"
+              class="inputField ma-0 pa-0"
+              :rules="emailRules"
+              :placeholder="item.email"
+            />
+          </MyFormRow>
         </v-form>
         <v-btn
           :disabled="(!valid || !vForm)"
@@ -142,11 +118,13 @@ import EventBus from '@/utils/eventBus';
 import { userSession } from '@/userSession';
 
 import Default from '../Default.vue';
+import MyFormRow from '../MyFormRow.vue';
 
 export default {
   name: 'BenutzerProfil',
   components: {
     Default,
+    MyFormRow,
   },
   data: () => ({
     loading: true,
