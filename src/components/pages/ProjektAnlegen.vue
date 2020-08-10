@@ -41,7 +41,6 @@
         </v-col>
       </v-row>
 
-
       <v-row>
         <v-col
           cols="12"
@@ -75,7 +74,6 @@
           </v-btn>
         </v-col>
       </v-row>
-
 
       <v-row>
         <v-col
@@ -156,7 +154,6 @@
         </v-col>
       </v-row>
 
-
       <v-row>
         <v-col cols="12">
           <v-text-field
@@ -184,7 +181,6 @@
           />
         </v-col>
       </v-row>
-
 
       <v-row>
         <v-col
@@ -233,7 +229,6 @@
           </v-row>
         </v-col>
       </v-row>
-
 
       <v-row>
         <v-col cols="12">
@@ -528,6 +523,7 @@ export default {
       error: false,
     },
     backend_userdata: [],
+    goalArray: [],
   }),
   computed: {
     smallDevice() {
@@ -558,7 +554,10 @@ export default {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
               if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
-                return true;
+                if (this.checkMilestoneGoals(v)) {
+                  return true;
+                }
+                return 'Meilenstein-Ziele dürfen nicht gleich sein';
               }
               return `Ziel muss unter ${this.project.goal} liegen`;
             }
@@ -584,6 +583,13 @@ export default {
     this.get_user();
   },
   methods: {
+    checkMilestoneGoals(value) {
+      if (this.project.milestones.length < 1) {
+        return true;
+      }
+      this.goalArray = this.project.milestones.map((milestone) => milestone.goal);
+      return !this.goalArray.some((mile) => mile === value);
+    },
     updateMap(lat, long) {
       try {
         let newCoords;
