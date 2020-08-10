@@ -15,7 +15,7 @@
         </p>
       </div>
       <v-layout
-        v-if="loading == true"
+        v-if="loading === true"
         justify-center
         class="loadingCircle"
       >

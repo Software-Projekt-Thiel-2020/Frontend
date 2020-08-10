@@ -187,7 +187,7 @@
                 </v-tab>
               </v-tabs>
               <v-layout
-                v-if="loadingVouchers==true"
+                v-if="loadingVouchers === true"
                 justify-center
               >
                 <v-progress-circular
@@ -236,7 +236,7 @@
                       <v-btn
                         v-if="!voucher.used"
                         color="success"
-                        :loading="reedemingVoucher && indexClicked == voucher.id"
+                        :loading="reedemingVoucher && indexClicked === voucher.id"
                         @click="redeemVoucher(voucher)"
                       >
                         Einlösen
@@ -289,7 +289,7 @@
                 <v-spacer />
               </v-toolbar>
               <v-layout
-                v-if="loadingDonations==true"
+                v-if="loadingDonations === true"
                 justify-center
               >
                 <v-progress-circular
@@ -382,7 +382,7 @@
 
 <script>
 import axios from 'axios';
-import { userSession } from '../../userSession';
+import { userSession } from '@/userSession';
 
 export default {
   name: 'Historie',

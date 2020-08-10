@@ -79,7 +79,7 @@
             width="100%"
           >
             <v-layout
-              v-if="loadingProject == true"
+              v-if="loadingProject === true"
               justify-center
             >
               <v-progress-circular
@@ -386,7 +386,7 @@ export default {
   },
   beforeDestroy() {
     if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.onResize, { passive: true });
+      window.removeEventListener('resize', this.onResize);
     }
   },
   methods: {

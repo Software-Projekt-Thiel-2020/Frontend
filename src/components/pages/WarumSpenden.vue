@@ -75,18 +75,13 @@ export default {
   data: () => ({
     custom: false,
   }),
-  computed: {
-    customBreak() {
-      return this.windowSize.x <= 700;
-    },
-  },
   mounted() {
     this.onResize();
     window.addEventListener('resize', this.onResize, { passive: true });
   },
   beforeDestroy() {
     if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.onResize, { passive: true });
+      window.removeEventListener('resize', this.onResize);
     }
   },
   methods: {
