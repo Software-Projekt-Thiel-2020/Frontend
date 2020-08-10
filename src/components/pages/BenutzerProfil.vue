@@ -1,186 +1,153 @@
 <template>
-  <div
-    class="pa-5 gradientBackground"
+  <Default
+    title="Willkommen"
+    :subtitle="item.username"
+    :loading="loading"
   >
-    <v-container>
-      <div>
-        <h1 class="display-2">
-          Willkommen!
-        </h1>
-        <p
-          v-if="errorMessage == null"
-          class="display-2 overline"
-        >
-          ({{ item.username }})
-        </p>
-      </div>
-      <v-layout
-        v-if="loading == true"
-        justify-center
-        class="loadingCircle"
+    <v-row
+      v-if="!errorMessage"
+      class="text-center"
+    >
+      <v-col
+        cols="12"
+        sm="4"
       >
-        <v-progress-circular
-          :size="70"
-          :width="7"
-          color="green"
-          indeterminate
-        />
-      </v-layout>
-      <v-row v-if="!errorMessage && loading == false">
-        <v-col
-          sm="6"
-          class="text-left pageBox"
-        >
-          <h2>Profildaten:</h2>
-          <br>
-
-          <v-form
-            ref="form"
-            v-model="vForm"
-          >
-            <v-row no-gutters>
-              <v-col>
-                <h4 class="mt-5">
-                  Vorname:
-                </h4>
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="newFirstname"
-                  class="inputField"
-                  :placeholder="item.firstname"
-                />
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col>
-                <h4 class="mt-5">
-                  Nachname:
-                </h4>
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="newLastname"
-                  class="inputField"
-                  :placeholder="item.lastname"
-                />
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col>
-                <h4 class="mt-5">
-                  E-Mail:
-                </h4>
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="newEmail"
-                  class="inputField"
-                  :rules="emailRules"
-                  :placeholder="item.email"
-                />
-              </v-col>
-            </v-row>
-          </v-form>
-          <v-btn
-            color="error"
-            class="mr-4 mt-4"
-            @click="reset"
-          >
-            Änderungen zurücksetzten
-          </v-btn>
-          <v-btn
-            :disabled="(!valid || !vForm)"
-            color="success"
-            class="mt-4"
-            :loading="processingChanges"
-            @click="submit"
-          >
-            Änderungen bestätigen
-          </v-btn>
-          <v-snackbar
-            v-model="snackbar"
-            multi-line
-            :color="snackbarType"
-            centered
-            :timeout="0"
-          >
-            {{ userFeedback }}
-            <v-btn
-              :disabled="(!valid || !vForm)"
-              color="success"
-              class="mt-4"
-              @click="submit"
-            >
-              Bestätigen
-            </v-btn>
-            <v-snackbar
-              v-model="snackbar"
-              multi-line
-              :color="snackbarType"
-              centered
-              :timeout="0"
-            >
-              {{ userFeedback }}
-              <v-btn
-                color="white"
-                text
-                @click="snackbar = false"
-              >
-                Close
-              </v-btn>
-            </v-snackbar>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-      <v-alert
-        v-else-if="errorMessage"
-        type="error"
-        class="ma-10"
-      >
-        {{ errorMessage }}
-      </v-alert>
-      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
-        <router-link
+        <v-btn
+          style="text-align:center"
+          block
           to="/portfolio"
-          tag="span"
-          class="link"
         >
-          <v-btn
-            style="text-align:center"
-            class="ma-1"
-          >
-            Meine Spenden / Gutscheine
-          </v-btn>
-        </router-link>
-      </div>
-      <div class="linkToDonate mx-auto text-center ma-2 mt-10">
-        <router-link
+          Meine Portfolio
+        </v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="4"
+      >
+        <v-btn
+          style="text-align:center"
+          block
           to="/InstitutionEditieren"
-          tag="span"
-          class="link"
         >
-          <v-btn
-            style="text-align:center"
-            class="ma-1"
-          >
-            Meine Institutionen
-          </v-btn>
-        </router-link>
-      </div>
-    </v-container>
-  </div>
+          Meine Institutionen
+        </v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        sm="4"
+      >
+        <v-btn
+          style="text-align:center"
+          block
+          to="/ProjektEditieren"
+        >
+          Meine Projekte
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row
+      v-if="!errorMessage"
+      class="text-center"
+    >
+      <v-col
+        cols="12"
+        sm="6"
+        class="text-left"
+      >
+        <v-form
+          ref="form"
+          v-model="vForm"
+        >
+          <v-row no-gutters>
+            <v-col>
+              <h4 class="mt-5">
+                Vorname:
+              </h4>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="newFirstname"
+                class="inputField"
+                :placeholder="item.firstname"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row no-gutters>
+            <v-col>
+              <h4 class="mt-5">
+                Nachname:
+              </h4>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="newLastname"
+                class="inputField"
+                :placeholder="item.lastname"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row no-gutters>
+            <v-col>
+              <h4 class="mt-5">
+                E-Mail:
+              </h4>
+            </v-col>
+            <v-col>
+              <v-text-field
+                v-model="newEmail"
+                class="inputField"
+                :rules="emailRules"
+                :placeholder="item.email"
+              />
+            </v-col>
+          </v-row>
+        </v-form>
+        <v-btn
+          :disabled="(!valid || !vForm)"
+          color="success"
+          class="mr-6 mb-6"
+          :loading="processingChanges"
+          width="12em"
+          @click="submit"
+        >
+          bestätigen
+        </v-btn>
+        <v-btn
+          color="error"
+          width="12em"
+          class="mr-6 mb-6"
+          @click="reset"
+        >
+          zurücksetzten
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-alert
+      v-else-if="errorMessage"
+      type="error"
+      class="ma-10"
+    >
+      {{ errorMessage }}
+    </v-alert>
+  </Default>
 </template>
 
 <script>
 import axios from 'axios';
+import EventBus from '@/utils/eventBus';
 import { userSession } from '@/userSession';
+
+import Default from '../Default.vue';
 
 export default {
   name: 'BenutzerProfil',
-
+  components: {
+    Default,
+  },
   data: () => ({
     loading: true,
     processingChanges: false,
@@ -199,16 +166,10 @@ export default {
     emailRules: [
       (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === ''),
     ],
-    snackbar: false,
-    userFeedback: '',
-    snackbarType: null,
   }),
   computed: {
     valid() {
-      if (this.newFirstname || this.newLastname || this.newEmail) {
-        return true;
-      }
-      return false;
+      return this.newFirstname || this.newLastname || this.newEmail;
     },
   },
   mounted() {
@@ -265,30 +226,18 @@ export default {
         this.processingChanges = true;
         axios.put('users', {}, { headers })
           .then(() => {
-            this.snackSucc();
+            EventBus.$emit('new-snackbar', 'Das Ändern ihrer Daten war erfolgreich', 'success', 10000, true);
             this.loadData();
             this.reset();
           })
           .catch((err) => {
-            this.snackErr();
+            EventBus.$emit('new-snackbar', `Das Ändern ihrer Daten war NICHT erfolgreich!\n${err.toString()}`, 'error', 10000, true);
             this.errorMessage = err.toString();
           }).finally(() => {
             this.processingChanges = false;
           });
       }
     },
-    snackSucc() {
-      this.snackbar = true;
-      this.snackbarType = 'success';
-      this.userFeedback = 'Das Ändern ihrer Daten war erfolgreich';
-    },
-    snackErr() {
-      this.snackbar = true;
-      this.snackbarType = 'error';
-      this.userFeedback = 'Das Ändern ihrer Daten war NICHT erfolgreich!';
-    },
-
-
   },
 };
 </script>
@@ -297,26 +246,5 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
-  }
-
-  .pageBox{
-    position:relative;
-    width: 100%;
-  }
-
-  .linkToDonate {
-    width: 100%;
-    bottom: 40px;
-  }
-
-  .gradientBackground {
-    background: rgb(255, 255, 255) linear-gradient(to right, rgb(230, 255, 242), rgb(200, 245, 255));
-    height: 100%;
-    width: 100%;
-  }
-
-  .loadingCircle {
-    margin-top: 100px;
-    margin-bottom: 100px;
   }
 </style>
