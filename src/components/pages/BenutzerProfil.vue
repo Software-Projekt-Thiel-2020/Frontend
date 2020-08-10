@@ -217,10 +217,7 @@ export default {
   }),
   computed: {
     valid() {
-      if (this.newFirstname || this.newLastname || this.newEmail) {
-        return true;
-      }
-      return false;
+      return !!(this.newFirstname || this.newLastname || this.newEmail);
     },
   },
   mounted() {
