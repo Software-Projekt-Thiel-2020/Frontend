@@ -7,6 +7,12 @@
       >
         {{ title }}
       </h1>
+      <h3
+        v-if="subtitle"
+        class="my-n2 text-center font-weight-light"
+      >
+        {{ subtitle }}
+      </h3>
       <v-divider class="my-5" />
       <MyAlertSystem
         ref="alertSystem"
@@ -41,6 +47,9 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    subtitle: {
+      type: String,
     },
     loading: {
       type: Boolean,
