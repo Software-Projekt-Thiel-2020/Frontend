@@ -1,5 +1,8 @@
 <template>
-  <div class="gradientBackground">
+  <Default
+    :title="project.length ? project[0].name : 'Institution'"
+    :loading="loadingVouchers || loadingProject"
+  >
     <v-dialog
       v-if="boughtVoucher "
       v-model="dialog"
@@ -70,6 +73,7 @@
         </v-btn>
       </v-card>
     </v-dialog>
+
     <v-container>
       <v-row>
         <v-col>
@@ -78,19 +82,7 @@
             elevation="4"
             width="100%"
           >
-            <v-layout
-              v-if="loadingProject == true"
-              justify-center
-            >
-              <v-progress-circular
-                :size="50"
-                :width="7"
-                color="green"
-                indeterminate
-              />
-            </v-layout>
             <div
-              v-else
               class="d-flex flex-no-wrap justify-space-between"
             >
               <div>
@@ -182,90 +174,62 @@
         </h1>
       </v-col>
     </v-row>
-    <v-layout
-      v-if="loadingVouchers === true"
-      justify-center
-    >
-      <v-progress-circular
-        :size="70"
-        :width="7"
-        color="green"
-        indeterminate
-      />
-    </v-layout>
-    <div v-else>
+    <div>
       <v-row>
         <v-col
           v-for="voucher in vouchers"
           :key="voucher.id"
-          cols="6"
+          cols="12"
+          sm="12"
+          md="6"
+          lg="4"
+          xl="3"
         >
-          <v-card
-            elevation="7"
-            class="py-6 text-center"
-          >
-            <v-row>
-              <v-col>
-                <h3 class="headline">
-                  {{ voucher.title }}
-                </h3>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Beschreibung:
-                </h4>
-                {{ voucher.subject }}
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Preis:
-                </h4>
-                {{ getETHValue(voucher.price) }}€
-              </v-col>
-              <v-col class="voucherData mr-3">
-                <h4>
-                  Gültigkeit:
-                </h4>
-                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h5>
-                  Wurde bereits {{ voucher.amount }} mal gekauft
-                </h5>
-              </v-col>
-            </v-row>
-            <v-btn
-              :id="voucher.id"
-              class="mt-2 btn-hover color-9"
-              dark
-              :loading="loading && indexClicked === voucher.id"
-              @click="buyVoucher(voucher)"
-            >
-              <span
-                v-if="!$vuetify.breakpoint.xsOnly"
-              >
-                Gutschein kaufen
-              </span>
-              <span
-                v-else
-              >
-                Kaufen
-              </span>
-            </v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row v-if="vouchers.length === 0">
-        <v-col class="noVouchers">
-          <h3>
-            Keine Gutscheine vorhanden
-          </h3>
+          <MyCard>
+            <template #title>
+              {{ voucher.title }}
+            </template>
+
+            <template #subtitle>
+              {{ voucher.subject }}
+            </template>
+
+            <template #text>
+              <v-row>
+                <v-col>
+                  <h4>
+                    Preis:
+                  </h4>
+                  {{ getETHValue(voucher.price) }}€
+                </v-col>
+                <v-col class="mr-3">
+                  <h4>
+                    Gültigkeit:
+                  </h4>
+                  {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <h5>
+                    Wurde bereits {{ voucher.amount }} mal gekauft
+                  </h5>
+                </v-col>
+              </v-row>
+
+              <div class=" text-center">
+                <v-btn
+                  :id="voucher.id"
+                  class="mt-2 btn-hover color-9"
+                  dark
+                  :loading="loading && indexClicked === voucher.id"
+                  @click="buyVoucher(voucher)"
+                >
+                  {{ `${!$vuetify.breakpoint.xsOnly ? 'Gutschein' : ''} Kaufen` }}
+                </v-btn>
+              </div>
+            </template>
+          </MyCard>
         </v-col>
       </v-row>
     </div>
@@ -311,15 +275,22 @@
     >
       Bitte melden Sie sich an
     </v-snackbar>
-  </div>
+  </Default>
 </template>
 
 <script>
 import axios from 'axios';
 import { userSession } from '@/userSession';
 
+import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
+
 export default {
   name: 'ProjectGutschein',
+  components: {
+    Default,
+    MyCard,
+  },
   data: () => ({
     customBreak: false,
     pictureBreak: false,
@@ -489,11 +460,6 @@ export default {
         backdrop-filter: blur(15px) brightness(0.5);
     }
 
-    .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
-    }
-
     .projectBox {
         padding: 20px;
         background-color: rgba(255, 255, 255, 0.8);
@@ -525,20 +491,6 @@ export default {
     .btn-hover.color-9 {
         background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
         box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
-    }
-
-    .voucherData {
-      text-align: left;
-      margin-left: 25px;
-    }
-
-    .voucherData h5 {
-      font-style: italic;
-    }
-
-    .noVouchers {
-      text-align: center;
-      color: red;
     }
 
     .checkmark__circle {
