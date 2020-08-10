@@ -142,12 +142,12 @@ export default {
     newFirstname: '',
     newLastname: '',
     emailRules: [
-      (v) => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === ''),
+      (v) => (/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || (v === '')) || 'Bitt eine gültige E-Mail Adresse angeben',
     ],
   }),
   computed: {
     valid() {
-      return this.newFirstname || this.newLastname || this.newEmail;
+      return !!(this.newFirstname || this.newLastname || this.newEmail);
     },
   },
   mounted() {
