@@ -655,7 +655,9 @@ export default {
     },
     async changeProject() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
-      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+      try {
+        window.btoa(this.editElement.description);
+      } catch (e) {
         EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
           'warning', 4000, true);
         return;
@@ -683,6 +685,10 @@ export default {
           headers.milestones = JSON.stringify(headers.milestones);
         }
         this.changingProject = true;
+        if (this.previewImage) {
+          URL.revokeObjectURL(this.previewImage);
+          this.previewImage = null;
+        }
         axios.patch(`projects/${this.editElement.id}`, null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -733,6 +739,10 @@ export default {
         milestones: [],
       };
       this.newMilestones = [];
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+        this.previewImage = null;
+      }
     },
     showAlert(msg, type) {
       this.alert = true;

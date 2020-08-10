@@ -444,14 +444,16 @@ export default {
     },
     async changeInst() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
-      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+      try {
+        window.btoa(this.editElement.description);
+      } catch (e) {
         EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
           'warning', 4000, true);
         return;
       }
 
       if (userSession.isUserSignedIn()) {
-        const headers = this.editElement;
+        const headers = JSON.parse(JSON.stringify(this.editElement));
         const authToken = userSession.loadUserData().authResponseToken;
         headers.authToken = authToken;
 
@@ -469,6 +471,10 @@ export default {
         headers.description = window.btoa(this.editElement.description);
         headers.short = window.btoa(this.editElement.short);
         this.loadingChanges = true;
+        if (this.previewImage) {
+          URL.revokeObjectURL(this.previewImage);
+          this.previewImage = null;
+        }
         axios.patch('institutions', null, { headers })
           .catch(() => {
             this.err.normErr = 1;
@@ -520,6 +526,10 @@ export default {
     closeOverlay() {
       this.overlay = false;
       this.editElement = {};
+      if (this.previewImage) {
+        URL.revokeObjectURL(this.previewImage);
+        this.previewImage = null;
+      }
     },
     showAlert(msg, type) {
       this.alert = true;
