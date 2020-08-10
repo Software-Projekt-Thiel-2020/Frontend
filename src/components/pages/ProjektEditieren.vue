@@ -3,7 +3,7 @@
     <v-layout
       class="mb-3"
       :justify-center="$vuetify.breakpoint.smAndDown"
-      :class="!$vuetify.breakpoint.smAndDown ? 'newProject' : ''"
+      :class="!$vuetify.breakpoint.smAndDown ? 'btnTitleLeft' : ''"
     >
       <v-btn
         to="/projektanlegen"
@@ -157,15 +157,6 @@
               />
             </MyFormRow>
 
-            <MyFormRow title="Beschreibung">
-              <Editor
-                ref="toastuiEditor"
-                :options="editorOptions"
-                height="500px"
-                initial-edit-type="wysiwyg"
-              />
-            </MyFormRow>
-
             <MyFormRow title="Kurz-Beschreibung">
               <v-text-field
                 v-model="editElement.short"
@@ -174,6 +165,15 @@
                 maxlength="140"
                 clearable
                 :rules="textRule"
+              />
+            </MyFormRow>
+
+            <MyFormRow title="Beschreibung">
+              <Editor
+                ref="toastuiEditor"
+                :options="editorOptions"
+                height="500px"
+                initial-edit-type="wysiwyg"
               />
             </MyFormRow>
 
@@ -377,6 +377,7 @@ import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
 import { Editor } from '@toast-ui/vue-editor';
 
+import EventBus from '@/utils/eventBus';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
@@ -654,6 +655,12 @@ export default {
     },
     async changeProject() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
+      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+        EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
+          'warning', 4000, true);
+        return;
+      }
+
       if (userSession.isUserSignedIn()) {
         const authToken = userSession.loadUserData().authResponseToken;
         const headers = {
@@ -743,9 +750,5 @@ export default {
 </script>
 
 <style scoped>
-  .newProject {
-    position: absolute;
-    top: 38px;
-    right:50px;
-  }
+
 </style>

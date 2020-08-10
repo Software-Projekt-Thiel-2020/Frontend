@@ -61,21 +61,6 @@
                 </v-row>
                 <v-row justify="center">
                   <v-col :cols="sizeField">
-                    <v-textarea
-                      v-model="description"
-                      clearable
-                      counter
-                      no-resize
-                      outlined
-                      :rules="textRule"
-                      label="Beschreibung"
-                      background-color="grey lighten-4"
-                      height="180"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row justify="center">
-                  <v-col :cols="sizeField">
                     <v-text-field
                       v-model="short"
                       clearable
@@ -86,6 +71,21 @@
                       label="Kurz-Beschreibung"
                       background-color="grey lighten-4"
                       maxlength="140"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row justify="center">
+                  <v-col :cols="sizeField">
+                    <v-textarea
+                      v-model="description"
+                      clearable
+                      counter
+                      no-resize
+                      outlined
+                      :rules="textRule"
+                      label="Beschreibung"
+                      background-color="grey lighten-4"
+                      height="180"
                     />
                   </v-col>
                 </v-row>
