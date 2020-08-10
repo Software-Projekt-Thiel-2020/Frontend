@@ -8,7 +8,7 @@
         {{ title }}
       </h1>
       <h3
-        v-if="subtitle"
+        v-if="'subtitle' in this.$options.propsData"
         class="my-n2 text-center font-weight-light"
       >
         {{ subtitle }}
@@ -50,6 +50,7 @@ export default {
     },
     subtitle: {
       type: String,
+      default: '',
     },
     loading: {
       type: Boolean,
