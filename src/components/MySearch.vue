@@ -31,7 +31,7 @@
         >
           <v-text-field
             v-model="value.place"
-            prepend-inner-icon="mdi-magnify"
+            prepend-inner-icon="mdi-map"
             label="Stadt/PLZ"
           />
         </v-col>
