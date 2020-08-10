@@ -41,7 +41,6 @@
         </v-col>
       </v-row>
 
-
       <v-row>
         <v-col
           cols="12"
@@ -76,7 +75,6 @@
         </v-col>
       </v-row>
 
-
       <v-row>
         <v-col
           cols="12"
@@ -84,7 +82,6 @@
         >
           <v-text-field
             v-model="project.goal"
-            min="1"
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
             outlined
@@ -156,7 +153,6 @@
         </v-col>
       </v-row>
 
-
       <v-row>
         <v-col cols="12">
           <v-text-field
@@ -184,7 +180,6 @@
           />
         </v-col>
       </v-row>
-
 
       <v-row>
         <v-col
@@ -233,7 +228,6 @@
           </v-row>
         </v-col>
       </v-row>
-
 
       <v-row>
         <v-col cols="12">
@@ -358,7 +352,7 @@
             justify-center
           >
             <v-btn
-              :disabled="!form"
+              :disabled="!form || project.milestones.length === 0"
               color="success"
               class="font-weight-medium ma-2"
               elevation="2"
@@ -505,7 +499,7 @@ export default {
       description: '',
       idInstitution: null,
       requiredVotes: 1,
-      goal: 1,
+      goal: 10,
       until: 0,
       milestones: [],
       longitude: '',
@@ -541,10 +535,13 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(v, 10) < 9e32 || v === null) {
-                return true;
+              if (parseInt(v, 10) >= 10 || v === null) {
+                if (parseInt(v, 10) < 9e32 || v === null) {
+                  return true;
+                }
+                return 'Zahl muss kleiner als 9e32 sein';
               }
-              return 'Zahl muss kleiner als 9e32 sein';
+              return 'Zahl muss mindestens 10 sein';
             }
             return 'Bitte nur ganze Zahlen eingeben';
           }
@@ -558,7 +555,10 @@ export default {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
               if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
-                return true;
+                if (this.checkMilestoneGoals(v)) {
+                  return true;
+                }
+                return 'Meilenstein-Ziele dürfen nicht gleich sein';
               }
               return `Ziel muss unter ${this.project.goal} liegen`;
             }
@@ -584,6 +584,13 @@ export default {
     this.get_user();
   },
   methods: {
+    checkMilestoneGoals(value) {
+      if (this.project.milestones.length < 1) {
+        return true;
+      }
+      const goalArray = this.project.milestones.map((milestone) => milestone.goal);
+      return !goalArray.some((mile) => mile === value);
+    },
     updateMap(lat, long) {
       try {
         let newCoords;
@@ -766,12 +773,12 @@ export default {
 </script>
 
 <style scoped>
-.titleHeader {
-  padding-bottom: 15px;
-  padding-top: 10px;
-  backdrop-filter: blur(15px) brightness(0.5);
-}
-.gradientBackground {
-  background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-}
+  .titleHeader {
+    padding-bottom: 15px;
+    padding-top: 10px;
+    backdrop-filter: blur(15px) brightness(0.5);
+  }
+  .gradientBackground {
+    background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+  }
 </style>
