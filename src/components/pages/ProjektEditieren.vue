@@ -527,7 +527,7 @@ export default {
     getMinDate() {
       this.minDate = new Date();
       // Smart Contracts: min: today + 1 day
-      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 2);
       this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     editMilestone(milestone) {

@@ -588,6 +588,14 @@ export default {
       if (this.project.milestones.length < 1) {
         return true;
       }
+
+      if (this.editedIndex > 0) {
+        const miles = JSON.parse(JSON.stringify(this.project.milestones));
+        miles.splice(this.project.milestones, 1);
+        const goalArray = miles.map((milestone) => milestone.goal);
+        const notAvailable = new Set(goalArray);
+        return !notAvailable.has(value);
+      }
       const goalArray = this.project.milestones.map((milestone) => milestone.goal);
       return !goalArray.some((mile) => mile === value);
     },
@@ -686,7 +694,7 @@ export default {
     getMinDate() {
       this.minDate = new Date();
       // Smart Contracts: min: today + 1 day
-      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 2);
       this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     getUserInstitutions() {
