@@ -754,7 +754,7 @@ export default {
         headers.milestones = headers.milestones.map((mile) => {
           const cpy = mile;
           // until / 1000 -> Umrechnung von ms auf s
-          cpy.until = new Date(mile.until).getTime() / 1000;
+          cpy.until = new Date(mile.until).getTime();
           return cpy;
         });
         headers.milestones = JSON.stringify(headers.milestones);
