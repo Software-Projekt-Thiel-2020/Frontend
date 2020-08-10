@@ -655,7 +655,9 @@ export default {
     },
     async changeProject() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
-      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+      try {
+        window.btoa(this.editElement.description);
+      } catch (e) {
         EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
           'warning', 4000, true);
         return;

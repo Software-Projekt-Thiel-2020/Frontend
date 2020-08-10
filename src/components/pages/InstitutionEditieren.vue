@@ -444,14 +444,16 @@ export default {
     },
     async changeInst() {
       this.editElement.description = this.$refs.toastuiEditor.invoke('getMarkdown');
-      if (!/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(this.editElement.description)) {
+      try {
+        window.btoa(this.editElement.description);
+      } catch (e) {
         EventBus.$emit('new-snackbar', 'Die Beschrebung darf nur gültige (Latin1) Zeichen enthalten',
           'warning', 4000, true);
         return;
       }
 
       if (userSession.isUserSignedIn()) {
-        const headers = this.editElement;
+        const headers = JSON.parse(JSON.stringify(this.editElement));
         const authToken = userSession.loadUserData().authResponseToken;
         headers.authToken = authToken;
 
