@@ -520,6 +520,7 @@ export default {
     closeOverlay() {
       this.overlay = false;
       this.editElement = {};
+      this.previewImage = null;
     },
     showAlert(msg, type) {
       this.alert = true;

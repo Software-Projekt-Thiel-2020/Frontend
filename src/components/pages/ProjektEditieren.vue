@@ -733,6 +733,7 @@ export default {
         milestones: [],
       };
       this.newMilestones = [];
+      this.previewImage = null;
     },
     showAlert(msg, type) {
       this.alert = true;
