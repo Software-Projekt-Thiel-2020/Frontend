@@ -64,216 +64,209 @@
     </v-layout>
     <div v-else-if="project">
       <v-container>
-        <v-card
-          v-if="project"
-          elevation="7"
-          class="pa-8 text-center"
-          color="rgba(255, 255, 255, 0.35)"
-        >
-          <v-card-text>
-            <v-row justify="center">
-              <v-col
-                cols="12"
-                style="max-width: 800px"
+        <v-card-text class="text-center">
+          <v-row justify="center">
+            <v-col
+              cols="12"
+              style="max-width: 800px"
+            >
+              <v-card
+                v-if="project"
+                elevation="10"
+                class="text-center"
               >
-                <v-card
-                  v-if="project"
-                  elevation="10"
-                  class="text-center"
+                <v-system-bar
+                  color="secondary"
+                  height="40px"
                 >
-                  <v-system-bar
-                    color="secondary"
-                    height="40px"
+                  <v-card-text
+                    class="headline font-weight-thin"
+                    style="color: white"
                   >
-                    <v-card-text
-                      class="headline font-weight-thin"
-                      style="color: white"
-                    >
-                      Meilensteine
-                    </v-card-text>
-                  </v-system-bar>
-                  <v-card-text v-if="project.milestones.length === 0">
-                    Keine Meilensteine vorhanden
+                    Meilensteine
                   </v-card-text>
-                  <div>
-                    <div
-                      v-for="milestone in project.milestones"
-                      :key="milestone.id"
-                    >
-                      <v-row>
-                        <v-col cols="12">
-                          <h1>
-                            {{ milestone.milestoneName }}
-                          </h1>
-                        </v-col>
-                        <v-col>
-                          <h4 class="title">
-                            Gesammelt
-                          </h4>
-                          <h1 class="title font-weight-light">
-                            {{ showValue(milestone.totalDonated) }}
-                          </h1>
-                        </v-col>
-                        <v-col>
-                          <h4 class="title">
-                            Ziel
-                          </h4>
-                          <h1 class="title font-weight-light">
-                            {{ showValue(milestone.goal) }}
-                          </h1>
-                        </v-col>
-                        <v-col>
-                          <h4 class="title">
-                            Voting
-                          </h4>
-                          <h1 class="title font-weight-light">
-                            {{ votePercentage(milestone.positiveVotes, milestone.negativeVotes) }}% (in {{ milestone.positiveVotes + milestone.negativeVotes }} Votes)
-                          </h1>
-                        </v-col>
-                      </v-row>
-                      <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
-                      <v-progress-linear
-                        color="secondary"
-                        height="16"
-                        :value="(project.totalDonated/milestone.goal) * 100"
-                        striped
-                        class="mb-1"
-                      />
-                    </div>
-                  </div>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card
-                  class="py-8"
-                  elevation="10"
-                >
-                  <div>
-                    <v-img
-                      v-if="project.picturePath"
-
-                      max-height="200px"
-                      contain
-                      :src="project.picturePath ? (apiurl+'/file/'+project.picturePath) : require(`@/assets/placeholder.png`)"
-                    >
-                      <template v-slot:placeholder>
-                        <v-row
-                          class="fill-height ma-0"
-                          align="center"
-                          justify="center"
-                        >
-                          <v-progress-circular
-                            indeterminate
-                            color="grey darken-5"
-                          />
-                        </v-row>
-                      </template>
-                    </v-img>
-                    <h4 class="headline font-weight-light">
-                      Jetzt Spenden!
-                    </h4>
-                    <currency-input
-                      v-model="donationValue"
-                      :allow-negative="false"
-                      :auto-decimal-mode="true"
-                      class="mt-3 headline"
-                      @change="compareInput"
-                    />
-                    <br>
-                    <h1 class="display-1">
-                      {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
-                    </h1>
-                    <v-checkbox
-                      v-model="voteEnabled"
-                      :disabled="voteDisabled || project.milestones.length === 0"
-                      style="display:inline-flex"
-                      class="text-center align-center"
-                      label="Für Meilenstein abstimmen"
-                    />
-                    <br>
-                    <v-btn
-                      class="btn-hover color-9"
-                      dark
-                      :loading="loadDonation"
-                      :disabled="donationValue <= 0"
-                      @click="donate()"
-                    >
-                      Betrag Spenden
-                    </v-btn>
-                  </div>
-                </v-card>
-                <v-card
-                  v-if="project"
-                  class="mt-6 grey--text text--darken-2"
-                  elevation="10"
-                >
-                  <v-system-bar
-                    color="secondary"
-                    height="40px"
-                  >
-                    <v-card-text
-                      class="headline font-weight-thin"
-                      style="color: white"
-                    >
-                      Beschreibung
-                    </v-card-text>
-                  </v-system-bar>
-                  <v-layout
-                    v-if="loadingInstitution == true"
-                    justify-center
-                  >
-                    <v-progress-circular
-                      :size="30"
-                      :width="7"
-                      color="green"
-                      indeterminate
-                    />
-                  </v-layout>
+                </v-system-bar>
+                <v-card-text v-if="project.milestones.length === 0">
+                  Keine Meilensteine vorhanden
+                </v-card-text>
+                <div>
                   <div
-                    v-if="institution"
+                    v-for="milestone in project.milestones"
+                    :key="milestone.id"
                   >
-                    <v-card-text>
-                      <h3 class="subtitle pt-1">
-                        Institution: {{ institution[0].name }}
-                      </h3>
-                      <br>
-                      <!-- eslint-disable-next-line vue/no-v-html -->
-                      <div v-html="compiledMarkdown" />
-                    </v-card-text>
-                    <router-link
-                      :to="'/projectGutschein/'+institution[0].id"
-                      tag="span"
-                      class="link"
-                    >
-                      <v-btn
-                        outlined
-                        color="grey"
-                        class="mb-4 mx-2"
+                    <v-row>
+                      <v-col cols="12">
+                        <h1>
+                          {{ milestone.milestoneName }}
+                        </h1>
+                      </v-col>
+                      <v-col>
+                        <h4 class="title">
+                          Gesammelt
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ showValue(milestone.totalDonated) }}
+                        </h1>
+                      </v-col>
+                      <v-col>
+                        <h4 class="title">
+                          Ziel
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ showValue(milestone.goal) }}
+                        </h1>
+                      </v-col>
+                      <v-col>
+                        <h4 class="title">
+                          Voting
+                        </h4>
+                        <h1 class="title font-weight-light">
+                          {{ votePercentage(milestone.positiveVotes, milestone.negativeVotes) }}% (in {{ milestone.positiveVotes + milestone.negativeVotes }} Votes)
+                        </h1>
+                      </v-col>
+                    </v-row>
+                    <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
+                    <v-progress-linear
+                      color="secondary"
+                      height="16"
+                      :value="(project.totalDonated/milestone.goal) * 100"
+                      striped
+                      class="mb-1"
+                    />
+                  </div>
+                </div>
+              </v-card>
+            </v-col>
+            <v-col>
+              <v-card
+                class="py-8"
+                elevation="10"
+              >
+                <div>
+                  <v-img
+                    v-if="project.picturePath"
+
+                    max-height="200px"
+                    contain
+                    :src="project.picturePath ? (apiurl+'/file/'+project.picturePath) : require(`@/assets/placeholder.png`)"
+                  >
+                    <template v-slot:placeholder>
+                      <v-row
+                        class="fill-height ma-0"
+                        align="center"
+                        justify="center"
                       >
-                        Zu den Gutscheinen
-                      </v-btn>
-                    </router-link>
+                        <v-progress-circular
+                          indeterminate
+                          color="grey darken-5"
+                        />
+                      </v-row>
+                    </template>
+                  </v-img>
+                  <h4 class="headline font-weight-light">
+                    Jetzt Spenden!
+                  </h4>
+                  <currency-input
+                    v-model="donationValue"
+                    :allow-negative="false"
+                    :auto-decimal-mode="true"
+                    class="mt-3 headline"
+                    @change="compareInput"
+                  />
+                  <br>
+                  <h1 class="display-1">
+                    {{ getDonationETHValue ? getDonationETHValue : 0 }} ETH
+                  </h1>
+                  <v-checkbox
+                    v-model="voteEnabled"
+                    :disabled="voteDisabled || project.milestones.length === 0"
+                    style="display:inline-flex"
+                    class="text-center align-center"
+                    label="Für Meilenstein abstimmen"
+                  />
+                  <br>
+                  <v-btn
+                    class="btn-hover color-9"
+                    dark
+                    :loading="loadDonation"
+                    :disabled="donationValue <= 0"
+                    @click="donate()"
+                  >
+                    Betrag Spenden
+                  </v-btn>
+                </div>
+              </v-card>
+              <v-card
+                v-if="project"
+                class="mt-6 grey--text text--darken-2"
+                elevation="10"
+              >
+                <v-system-bar
+                  color="secondary"
+                  height="40px"
+                >
+                  <v-card-text
+                    class="headline font-weight-thin"
+                    style="color: white"
+                  >
+                    Beschreibung
+                  </v-card-text>
+                </v-system-bar>
+                <v-layout
+                  v-if="loadingInstitution == true"
+                  justify-center
+                >
+                  <v-progress-circular
+                    :size="30"
+                    :width="7"
+                    color="green"
+                    indeterminate
+                  />
+                </v-layout>
+                <div
+                  v-if="institution"
+                >
+                  <v-card-text>
+                    <h3 class="subtitle pt-1">
+                      Institution: {{ institution[0].name }}
+                    </h3>
+                    <br>
+                    <!-- eslint-disable-next-line vue/no-v-html -->
+                    <div v-html="compiledMarkdown" />
+                  </v-card-text>
+                  <router-link
+                    :to="'/projectGutschein/'+institution[0].id"
+                    tag="span"
+                    class="link"
+                  >
                     <v-btn
                       outlined
                       color="grey"
                       class="mb-4 mx-2"
-                      :href="institution[0].webpage"
                     >
-                      Webseite besuchen
+                      Zu den Gutscheinen
                     </v-btn>
-                  </div>
-                  <v-alert
-                    v-if="institutionDialog.error"
-                    type="error"
-                    tile
+                  </router-link>
+                  <v-btn
+                    outlined
+                    color="grey"
+                    class="mb-4 mx-2"
+                    :href="institution[0].webpage"
                   >
-                    Insititution konnte nicht geladen werden: {{ institutionDialog.errorMessage }}
-                  </v-alert>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+                    Webseite besuchen
+                  </v-btn>
+                </div>
+                <v-alert
+                  v-if="institutionDialog.error"
+                  type="error"
+                  tile
+                >
+                  Insititution konnte nicht geladen werden: {{ institutionDialog.errorMessage }}
+                </v-alert>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-card-text>
       </v-container>
     </div>
     <v-snackbar
