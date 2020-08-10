@@ -82,14 +82,16 @@
         <!-- eslint-disable-next-line vue/no-v-html -->
         <div v-html="compiledMarkdown" />
       </v-card-text>
-      <v-btn
-        outlined
-        color="grey"
-        class="mb-4 mx-2"
-        :href="institution[0].webpage"
-      >
-        Webseite besuchen
-      </v-btn>
+      <div class="text-center">
+        <v-btn
+          outlined
+          color="grey"
+          class="mb-4 mx-2"
+          :href="institution[0].webpage"
+        >
+          Webseite besuchen
+        </v-btn>
+      </div>
     </v-card>
 
     <v-dialog
