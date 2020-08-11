@@ -13,7 +13,7 @@
     </v-container>
     <v-container fluid>
       <v-layout
-        v-if="loading === true"
+        v-if="loading"
         justify-center
       >
         <v-progress-circular

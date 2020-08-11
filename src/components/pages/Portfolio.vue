@@ -187,7 +187,7 @@
                 </v-tab>
               </v-tabs>
               <v-layout
-                v-if="loadingVouchers === true"
+                v-if="loadingVouchers"
                 justify-center
               >
                 <v-progress-circular
@@ -289,7 +289,7 @@
                 <v-spacer />
               </v-toolbar>
               <v-layout
-                v-if="loadingDonations === true"
+                v-if="loadingDonations"
                 justify-center
               >
                 <v-progress-circular

@@ -51,7 +51,7 @@
       </v-card>
     </v-dialog>
     <v-layout
-      v-if="loading === true"
+      v-if="loading"
       justify-center
     >
       <v-progress-circular
