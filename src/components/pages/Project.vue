@@ -269,20 +269,6 @@
         </v-card-text>
       </v-container>
     </div>
-    <v-snackbar
-      v-model="notLoggedin"
-      top
-      color="error"
-    >
-      Bitte melden Sie sich an
-    </v-snackbar>
-    <v-snackbar
-      v-model="error"
-      top
-      color="error"
-    >
-      Spende konnte nicht getätigt werden: {{ errorMessage }}
-    </v-snackbar>
   </Default>
 </template>
 
@@ -290,6 +276,7 @@
 import axios from 'axios';
 import marked from 'marked';
 import DOMPurify from 'dompurify';
+import EventBus from '@/utils/eventBus';
 
 import Default from '../Default.vue';
 
@@ -319,7 +306,6 @@ export default {
     },
     loadingInstitution: false,
     institution: undefined,
-    notLoggedin: false,
     loadDonation: false,
     error: false,
   }),
@@ -361,7 +347,7 @@ export default {
     },
     donate() {
       if (this.userData == null) {
-        this.notLoggedin = true;
+        EventBus.$emit('new-snackbar', 'Bitte melden Sie sich an', 'error', 10000, true);
       } else {
         const donationAmount = this.getDonationETHValue * this.weiFormula;
         const headers = {
@@ -378,8 +364,7 @@ export default {
             this.loadProject();
           })
           .catch((err) => {
-            this.errorMessage = err.toString();
-            this.error = true;
+            EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()}`, 'error', 10000, true);
           })
           .finally(() => {
             this.loadDonation = false;
@@ -403,7 +388,7 @@ export default {
           // console.log(this.exrate);
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
+          EventBus.$emit('new-snackbar', `Konnte Wechselkurs nicht laden: ${err.toString()}`, 'error', 10000, true);
         })
         .finally(() => {
           this.loading = false;
@@ -420,7 +405,7 @@ export default {
           this.loadInstitution();
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
+          EventBus.$emit('new-snackbar', `Projekt konnte nicht geladen werden: ${err.toString()}`, 'error', 10000, true);
         })
         .finally(() => {
           this.loading = false;
