@@ -527,7 +527,7 @@ export default {
   }
 
   .walletAddress {
-    font-family: Courier;
+    font-family: Courier,serif;
   }
 
   .noEntryText{

@@ -206,8 +206,7 @@ export default {
         bottom: 0; /* Footer Height */
         width: 100%;
         min-height: 100%;
-        background-color: black;
-        background: url(../../assets/casedonation.jpg) no-repeat center center fixed;
+        background: black url(../../assets/casedonation.jpg) no-repeat fixed center center;
         background-size: cover;
     }
 
@@ -217,8 +216,7 @@ export default {
         top: 0; /* Header Height */
         width: 100%;
         height: 100vh;
-        background: linear-gradient(to right, rgba(26, 225, 79, 0.3), rgba(63, 134, 237, 0.3));
-        background-color: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.5) linear-gradient(to right, rgba(26, 225, 79, 0.3), rgba(63, 134, 237, 0.3));
     }
 
     .btn-hover {
