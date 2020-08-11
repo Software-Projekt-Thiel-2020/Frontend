@@ -535,8 +535,10 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(v, 10) >= 10 || v === null) {
-                if (parseInt(v, 10) < 9e32 || v === null) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(v) >= 10 || v === null) {
+                // eslint-disable-next-line no-undef
+                if (BigInt(v) < 9e32 || v === null) {
                   return true;
                 }
                 return 'Zahl muss kleiner als 9e32 sein';
@@ -552,9 +554,13 @@ export default {
     milestoneWeiRule() {
       return [
         (v) => {
-          if (!!v || v === null) {
-            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
+          if (v === null) {
+            return true;
+          }
+          if (v) {
+            if (/^[1-9][0-9]*$/s.test(v)) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(this.project.goal) > BigInt(v)) {
                 if (this.checkMilestoneGoals(v)) {
                   return true;
                 }
@@ -588,8 +594,16 @@ export default {
       if (this.project.milestones.length < 1) {
         return true;
       }
+      if (this.editedIndex > 0) {
+        const miles = JSON.parse(JSON.stringify(this.project.milestones));
+        miles.splice(this.project.milestones, 1);
+        const goalArray = miles.map((milestone) => milestone.goal);
+        const notAvailable = new Set(goalArray);
+        return !notAvailable.has(value);
+      }
       const goalArray = this.project.milestones.map((milestone) => milestone.goal);
-      return !goalArray.some((mile) => mile === value);
+      // eslint-disable-next-line no-undef
+      return !goalArray.some((mile) => BigInt(mile) === BigInt(value));
     },
     updateMap(lat, long) {
       try {
@@ -704,6 +718,7 @@ export default {
     calcMainUntil() {
       this.dialog3.timeMissing = this.project.until === 0;
       this.dialog3.titleMissing = this.project.title === null;
+      // BitInt probably not needed
       this.dialog3.goalMissing = this.project.goal <= 0;
       if (this.dialog3.titleMissing === false && this.dialog3.timeMissing === false && this.dialog3.goalMissing === false) {
         this.createSpendenProjekt();
