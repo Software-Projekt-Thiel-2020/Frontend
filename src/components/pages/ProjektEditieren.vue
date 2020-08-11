@@ -481,7 +481,10 @@ export default {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
               if (v > this.minWei || v === null) {
                 if (v < this.editElement.goal || v === null) {
-                  return true;
+                  if (this.checkMilestoneGoals(v)) {
+                    return true;
+                  }
+                  return 'Meilenstein-Ziele dürfen nicht gleich sein';
                 }
                 return `Ziel muss unter ${this.editElement.goal} liegen`;
               }
@@ -499,6 +502,13 @@ export default {
     this.getMinDate();
   },
   methods: {
+    checkMilestoneGoals(value) {
+      if (this.newMilestones.length < 1) {
+        return true;
+      }
+      const goalArray = this.this.newMilestones.map((milestone) => milestone.goal);
+      return !goalArray.some((mile) => mile === value);
+    },
     previewImageUpdate() {
       if (this.previewImage) {
         URL.revokeObjectURL(this.previewImage);

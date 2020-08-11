@@ -735,7 +735,7 @@ export default {
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
         headers.milestones = headers.milestones.map((mile) => {
-          const cpy = mile;
+          const cpy = JSON.parse(JSON.stringify(mile));
           // until / 1000 -> Umrechnung von ms auf s
           cpy.until = new Date(mile.until).getTime() / 1000;
           return cpy;
