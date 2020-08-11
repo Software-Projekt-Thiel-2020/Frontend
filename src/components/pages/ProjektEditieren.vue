@@ -470,7 +470,7 @@ export default {
         const mCopy = JSON.parse(JSON.stringify(milestone));
         mCopy.newIndex = this.newMilestones.indexOf(milestone);
         // until * 1000, weil ms auf s umgerechnet wird
-        mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
+        mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString('de-DE');
         return mCopy;
       });
     },
@@ -506,7 +506,11 @@ export default {
       if (this.newMilestones.length < 1) {
         return true;
       }
-      const goalArray = this.this.newMilestones.map((milestone) => milestone.goal);
+      const allArray = JSON.parse(JSON.stringify(this.newMilestones));
+      if (this.editFlag) {
+        allArray.splice(this.newMile.newIndex, 1);
+      }
+      const goalArray = allArray.map((milestone) => milestone.goal);
       return !goalArray.some((mile) => mile === value);
     },
     previewImageUpdate() {
@@ -749,6 +753,8 @@ export default {
         milestones: [],
       };
       this.newMilestones = [];
+      this.minDate = null;
+      this.minWei = 1;
       if (this.previewImage) {
         URL.revokeObjectURL(this.previewImage);
         this.previewImage = null;
