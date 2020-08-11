@@ -197,6 +197,16 @@
     </v-snackbar>
 
     <v-snackbar
+      v-if="dialog.body"
+      v-model="dialog.error"
+      top
+      color="error"
+      :timeout="10000"
+    >
+      Institution konnte nicht erstellt werden: {{ dialog.errorMessage }} ({{ dialog.body }})
+    </v-snackbar>
+    <v-snackbar
+      v-else
       v-model="dialog.error"
       top
       color="error"
@@ -255,6 +265,7 @@ export default {
       successful: false,
       error: false,
       errorMessage: '',
+      body: '',
     },
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -323,6 +334,9 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
+          if (err.response) {
+            this.dialog.body = err.response.data.error;
+          }
         }).finally(() => {
           this.loading = false;
         });
