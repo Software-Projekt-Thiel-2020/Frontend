@@ -1,5 +1,121 @@
 <template>
-  <div class="gradientBackground">
+  <Default
+    :title="institution ? institution[0].name : 'Institution'"
+    :loading="loadingVouchers || loadingProject"
+  >
+    <v-row>
+      <v-col
+        v-for="voucher in vouchers"
+        :key="voucher.id"
+        cols="12"
+        sm="12"
+        md="6"
+        lg="4"
+        xl="3"
+      >
+        <MyCard>
+          <template #title>
+            {{ voucher.title }}
+          </template>
+
+          <template #subtitle>
+            {{ voucher.subject }}
+          </template>
+
+          <template #text>
+            <v-row>
+              <v-col>
+                <h4>
+                  Preis:
+                </h4>
+                {{ '≈ ' + getETHValue(voucher.price) + '€' }}
+              </v-col>
+              <v-col class="mr-3">
+                <h4>
+                  Gültigkeit:
+                </h4>
+                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <h5>
+                  Wurde bereits {{ voucher.amount }} mal gekauft
+                </h5>
+              </v-col>
+            </v-row>
+
+            <div class=" text-center">
+              <v-btn
+                :id="voucher.id"
+                class="mt-2 btn-hover color-9"
+                dark
+                :loading="loading && indexClicked === voucher.id"
+                @click="buyVoucher(voucher)"
+              >
+                {{ `${!$vuetify.breakpoint.xsOnly ? 'Gutschein' : ''} Kaufen` }}
+              </v-btn>
+            </div>
+          </template>
+        </MyCard>
+      </v-col>
+    </v-row>
+
+    <v-divider class="my-5" />
+
+    <v-card
+      v-if="institution"
+      class="mt-6 grey--text text--darken-2"
+      elevation="10"
+    >
+      <v-system-bar
+        color="secondary"
+        height="40px"
+        class="text-center"
+      >
+        <v-card-text
+          class="headline font-weight-thin"
+          style="color: white"
+        >
+          {{ institution[0].name }}
+        </v-card-text>
+      </v-system-bar>
+      <v-card-text>
+        <v-img
+          v-if="institution[0].picturePath"
+          class="mb-4"
+          max-height="300px"
+          contain
+          :src="institution[0].picturePath ? (apiurl+'/file/'+institution[0].picturePath) : require(`@/assets/placeholder.png`)"
+        >
+          <template v-slot:placeholder>
+            <v-row
+              class="fill-height ma-0"
+              align="center"
+              justify="center"
+            >
+              <v-progress-circular
+                indeterminate
+                color="grey darken-5"
+              />
+            </v-row>
+          </template>
+        </v-img>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div v-html="compiledMarkdown" />
+      </v-card-text>
+      <div class="text-center">
+        <v-btn
+          outlined
+          color="grey"
+          class="mb-4 mx-2"
+          :href="institution[0].webpage"
+        >
+          Webseite besuchen
+        </v-btn>
+      </div>
+    </v-card>
+
     <v-dialog
       v-if="boughtVoucher "
       v-model="dialog"
@@ -70,256 +186,25 @@
         </v-btn>
       </v-card>
     </v-dialog>
-    <v-container>
-      <v-row>
-        <v-col>
-          <v-card
-            class="projectBox"
-            elevation="4"
-            width="100%"
-          >
-            <v-layout
-              v-if="loadingProject === true"
-              justify-center
-            >
-              <v-progress-circular
-                :size="50"
-                :width="7"
-                color="green"
-                indeterminate
-              />
-            </v-layout>
-            <div
-              v-else
-              class="d-flex flex-no-wrap justify-space-between"
-            >
-              <div>
-                <v-card-title class="font-weight-light display-1">
-                  <span v-if="customBreak">
-                    Informationen
-                  </span>
-                  <span v-else>
-                    Informationen über den Betrieb
-                  </span>
-                </v-card-title>
-                <v-card-text>
-                  <v-row
-                    class="font-weight-medium"
-                    style="font-size: larger"
-                  >
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Name:
-                    </v-col>
-                    <v-col>
-                      {{ project[0].name }}
-                    </v-col>
-                  </v-row>
-                  <v-row>
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Adresse:
-                    </v-col>
-                    <v-col>
-                      {{ project[0].address }}
-                    </v-col>
-                  </v-row>
-                  <v-row
-                    v-if="pictureBreak"
-                  >
-                    <v-col
-                      :cols="spaltenBreak"
-                    >
-                      Bild:
-                    </v-col>
-                    <v-col>
-                      <v-img
-                        max-height="160"
-                        max-width="160"
-                        contain
-                        :src="image"
-                      />
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <v-card-actions>
-                  <a :href="'//'+project[0].webpage">
-                    <v-btn outlined>
-                      Webseite besuchen
-                    </v-btn>
-                  </a>
-                </v-card-actions>
-              </div>
-            </div>
-          </v-card>
-        </v-col>
-        <v-col
-          v-if="!pictureBreak"
-          cols="4"
-          align="right"
-          justify="top"
-        >
-          <img
-            v-if="project[0].picturePath"
-            :src="apiurl+'/file/'+project[0].picturePath"
-          >
-          <img
-            v-else
-            src="../../assets/placeholder.png"
-          >
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-row>
-      <v-col class="titleHeader text-center">
-        <h1
-          :class="$vuetify.breakpoint.smAndDown ? 'display-1' : 'display-3'"
-          class="font-weight-thin white--text text-center"
-        >
-          Verfügbare Gutscheine
-        </h1>
-      </v-col>
-    </v-row>
-    <v-layout
-      v-if="loadingVouchers === true"
-      justify-center
-    >
-      <v-progress-circular
-        :size="70"
-        :width="7"
-        color="green"
-        indeterminate
-      />
-    </v-layout>
-    <div v-else>
-      <v-row>
-        <v-col
-          v-for="voucher in vouchers"
-          :key="voucher.id"
-          cols="6"
-        >
-          <v-card
-            elevation="7"
-            class="py-6 text-center"
-          >
-            <v-row>
-              <v-col>
-                <h3 class="headline">
-                  {{ voucher.title }}
-                </h3>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Beschreibung:
-                </h4>
-                {{ voucher.subject }}
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h4>
-                  Preis:
-                </h4>
-                {{ getETHValue(voucher.price) }}€
-              </v-col>
-              <v-col class="voucherData mr-3">
-                <h4>
-                  Gültigkeit:
-                </h4>
-                {{ voucher.validTime / 60 / 60 / 24 / 365 }} Jahr(e)
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col class="voucherData">
-                <h5>
-                  Wurde bereits {{ voucher.amount }} mal gekauft
-                </h5>
-              </v-col>
-            </v-row>
-            <v-btn
-              :id="voucher.id"
-              class="mt-2 btn-hover color-9"
-              dark
-              :loading="loading && indexClicked === voucher.id"
-              @click="buyVoucher(voucher)"
-            >
-              <span
-                v-if="!$vuetify.breakpoint.xsOnly"
-              >
-                Gutschein kaufen
-              </span>
-              <span
-                v-else
-              >
-                Kaufen
-              </span>
-            </v-btn>
-          </v-card>
-        </v-col>
-      </v-row>
-      <v-row v-if="vouchers.length === 0">
-        <v-col class="noVouchers">
-          <h3>
-            Keine Gutscheine vorhanden
-          </h3>
-        </v-col>
-      </v-row>
-    </div>
-    <v-snackbar
-      v-model="dialogVoucher.error"
-      top
-      color="error"
-    >
-      Gutscheine konnten nicht geladen werden {{ dialogVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogProject.error"
-      top
-      color="error"
-    >
-      Institution konnten nicht geladen werden {{ dialogProject.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogEth.error"
-      top
-      color="error"
-    >
-      Etherum Wechselkurs konnte nicht geladen werden {{ dialogEth.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogBuyVoucher.error"
-      top
-      color="error"
-    >
-      Gutschein konnte nicht gekauft werden {{ dialogVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogBuyVoucher.successfull"
-      top
-      color="success"
-    >
-      Gutschein gekauft
-    </v-snackbar>
-    <v-snackbar
-      v-model="notLoggedin"
-      top
-      color="error"
-    >
-      Bitte melden Sie sich an
-    </v-snackbar>
-  </div>
+  </Default>
 </template>
 
 <script>
 import axios from 'axios';
+import marked from 'marked';
+import DOMPurify from 'dompurify';
 import { userSession } from '@/userSession';
+import EventBus from '@/utils/eventBus';
+
+import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'ProjectGutschein',
+  components: {
+    Default,
+    MyCard,
+  },
   data: () => ({
     customBreak: false,
     pictureBreak: false,
@@ -329,33 +214,11 @@ export default {
     userData: null,
     institutionId: null,
     dialog: false,
-    project: [{
-      name: '',
-      webpage: '',
-      address: '',
-    }],
+    institution: undefined,
     image: 'https://i.imgur.com/EJOjIMC.jpg',
     vouchers: [],
     loadingVouchers: true,
     loadingProject: true,
-    dialogVoucher: {
-      errorMessage: '',
-      error: false,
-    },
-    dialogProject: {
-      errorMessage: '',
-      error: false,
-    },
-    dialogBuyVoucher: {
-      errorMessage: '',
-      error: false,
-      successfull: false,
-    },
-    dialogEth: {
-      errorMessage: '',
-      error: false,
-    },
-    notLoggedin: false,
     exrate: 0,
     ethToEur: 0,
     loading: false,
@@ -363,11 +226,8 @@ export default {
     boughtVoucher: null,
   }),
   computed: {
-    spaltenBreak() {
-      if (this.$vuetify.breakpoint.xsOnly) {
-        return 4;
-      }
-      return this.$vuetify.breakpoint.lgAndUp ? 2 : 3;
+    compiledMarkdown() {
+      return this.institution ? marked(DOMPurify.sanitize(this.institution[0].description)) : '';
     },
   },
   created() {
@@ -406,11 +266,10 @@ export default {
       url += this.institutionId;
       axios.get(url)
         .then((res) => {
-          this.project = res.data;
+          this.institution = res.data;
         })
         .catch((err) => {
-          this.dialogProject.errorMessage = err.toString();
-          this.dialogProject.error = true;
+          EventBus.$emit('new-snackbar', `Institution konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         }).finally(() => {
           this.loadingProject = false;
         });
@@ -425,8 +284,7 @@ export default {
           this.vouchers = res.data;
         })
         .catch((err) => {
-          this.dialogVoucher.errorMessage = err.toString();
-          this.dialogVoucher.error = true;
+          EventBus.$emit('new-snackbar', `Gutscheine konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         }).finally(() => {
           this.loadingVouchers = false;
         });
@@ -437,13 +295,12 @@ export default {
           this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
-          this.dialogEth.errorMessage = err.toString();
-          this.dialogEth.error = true;
+          EventBus.$emit('new-snackbar', `Etherum Wechselkurs konnte nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         });
     },
     buyVoucher(voucher) {
       if (this.userData == null) {
-        this.notLoggedin = true;
+        EventBus.$emit('new-snackbar', 'Bitte melden Sie sich an', 'error', 10000, true);
       } else {
         const headers = {
           idVoucher: voucher.id,
@@ -457,8 +314,7 @@ export default {
             this.openDialog();
           })
           .catch((err) => {
-            this.dialogBuyVoucher.errorMessage = err.toString();
-            this.dialogBuyVoucher.error = true;
+            EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()}`, 'error', 10000, true);
           }).finally(() => {
             this.loading = false;
           });
@@ -483,22 +339,6 @@ export default {
 </script>
 
 <style scoped>
-    .titleHeader {
-        padding-bottom: 15px;
-        padding-top: 10px;
-        backdrop-filter: blur(15px) brightness(0.5);
-    }
-
-    .gradientBackground {
-        background: linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
-        background-color: rgb(255, 255, 255);
-    }
-
-    .projectBox {
-        padding: 20px;
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-
     a {
         text-decoration: none;
     }
@@ -525,20 +365,6 @@ export default {
     .btn-hover.color-9 {
         background-image: linear-gradient(to right, #1ae14f, #3f86ed, #04befe, #12cd44);
         box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
-    }
-
-    .voucherData {
-      text-align: left;
-      margin-left: 25px;
-    }
-
-    .voucherData h5 {
-      font-style: italic;
-    }
-
-    .noVouchers {
-      text-align: center;
-      color: red;
     }
 
     .checkmark__circle {
