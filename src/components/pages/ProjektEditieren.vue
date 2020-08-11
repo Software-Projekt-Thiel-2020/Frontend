@@ -258,61 +258,64 @@
                       max-width="400"
                     >
                       <v-card>
-                        <v-card-title>
-                          <span class="headline"> Neuer Meilenstein</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-row justify="center">
-                            <v-col>
-                              <v-text-field
-                                v-model="newMile.milestoneName"
-                                label="Meilensteinname"
-                                outlined
-                                clearable
-                                :rules="milestoneNameRule"
-                              />
-                            </v-col>
-                          </v-row>
-                          <v-row justify="center">
-                            <v-col>
-                              <v-text-field
-                                v-model="newMile.goal"
-                                label="Spendenziel in Wei"
-                                min="1"
-                                outlined
-                                clearable
-                                :rules="weiRule"
-                              />
-                            </v-col>
-                          </v-row>
-                          <v-row>
-                            <v-col align="center">
-                              <v-date-picker
-                                v-model="newMile.until"
-                                :min="minDate"
-                                :max="editElement.until"
-                              />
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="closeDialog"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null"
-                            color="blue darken-1"
-                            text
-                            @click="saveMilestone"
-                          >
-                            Save
-                          </v-btn>
-                        </v-card-actions>
+                        <v-form v-model="milestoneForm">
+                          <v-card-title>
+                            <span class="headline"> Neuer Meilenstein</span>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-row justify="center">
+                              <v-col>
+                                <v-text-field
+                                  v-model="newMile.milestoneName"
+                                  label="Meilensteinname"
+                                  outlined
+                                  clearable
+                                  counter
+                                  maxlength="255"
+                                  :rules="milestoneNameRule"
+                                />
+                              </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                              <v-col>
+                                <v-text-field
+                                  v-model="newMile.goal"
+                                  label="Spendenziel in Wei"
+                                  outlined
+                                  clearable
+                                  :rules="weiRule"
+                                />
+                              </v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col class="text-center">
+                                <v-date-picker
+                                  v-model="newMile.until"
+                                  :min="minDate"
+                                  :max="editElement.until"
+                                />
+                              </v-col>
+                            </v-row>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeDialog"
+                            >
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null || !milestoneForm"
+                              color="blue darken-1"
+                              text
+                              @click="saveMilestone"
+                            >
+                              Save
+                            </v-btn>
+                          </v-card-actions>
+                        </v-form>
                       </v-card>
                     </v-dialog>
                   </v-toolbar>
@@ -411,6 +414,7 @@ export default {
     alertType: null,
     userFeedback: '',
     form: false,
+    milestoneForm: false,
     loading: true,
     changingProject: false,
     tableHeaders: [

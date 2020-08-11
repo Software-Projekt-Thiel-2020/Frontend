@@ -267,61 +267,64 @@
                     </v-btn>
                   </template>
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="12">
-                            <v-text-field
-                              v-model="editedItem.name"
-                              label="Meilensteinname*"
-                              outlined
-                              clearable
-                              :rules="milestoneNameRule"
-                            />
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              v-model="editedItem.goal"
-                              label="Spendenziel* (WEI)"
-                              min="1"
-                              type="number"
-                              outlined
-                              clearable
-                              :rules="milestoneWeiRule"
-                            />
-                          </v-col>
-                          <v-col>
-                            <v-date-picker
-                              v-model="editedItem.until"
-                              :min="minDate"
-                              :max="date"
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer />
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="cancel"
-                      >
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        :disabled="editedItem.name === null || editedItem.goal === null || editedItem.until === null"
-                        color="blue darken-1"
-                        text
-                        @click="save"
-                      >
-                        Save
-                      </v-btn>
-                    </v-card-actions>
+                    <v-form v-model="milestoneForm">
+                      <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="editedItem.name"
+                                label="Meilensteinname*"
+                                outlined
+                                clearable
+                                counter
+                                maxlength="255"
+                                :rules="milestoneNameRule"
+                              />
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="editedItem.goal"
+                                label="Spendenziel* (WEI)"
+                                min="1"
+                                type="number"
+                                outlined
+                                clearable
+                                :rules="milestoneWeiRule"
+                              />
+                            </v-col>
+                            <v-col class="text-center">
+                              <v-date-picker
+                                v-model="editedItem.until"
+                                :min="minDate"
+                                :max="date"
+                              />
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="cancel"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          :disabled="editedItem.name === null || editedItem.goal === null || editedItem.until === null || !milestoneForm"
+                          color="blue darken-1"
+                          text
+                          @click="save"
+                        >
+                          Save
+                        </v-btn>
+                      </v-card-actions>
+                    </v-form>
                   </v-card>
                 </v-dialog>
               </v-toolbar>
@@ -413,6 +416,7 @@ export default {
   },
   data: () => ({
     form: false,
+    milestoneForm: false,
     milestonesDate: [],
     shortRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
