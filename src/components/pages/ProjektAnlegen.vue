@@ -374,6 +374,15 @@
       Spendenprojekt erstellt!
     </v-snackbar>
     <v-snackbar
+      v-if="dialog.body"
+      v-model="dialog.error"
+      top
+      color="error"
+    >
+      Spendenprojekt konnte nicht erstellt werden: {{ dialog.errorMessage }} ({{ dialog.body }})
+    </v-snackbar>
+    <v-snackbar
+      v-else
       v-model="dialog.error"
       top
       color="error"
@@ -445,6 +454,7 @@ export default {
       successful: false,
       error: false,
       errorMessage: '',
+      body: '',
     },
     dialog2: false,
     dialog3: {
@@ -747,6 +757,9 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
+          if (err.response) {
+            this.dialog.body = err.response.data.error;
+          }
         }).finally(() => {
           this.loading = false;
         });
