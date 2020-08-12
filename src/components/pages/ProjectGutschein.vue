@@ -312,6 +312,7 @@ export default {
           .then(() => {
             this.boughtVoucher = voucher;
             this.openDialog();
+            EventBus.$emit('reload-user');
           })
           .catch((err) => {
             EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()}`, 'error', 10000, true);
