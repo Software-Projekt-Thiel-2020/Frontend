@@ -361,6 +361,8 @@ export default {
         axios.post('donations', {}, { headers })
           .then(() => {
             this.openDialog();
+            this.loadProject();
+            EventBus.$emit('reload-user');
           })
           .catch((err) => {
             EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()}`, 'error', 10000, true);
@@ -377,7 +379,6 @@ export default {
     closeDialog() {
       this.dialog = false;
       this.$confetti.stop();
-      window.location.reload(true);
     },
     weiToEuro() {
       this.loading = true;
