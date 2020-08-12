@@ -112,6 +112,7 @@ export default {
         latitude: -1,
         longitude: -1,
         errorMessage: '',
+        navigator: false,
       }),
     },
     placeholder: {
@@ -138,6 +139,12 @@ export default {
 
   methods: {
     getOwnLocation() {
+      if (this.value.navigator) {
+        this.value.longitude = -1;
+        this.value.latitude = -1;
+        this.value.navigator = false;
+        return;
+      }
       if (!('geolocation' in navigator)) {
         this.errorMessage = 'Geolocation ist nicht verfügbar';
         return;
@@ -148,6 +155,7 @@ export default {
         this.value.longitude = pos.coords.longitude;
         this.value.latitude = pos.coords.latitude;
         this.loadLocation = false;
+        this.value.navigator = true;
       }, (err) => {
         this.loadLocation = false;
         this.value.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
