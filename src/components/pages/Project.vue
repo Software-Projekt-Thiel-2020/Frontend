@@ -296,7 +296,7 @@ export default {
     weiFormula: 1e18,
     errorMessage: null,
     loading: false,
-    voteEnabled: true,
+    voteEnabled: false,
     voteDisabled: true,
     donationDisabled: true,
     apiurl: window.apiurl,
@@ -362,6 +362,7 @@ export default {
           .then(() => {
             this.openDialog();
             this.loadProject();
+            EventBus.$emit('reload-user');
           })
           .catch((err) => {
             EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()}`, 'error', 10000, true);
