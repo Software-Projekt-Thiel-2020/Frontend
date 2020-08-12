@@ -110,8 +110,8 @@ export default {
       lCodes: ['DE', 'AT', 'CH'],
       code: 'DE',
       radius: 10,
-      latitude: -1,
-      longitude: -1,
+      latitude: undefined,
+      longitude: undefined,
       errorMessage: '',
       navigator: false,
     },
@@ -141,13 +141,13 @@ export default {
       this.load();
     },
     loadInstitutions() {
-      if (this.searchModel.name || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
+      if (this.searchModel.name || (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined')) {
         let url = '';
         url = 'institutions?has_vouchers=1&name=';
         if (this.searchModel.name) {
           url = url.concat(`${this.searchModel.name}`);
         }
-        if (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1) {
+        if (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined') {
           url = url.concat(`&longitude=${this.searchModel.longitude}&latitude=${this.searchModel.latitude}&radius=${this.searchModel.radius}`);
         }
         axios.get(url)
@@ -170,8 +170,8 @@ export default {
     },
     suchen() {
       if (!this.searchModel.navigator && !this.searchModel.place.length) {
-        this.searchModel.longitude = -1;
-        this.searchModel.latitude = -1;
+        this.searchModel.longitude = undefined;
+        this.searchModel.latitude = undefined;
       }
       this.errorMessage = '';
       this.gotResponse = false;
@@ -189,7 +189,7 @@ export default {
               this.searchModel.longitude = res.data[0].lon;
               this.searchModel.latitude = res.data[0].lat;
             }
-            if (this.searchModel.latitude === -1 || this.searchModel.longitude === -1) {
+            if (typeof this.searchModel.latitude === 'undefined' || this.searchModel.longitude === 'undefined') {
               this.errorMessage = 'Es konnten keine Institutionen mit Gutscheinen gefunden werden';
             } else {
               this.loadInstitutions();
@@ -201,7 +201,7 @@ export default {
             this.gotResponse = true;
             this.loading = false;
           });
-      } else if (this.searchModel.errorMessage === '' || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
+      } else if (this.searchModel.errorMessage === '' || (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined')) {
         this.loadInstitutions();
       }
     },

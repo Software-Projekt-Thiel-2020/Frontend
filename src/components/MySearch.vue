@@ -109,8 +109,8 @@ export default {
         lCodes: ['DE', 'AT', 'CH'],
         code: 'DE',
         radius: 10,
-        latitude: -1,
-        longitude: -1,
+        latitude: undefined,
+        longitude: undefined,
         errorMessage: '',
         navigator: false,
       }),
@@ -127,21 +127,21 @@ export default {
 
   computed: {
     locationButton() {
-      if (this.value.latitude !== -1 && this.value.longitude !== -1) {
+      if (typeof this.value.latitude !== 'undefined' && typeof this.value.longitude !== 'undefined') {
         return 'success';
       }
       return 'primary';
     },
     searchButton() {
-      return !(this.value.name !== '' || (this.value.longitude !== -1 && this.value.latitude !== -1) || (this.value.place !== '' && this.value.code !== ''));
+      return !(this.value.name !== '' || (typeof this.value.longitude !== 'undefined' && typeof this.value.latitude !== 'undefined') || (this.value.place !== '' && this.value.code !== ''));
     },
   },
 
   methods: {
     getOwnLocation() {
       if (this.value.navigator) {
-        this.value.longitude = -1;
-        this.value.latitude = -1;
+        this.value.longitude = undefined;
+        this.value.latitude = undefined;
         this.value.navigator = false;
         return;
       }
@@ -165,8 +165,8 @@ export default {
       this.value.name = '';
       this.value.place = '';
       this.value.radius = 10;
-      this.value.longitude = -1;
-      this.value.latitude = -1;
+      this.value.longitude = undefined;
+      this.value.latitude = undefined;
       this.value.errorMessage = '';
       this.$emit('reset');
     },
