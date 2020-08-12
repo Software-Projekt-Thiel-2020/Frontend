@@ -477,11 +477,19 @@ export default {
     weiRule() {
       return [
         (v) => {
-          if (!!v || v === null) {
-            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (v > this.minWei || v === null) {
-                if (v < this.editElement.goal || v === null) {
-                  return true;
+          if (v === null) {
+            return true;
+          }
+          if (v) {
+            if (/^[1-9][0-9]*$/s.test(v)) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(v) > BigInt(this.minWei)) {
+                // eslint-disable-next-line no-undef
+                if (BigInt(v) < BigInt(this.editElement.goal)) {
+                  if (this.checkMilestoneGoals(v)) {
+                    return true;
+                  }
+                  return 'Meilenstein-Ziele dürfen nicht gleich sein';
                 }
                 return `Ziel muss unter ${this.editElement.goal} liegen`;
               }
@@ -499,6 +507,18 @@ export default {
     this.getMinDate();
   },
   methods: {
+    checkMilestoneGoals(value) {
+      if (this.newMilestones.length < 1) {
+        return true;
+      }
+      const allArray = JSON.parse(JSON.stringify(this.newMilestones));
+      if (this.editFlag) {
+        allArray.splice(this.newMile.newIndex, 1);
+      }
+      const goalArray = allArray.map((milestone) => milestone.goal);
+      // eslint-disable-next-line no-undef
+      return !goalArray.some((mile) => BigInt(mile) === BigInt(value));
+    },
     previewImageUpdate() {
       if (this.previewImage) {
         URL.revokeObjectURL(this.previewImage);
@@ -639,7 +659,8 @@ export default {
 
             // Set min WEI amount for new milestones
             this.editElement.milestones.forEach((mile) => {
-              if (mile.goal > this.minWei) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(mile.goal) > BigInt(this.minWei)) {
                 this.minWei = mile.goal;
               }
             });

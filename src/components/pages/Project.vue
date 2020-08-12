@@ -429,9 +429,13 @@ export default {
           });
       }
     },
+    converToBigInt(value) {
+      // eslint-disable-next-line no-undef
+      return value === null ? value : BigInt(value);
+    },
     showValue(value) {
-      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
-      if (value > 1e6) return `${(value / 1e6)} MWEI`;
+      if (this.converToBigInt(value) > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (this.converToBigInt(value) > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
     compareInput() {
