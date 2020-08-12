@@ -365,7 +365,7 @@ export default {
             EventBus.$emit('reload-user');
           })
           .catch((err) => {
-            EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
+            EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()}`, 'error', 10000, true);
           })
           .finally(() => {
             this.loadDonation = false;
