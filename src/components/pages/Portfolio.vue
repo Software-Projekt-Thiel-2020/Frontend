@@ -465,7 +465,7 @@ export default {
       this.reedemingVoucher = true;
       axios.delete('vouchers/user', { headers: head, data: {} })
         .then(() => {
-          EventBus.$emit('new-alert', `Gutschein '${voucher.titel}' erfolgreich eingelöst!`, 'success', 0, true);
+          EventBus.$emit('new-snackbar', `Gutschein '${voucher.titel}' erfolgreich eingelöst!`, 'success', 0, true);
         }).catch((err) => {
           this.errorMessage = err.toString();
           EventBus.$emit('new-alert', `Beim Einlösen von '${voucher.titel}' ist ein Fehler aufgetreten ${err.toString()} - ${err.response.data.error}`, 'error', 0, true);
@@ -491,7 +491,9 @@ export default {
           EventBus.$emit('new-snackbar', 'Voten war erfolgreich', 'success', 10000, true);
         })
         .catch((err) => {
-          EventBus.$emit('new-alert', `Voten nicht erfolgreich! ${err.toString()}`, 'error', 0, true);
+          EventBus.$emit('new-alert', `Voten nicht erfolgreich! ${err.toString()} - ${err.response.data.error}`, 'error', 0, true);
+        }).finally(() => {
+          window.scrollTo(0, 0);
         });
     },
   },
