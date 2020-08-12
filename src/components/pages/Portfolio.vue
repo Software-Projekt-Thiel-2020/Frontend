@@ -89,26 +89,7 @@
         </v-col>
       </v-row>
     </v-parallax>
-    <v-alert
-      v-model="redeemFail"
-      dismissible
-      prominent
-      tile
-      class="text-center"
-      type="error"
-    >
-      Beim Einlösen von '{{ redeemVTitle }}' ist ein Fehler aufgetreten {{ errorMessage }}
-    </v-alert>
-    <v-alert
-      v-model="redeemSucc"
-      dismissible
-      prominent
-      tile
-      class="text-center"
-      type="success"
-    >
-      Gutschein '{{ redeemVTitle }}' erfolgreich eingelöst!
-    </v-alert>
+    <MyAlertSystem class="ma-2" />
     <div>
       <v-container>
         <v-row>
@@ -383,9 +364,14 @@
 <script>
 import axios from 'axios';
 import { userSession } from '@/userSession';
+import EventBus from '@/utils/eventBus';
+import MyAlertSystem from '../MyAlertSystem.vue';
 
 export default {
   name: 'Historie',
+  components: {
+    MyAlertSystem,
+  },
   data: () => ({
     weiFormula: 1e18,
     tab: null,
@@ -396,9 +382,6 @@ export default {
     dErrMsg: '',
     gotResponse: false,
     user: null,
-    redeemVTitle: '',
-    redeemFail: false,
-    redeemSucc: false,
     voucherPage: 1,
     donationPage: 1,
     loadingVouchers: true,
@@ -482,13 +465,12 @@ export default {
       this.reedemingVoucher = true;
       axios.delete('vouchers/user', { headers: head, data: {} })
         .then(() => {
-          this.redeemSucc = true;
+          EventBus.$emit('new-snackbar', `Gutschein '${voucher.titel}' erfolgreich eingelöst!`, 'success', 0, true);
         }).catch((err) => {
           this.errorMessage = err.toString();
-          this.redeemFail = true;
+          EventBus.$emit('new-alert', `Beim Einlösen von '${voucher.titel}' ist ein Fehler aufgetreten ${err.toString()} - ${err.response.data.error}`, 'error', 0, true);
         }).finally(() => {
           this.reedemingVoucher = false;
-          this.redeemVTitle = voucher.titel;
           this.loadData();
           window.scrollTo(0, 0);
         });
@@ -506,9 +488,12 @@ export default {
         .then(() => {
           const index = this.donations.indexOf(donation);
           this.donations[index].voted = vote;
+          EventBus.$emit('new-snackbar', 'Voten war erfolgreich', 'success', 10000, true);
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
+          EventBus.$emit('new-alert', `Voten nicht erfolgreich! ${err.toString()} - ${err.response.data.error}`, 'error', 0, true);
+        }).finally(() => {
+          window.scrollTo(0, 0);
         });
     },
   },
@@ -516,22 +501,22 @@ export default {
 </script>
 
 <style scoped>
-  #content{
-    background: rgb(2,0,36);
-    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+  #content {
+    background: rgb(2, 0, 36);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
     min-height: 100%;
   }
 
   .pricetag {
-      font-size: 1.7rem;
+    font-size: 1.7rem;
   }
 
   .walletAddress {
-    font-family: Courier,serif;
+    font-family: Courier, serif;
   }
 
-  .noEntryText{
-    color: rgba(255,255,255,0.7);
+  .noEntryText {
+    color: rgba(255, 255, 255, 0.7);
   }
 
   .wallet {
@@ -542,7 +527,8 @@ export default {
     margin-top: 20px;
     margin-bottom: 20px;
   }
+
   .lightgrey {
-    color: rgba(0,0,0,0.6) !important;
+    color: rgba(0, 0, 0, 0.6) !important;
   }
 </style>
