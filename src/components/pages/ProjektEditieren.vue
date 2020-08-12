@@ -414,12 +414,13 @@ export default {
     alertType: null,
     userFeedback: '',
     form: false,
+    milestoneForm: false,
     loading: true,
     changingProject: false,
     tableHeaders: [
       { text: 'Meilensteinname', align: 'start', value: 'milestoneName' },
       { text: 'Spendenziel', value: 'goal' },
-      { text: 'Meilensteinende', value: 'until', sortable: false },
+      { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     newMilestones: [],
@@ -444,7 +445,7 @@ export default {
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
-      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+      (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     milestoneNameRule: [
       (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
