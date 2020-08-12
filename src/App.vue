@@ -38,7 +38,6 @@ export default {
     z-index: 0;
   }
   v-content {
-
     overflow: scroll;
   }
 </style>

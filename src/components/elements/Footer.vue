@@ -78,7 +78,7 @@ export default {
     .btn-hover {
         background-size: 300% 100%;
         border-radius: 50px;
-        text-shadow: rgba(0,0,0,0.7) 0px 0px 5px;
+        text-shadow: rgba(0,0,0,0.7) 0 0 5px;
         transition: all .4s ease-in-out;
     }
 

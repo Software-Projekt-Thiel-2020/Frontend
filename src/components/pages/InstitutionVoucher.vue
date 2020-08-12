@@ -419,11 +419,7 @@ export default {
         this.disabled = true;
       } else if (this.newPrice < 0 || this.newPrice > 9e30) {
         this.disabled = true;
-      } else if ((this.newValidTime < 1 || this.newValidTime < this.oldTime || this.newValidTime > 20) && this.newValidTime) {
-        this.disabled = true;
-      } else {
-        this.disabled = false;
-      }
+      } else this.disabled = !!((this.newValidTime < 1 || this.newValidTime < this.oldTime || this.newValidTime > 20) && this.newValidTime);
     },
     openDialog() {
       this.addVoucherOverlay = true;

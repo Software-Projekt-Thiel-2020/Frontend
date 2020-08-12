@@ -286,7 +286,7 @@
                             </v-col>
                           </v-row>
                           <v-row>
-                            <v-col align="center">
+                            <v-col class="text-center">
                               <v-date-picker
                                 v-model="newMile.until"
                                 :min="minDate"
