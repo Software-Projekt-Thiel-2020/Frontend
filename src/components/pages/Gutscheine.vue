@@ -113,6 +113,7 @@ export default {
       latitude: -1,
       longitude: -1,
       errorMessage: '',
+      navigator: false,
     },
   }),
   mounted() {
@@ -168,6 +169,10 @@ export default {
       }
     },
     suchen() {
+      if (!this.searchModel.navigator && !this.searchModel.place.length) {
+        this.searchModel.longitude = -1;
+        this.searchModel.latitude = -1;
+      }
       this.errorMessage = '';
       this.gotResponse = false;
       this.loading = true;
