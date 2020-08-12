@@ -254,15 +254,16 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <v-icon
-                        v-if="$vuetify.breakpoint.xsOnly"
-                      >
-                        mdi-plus-thick
-                      </v-icon>
-                      <span
-                        v-else
-                      >
-                        Neuer Meilenstein
+                      <span>
+                        <v-icon v-if="$vuetify.breakpoint.xsOnly">
+                          mdi-plus-thick
+                        </v-icon>
+                        <span
+                          v-else
+                        >
+                          Neuer Meilenstein
+                        </span>
+                        *
                       </span>
                     </v-btn>
                   </template>
@@ -466,12 +467,7 @@ export default {
       goalMissing: false,
     },
     headers: [
-      {
-        text: 'Meilensteinname',
-        align: 'start',
-        sortable: false,
-        value: 'name',
-      },
+      { text: 'Meilensteinname', align: 'start', value: 'name' },
       { text: 'Spendenziel', value: 'goal' },
       { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
@@ -607,14 +603,11 @@ export default {
       if (this.project.milestones.length < 1) {
         return true;
       }
-      if (this.editedIndex > 0) {
-        const miles = JSON.parse(JSON.stringify(this.project.milestones));
-        miles.splice(this.project.milestones, 1);
-        const goalArray = miles.map((milestone) => milestone.goal);
-        const notAvailable = new Set(goalArray);
-        return !notAvailable.has(value);
+      const allArray = JSON.parse(JSON.stringify(this.project.milestones));
+      if (this.editedIndex !== -1) {
+        allArray.splice(this.editedIndex, 1);
       }
-      const goalArray = this.project.milestones.map((milestone) => milestone.goal);
+      const goalArray = allArray.map((milestone) => milestone.goal);
       // eslint-disable-next-line no-undef
       return !goalArray.some((mile) => BigInt(mile) === BigInt(value));
     },
