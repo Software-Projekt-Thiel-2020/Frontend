@@ -368,6 +368,10 @@ export default {
     this.weiToEuro();
   },
   methods: {
+    converToBigInt(value) {
+      // eslint-disable-next-line no-undef
+      return value === null ? value : BigInt(value);
+    },
     getETHValue(value) {
       if (value > 0) {
         return (value * this.ethToEur).toFixed(4).toString();
@@ -377,6 +381,7 @@ export default {
     weiToEuro() {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR')
         .then((res) => {
+          console.log(res);
           this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
@@ -412,12 +417,12 @@ export default {
     },
     valuesChanged() {
       if (this.newValidTime === this.oldTime
-        && this.newPrice === this.editItem.price
+        && this.converToBigInt(this.newPrice) === this.converToBigInt(this.editItem.price)
         && this.newAvailable === this.editItem.available) {
         this.disabled = true;
       } else if (!this.newValidTime && !this.newPrice && this.newAvailable === this.editItem.available) {
         this.disabled = true;
-      } else if (this.newPrice < 0 || this.newPrice > 9e30) {
+      } else if (this.converToBigInt(this.newPrice) < 0 || this.converToBigInt(this.newPrice) > 9e30) {
         this.disabled = true;
       } else if ((this.newValidTime < 1 || this.newValidTime < this.oldTime || this.newValidTime > 20) && this.newValidTime) {
         this.disabled = true;
@@ -451,7 +456,7 @@ export default {
     priceRules() {
       return [
         () => (this.newVoucher.price >= 0) || 'Kein valider Preis',
-        () => (this.newVoucher.price <= 9e30) || 'Preis darf max. 9e30 sein',
+        () => (this.converToBigInt(this.newVoucher.price) <= 9e30) || 'Preis darf max. 9e30 sein',
         () => /^[0-9]+$/.test(this.newVoucher.price) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
@@ -465,7 +470,7 @@ export default {
     priceRulesEdit() {
       return [
         () => (this.newPrice >= 0) || 'Kein valider Preis',
-        () => (this.newPrice <= 9e30) || 'Preis darf max. 9e30 sein',
+        () => (this.converToBigInt(this.newPrice) <= 9e30) || 'Preis darf max. 9e30 sein',
         () => /^[0-9]+$/.test(this.newPrice) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
