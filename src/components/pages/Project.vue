@@ -51,7 +51,7 @@
       </v-card>
     </v-dialog>
     <v-layout
-      v-if="loading == true"
+      v-if="loading"
       justify-center
     >
       <v-progress-circular
@@ -269,20 +269,6 @@
         </v-card-text>
       </v-container>
     </div>
-    <v-snackbar
-      v-model="notLoggedin"
-      top
-      color="error"
-    >
-      Bitte melden Sie sich an
-    </v-snackbar>
-    <v-snackbar
-      v-model="error"
-      top
-      color="error"
-    >
-      Spende konnte nicht getätigt werden: {{ errorMessage }}
-    </v-snackbar>
   </Default>
 </template>
 
@@ -290,6 +276,7 @@
 import axios from 'axios';
 import marked from 'marked';
 import DOMPurify from 'dompurify';
+import EventBus from '@/utils/eventBus';
 
 import Default from '../Default.vue';
 
@@ -309,7 +296,7 @@ export default {
     weiFormula: 1e18,
     errorMessage: null,
     loading: false,
-    voteEnabled: true,
+    voteEnabled: false,
     voteDisabled: true,
     donationDisabled: true,
     apiurl: window.apiurl,
@@ -319,7 +306,6 @@ export default {
     },
     loadingInstitution: false,
     institution: undefined,
-    notLoggedin: false,
     loadDonation: false,
     error: false,
   }),
@@ -361,7 +347,7 @@ export default {
     },
     donate() {
       if (this.userData == null) {
-        this.notLoggedin = true;
+        EventBus.$emit('new-snackbar', 'Bitte melden Sie sich an', 'error', 10000, true);
       } else {
         const donationAmount = this.getDonationETHValue * this.weiFormula;
         const headers = {
@@ -376,10 +362,10 @@ export default {
           .then(() => {
             this.openDialog();
             this.loadProject();
+            EventBus.$emit('reload-user');
           })
           .catch((err) => {
-            this.errorMessage = err.toString();
-            this.error = true;
+            EventBus.$emit('new-snackbar', `Spende konnte nicht getätigt werden: ${err.toString()}`, 'error', 10000, true);
           })
           .finally(() => {
             this.loadDonation = false;
@@ -403,7 +389,7 @@ export default {
           // console.log(this.exrate);
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
+          EventBus.$emit('new-snackbar', `Konnte Wechselkurs nicht laden: ${err.toString()}`, 'error', 10000, true);
         })
         .finally(() => {
           this.loading = false;
@@ -420,7 +406,7 @@ export default {
           this.loadInstitution();
         })
         .catch((err) => {
-          this.errorMessage = err.toString();
+          EventBus.$emit('new-snackbar', `Projekt konnte nicht geladen werden: ${err.toString()}`, 'error', 10000, true);
         })
         .finally(() => {
           this.loading = false;
@@ -443,9 +429,13 @@ export default {
           });
       }
     },
+    converToBigInt(value) {
+      // eslint-disable-next-line no-undef
+      return value === null ? value : BigInt(value);
+    },
     showValue(value) {
-      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
-      if (value > 1e6) return `${(value / 1e6)} MWEI`;
+      if (this.converToBigInt(value) > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (this.converToBigInt(value) > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
     compareInput() {
@@ -479,7 +469,7 @@ export default {
   .btn-hover {
     background-size: 300% 100%;
     border-radius: 50px;
-    text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
+    text-shadow: rgba(0, 0, 0, 0.7) 0 0 5px;
     transition: all .4s ease-in-out;
   }
   .btn-hover:hover {
@@ -507,10 +497,10 @@ export default {
     stroke-width: 2;
     stroke: #fff;
     stroke-miterlimit: 10;
-    margin: 0px auto;
+    margin: 0 auto;
     border-top-left-radius: 50% !important;
     border-top-right-radius: 50% !important;
-    box-shadow: inset 0px 0px 0px #7ac142;
+    box-shadow: inset 0 0 0 #7ac142;
     animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
   }
   .checkmark__check {
@@ -535,7 +525,7 @@ export default {
   }
   @keyframes fill {
     100% {
-      box-shadow: inset 0px 0px 0px 30px #7ac142;
+      box-shadow: inset 0 0 0 30px #7ac142;
     }
   }
 </style>

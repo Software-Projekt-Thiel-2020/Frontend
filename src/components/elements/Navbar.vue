@@ -519,6 +519,7 @@
 import * as blockstack from 'blockstack';
 import axios from 'axios';
 import { userSession } from '@/userSession';
+import EventBus from '@/utils/eventBus';
 
 export default {
   name: 'Navbar',
@@ -568,6 +569,9 @@ export default {
         this.$refs.register_form.validate();
       }
     }, 250);
+    EventBus.$on('reload-user', () => {
+      this.get_user();
+    });
   },
   methods: {
     signIn() {

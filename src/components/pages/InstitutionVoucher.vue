@@ -312,54 +312,13 @@
         </v-form>
       </v-card>
     </v-dialog>
-    <v-snackbar
-      v-model="dialogVoucher.error"
-      top
-      color="error"
-    >
-      Gutscheine konnten nicht geladen werden {{ dialogVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogEdit.error"
-      top
-      color="error"
-    >
-      Gutschein konnte nicht aktualisiert werden {{ dialogEdit.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogEdit.success"
-      top
-      color="success"
-    >
-      Gutschein wurde aktualisiert
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogAddVoucher.error"
-      top
-      color="error"
-    >
-      Gutschein konnte nicht erstellt werden {{ dialogAddVoucher.errorMessage }}
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogAddVoucher.success"
-      top
-      color="success"
-    >
-      Gutschein wurde erstellt
-    </v-snackbar>
-    <v-snackbar
-      v-model="dialogEth.error"
-      top
-      color="error"
-    >
-      Etherum Wechselkurs konnte nicht geladen werden {{ dialogEth.errorMessage }}
-    </v-snackbar>
   </Default>
 </template>
 
 <script>
 import axios from 'axios';
 import { userSession } from '@/userSession';
+import EventBus from '@/utils/eventBus';
 
 import Default from '../Default.vue';
 import MyCard from '../MyCard.vue';
@@ -376,10 +335,6 @@ export default {
     institutionId: null,
     vouchers: null,
     loadingVouchers: true,
-    dialogVoucher: {
-      errorMessage: '',
-      error: false,
-    },
     overlay: false,
     editItem: {},
     newValidTime: null,
@@ -388,17 +343,8 @@ export default {
     newAvailable: null,
     form: false,
     changingVoucher: false,
-    dialogEdit: {
-      errorMessage: '',
-      error: false,
-      success: false,
-    },
     disabled: true,
     ethToEur: null,
-    dialogEth: {
-      error: false,
-      errorMessage: '',
-    },
     addVoucherOverlay: false,
     addVoucherDisabled: true,
     creatingVoucher: false,
@@ -408,11 +354,6 @@ export default {
       subject: '',
       validTime: null,
       form: false,
-    },
-    dialogAddVoucher: {
-      errorMessage: '',
-      error: false,
-      success: false,
     },
   }),
   created() {
@@ -427,6 +368,10 @@ export default {
     this.weiToEuro();
   },
   methods: {
+    converToBigInt(value) {
+      // eslint-disable-next-line no-undef
+      return value === null ? value : BigInt(value);
+    },
     getETHValue(value) {
       if (value > 0) {
         return (value * this.ethToEur).toFixed(4).toString();
@@ -439,8 +384,7 @@ export default {
           this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
-          this.dialogEth.errorMessage = err.toString();
-          this.dialogEth.error = true;
+          EventBus.$emit('new-snackbar', `Etherum Wechselkurs konnte nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         });
     },
     loadVouchers() {
@@ -451,8 +395,7 @@ export default {
           this.vouchers = res.data;
         })
         .catch((err) => {
-          this.dialogVoucher.errorMessage = err.toString();
-          this.dialogVoucher.error = true;
+          EventBus.$emit('new-snackbar', `Gutscheine konnten nicht geladen werden ${err.toString()}`, 'error', 10000, true);
         }).finally(() => {
           this.loadingVouchers = false;
         });
@@ -473,18 +416,14 @@ export default {
     },
     valuesChanged() {
       if (this.newValidTime === this.oldTime
-        && this.newPrice === this.editItem.price
+        && this.converToBigInt(this.newPrice) === this.converToBigInt(this.editItem.price)
         && this.newAvailable === this.editItem.available) {
         this.disabled = true;
       } else if (!this.newValidTime && !this.newPrice && this.newAvailable === this.editItem.available) {
         this.disabled = true;
-      } else if (this.newPrice < 0 || this.newPrice > 9e30) {
+      } else if (this.converToBigInt(this.newPrice) < 0 || this.converToBigInt(this.newPrice) > 9e30) {
         this.disabled = true;
-      } else if ((this.newValidTime < 1 || this.newValidTime < this.oldTime || this.newValidTime > 20) && this.newValidTime) {
-        this.disabled = true;
-      } else {
-        this.disabled = false;
-      }
+      } else this.disabled = !!((this.newValidTime < 1 || this.newValidTime < this.oldTime || this.newValidTime > 20) && this.newValidTime);
     },
     openDialog() {
       this.addVoucherOverlay = true;
@@ -512,7 +451,7 @@ export default {
     priceRules() {
       return [
         () => (this.newVoucher.price >= 0) || 'Kein valider Preis',
-        () => (this.newVoucher.price <= 9e30) || 'Preis darf max. 9e30 sein',
+        () => (this.converToBigInt(this.newVoucher.price) <= 9e30) || 'Preis darf max. 9e30 sein',
         () => /^[0-9]+$/.test(this.newVoucher.price) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
@@ -526,7 +465,7 @@ export default {
     priceRulesEdit() {
       return [
         () => (this.newPrice >= 0) || 'Kein valider Preis',
-        () => (this.newPrice <= 9e30) || 'Preis darf max. 9e30 sein',
+        () => (this.converToBigInt(this.newPrice) <= 9e30) || 'Preis darf max. 9e30 sein',
         () => /^[0-9]+$/.test(this.newPrice) || 'Bitte geben Sie eine ganze Zahl ein',
       ];
     },
@@ -564,10 +503,9 @@ export default {
       }
 
       axios.patch(url, {}, { headers }).then(() => {
-        this.dialogEdit.success = true;
+        EventBus.$emit('new-snackbar', 'Gutschein wurde aktualisiert', 'success', 10000, true);
       }).catch((err) => {
-        this.dialogEdit.error = true;
-        this.dialogEdit.errorMessage = err.toString();
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht aktualisiert werden ${err.toString()}`, 'error', 10000, true);
       }).finally(() => {
         this.changingVoucher = false;
         this.closeOverlay();
@@ -586,10 +524,9 @@ export default {
         validTime: this.newVoucher.validTime * 365 * 24 * 60 * 60,
       };
       axios.post(url, {}, { headers }).then(() => {
-        this.dialogAddVoucher.success = true;
+        EventBus.$emit('new-snackbar', 'Gutschein wurde erstellt', 'success', 10000, true);
       }).catch((err) => {
-        this.dialogAddVoucher.error = true;
-        this.dialogAddVoucher.errorMessage = err.toString();
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht erstellt werden ${err.toString()}`, 'error', 10000, true);
       }).finally(() => {
         this.creatingVoucher = false;
         this.closeDialog();

@@ -32,7 +32,7 @@
               Spende über die Blockchain
             </h1>
             <p
-              align="justify"
+              class="text-justify"
               style="margin-left: 15%; margin-right: 15%"
             >
               Mit unserem transparenten Verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem Du gerne helfen möchtest.
@@ -66,7 +66,7 @@
               Unterstütze deine Umgebung!
             </h1>
             <p
-              align="justify"
+              class="text-justify"
               style="margin-left: 15%; margin-right: 15%"
             >
               Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich da zu sein.
@@ -105,7 +105,7 @@
               Spende über die Blockchain
             </h1>
             <p
-              align="justify"
+              class="text-justify"
               style="margin-left: 15%; margin-right: 15%"
             >
               Mit unserem transparenten Verfahren kommt deine Spende da an, wo sie auch gebraucht wird. Finde ein Spendenprojekt oder ein Unternehmen dem Du gerne helfen möchtest.
@@ -138,7 +138,7 @@
               Unterstütze deine Umgebung!
             </h1>
             <p
-              align="justify"
+              class="text-justify"
               style="margin-left: 15%; margin-right: 15%"
             >
               Dein Kino um die Ecke, das Restaurant bei dem es die besten Gerichte in der Stadt gibt, der Kiosk auf deinem Weg zur Arbeit. Sie alle sind von COVID-19 Virus betroffen und brauchen deine Hilfe um auch in Zukunft für dich da zu sein.
@@ -206,8 +206,7 @@ export default {
         bottom: 0; /* Footer Height */
         width: 100%;
         min-height: 100%;
-        background-color: black;
-        background: url(../../assets/casedonation.jpg) no-repeat center center fixed;
+        background: black url(../../assets/casedonation.jpg) no-repeat fixed center center;
         background-size: cover;
     }
 
@@ -217,8 +216,7 @@ export default {
         top: 0; /* Header Height */
         width: 100%;
         height: 100vh;
-        background: linear-gradient(to right, rgba(26, 225, 79, 0.3), rgba(63, 134, 237, 0.3));
-        background-color: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.5) linear-gradient(to right, rgba(26, 225, 79, 0.3), rgba(63, 134, 237, 0.3));
     }
 
     .btn-hover {

@@ -377,6 +377,15 @@
       Spendenprojekt erstellt!
     </v-snackbar>
     <v-snackbar
+      v-if="dialog.body"
+      v-model="dialog.error"
+      top
+      color="error"
+    >
+      Spendenprojekt konnte nicht erstellt werden: {{ dialog.errorMessage }} ({{ dialog.body }})
+    </v-snackbar>
+    <v-snackbar
+      v-else
       v-model="dialog.error"
       top
       color="error"
@@ -440,7 +449,7 @@ export default {
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
-      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+      (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     blockTime: true,
     blockAdditionalMilestones: true,
@@ -539,8 +548,10 @@ export default {
         (v) => {
           if (!!v || v === null) {
             if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(v, 10) >= 10 || v === null) {
-                if (parseInt(v, 10) < 9e32 || v === null) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(v) >= 10 || v === null) {
+                // eslint-disable-next-line no-undef
+                if (BigInt(v) < 9e32 || v === null) {
                   return true;
                 }
                 return 'Zahl muss kleiner als 9e32 sein';
@@ -556,9 +567,13 @@ export default {
     milestoneWeiRule() {
       return [
         (v) => {
-          if (!!v || v === null) {
-            if (/^[1-9][0-9]*$/s.test(v) || v === null) {
-              if (parseInt(this.project.goal, 10) > parseInt(v, 10) || v === null) {
+          if (v === null) {
+            return true;
+          }
+          if (v) {
+            if (/^[1-9][0-9]*$/s.test(v)) {
+              // eslint-disable-next-line no-undef
+              if (BigInt(this.project.goal) > BigInt(v)) {
                 if (this.checkMilestoneGoals(v)) {
                   return true;
                 }
@@ -592,7 +607,6 @@ export default {
       if (this.project.milestones.length < 1) {
         return true;
       }
-
       if (this.editedIndex > 0) {
         const miles = JSON.parse(JSON.stringify(this.project.milestones));
         miles.splice(this.project.milestones, 1);
@@ -601,7 +615,8 @@ export default {
         return !notAvailable.has(value);
       }
       const goalArray = this.project.milestones.map((milestone) => milestone.goal);
-      return !goalArray.some((mile) => mile === value);
+      // eslint-disable-next-line no-undef
+      return !goalArray.some((mile) => BigInt(mile) === BigInt(value));
     },
     updateMap(lat, long) {
       try {
@@ -639,7 +654,7 @@ export default {
       this.calcUntil();
     },
     editItem(item) {
-      this.editedIndex = this.project.milestones.indexOf(item);
+      this.editedIndex = this.milestonesDate.indexOf(item);
 
       const copy = JSON.parse(JSON.stringify(item));
       // in this case "5.9.2020" --> 2020-9-5
@@ -648,14 +663,12 @@ export default {
 
       this.editedItem = { ...copy };
       this.preEditedItem = { ...copy };
-      this.deleteItem(item);
       this.dialog2 = true;
     },
     deleteItem(item) {
-      const index = this.project.milestones.indexOf(item);
+      const index = this.milestonesDate.indexOf(item);
       this.project.milestones.splice(index, 1);
-      const displayIndex = this.milestonesDate.indexOf(item);
-      this.milestonesDate.splice(displayIndex, 1);
+      this.milestonesDate.splice(index, 1);
     },
     cancel() {
       this.editedItem = { ...this.preEditedItem };
@@ -679,20 +692,22 @@ export default {
       });
     },
     save() {
-      const dateArray = this.editedItem.until.split(('-'), 3);
-      dateArray[1] -= 1;
-      // durch 1000 weil von ms auf sekunden umgerechnet wird
-      const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
       if (this.editedIndex > -1) {
-        this.project.milestones[this.project.milestones.length - 1].until = date;
+        const dateArray = this.editedItem.until.split(('-'), 3);
+        dateArray[1] -= 1;
+        const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10));
         Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
+        this.project.milestones[this.editedIndex].until = date;
+        // Für die User Anzeige des Datums
+        const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.editedIndex]));
+        cpy.until = new Date(cpy.until).toLocaleDateString();
+        Object.assign(this.milestonesDate[this.editedIndex], cpy);
       } else {
         this.project.milestones.push(this.editedItem);
+        const copy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
+        copy.until = new Date(copy.until).toLocaleDateString();
+        this.milestonesDate.push(copy);
       }
-      // Für die User Anzeige des Datums
-      const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
-      cpy.until = new Date(cpy.until).toLocaleDateString();
-      this.milestonesDate.push(cpy);
       this.close();
     },
     getMinDate() {
@@ -759,6 +774,9 @@ export default {
         .catch((err) => {
           this.dialog.errorMessage = err.toString();
           this.dialog.error = true;
+          if (err.response) {
+            this.dialog.body = err.response.data.error;
+          }
         }).finally(() => {
           this.loading = false;
         });

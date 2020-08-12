@@ -246,7 +246,7 @@ export default {
   },
   beforeDestroy() {
     if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', this.onResize, { passive: true });
+      window.removeEventListener('resize', this.onResize);
     }
   },
   methods: {
@@ -312,6 +312,7 @@ export default {
           .then(() => {
             this.boughtVoucher = voucher;
             this.openDialog();
+            EventBus.$emit('reload-user');
           })
           .catch((err) => {
             EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()}`, 'error', 10000, true);
@@ -320,9 +321,13 @@ export default {
           });
       }
     },
+    converToBigInt(value) {
+      // eslint-disable-next-line no-undef
+      return value === null ? value : BigInt(value);
+    },
     showValue(value) {
-      if (value > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
-      if (value > 1e6) return `${(value / 1e6)} MWEI`;
+      if (this.converToBigInt(value) > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
+      if (this.converToBigInt(value) > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
     openDialog() {
@@ -353,7 +358,7 @@ export default {
     .btn-hover {
         background-size: 300% 100%;
         border-radius: 50px;
-        text-shadow: rgba(0, 0, 0, 0.7) 0px 0px 5px;
+        text-shadow: rgba(0, 0, 0, 0.7) 0 0 5px;
         transition: all .4s ease-in-out;
     }
 
@@ -384,10 +389,10 @@ export default {
       stroke-width: 2;
       stroke: #fff;
       stroke-miterlimit: 10;
-      margin: 0px auto;
+      margin: 0 auto;
       border-top-left-radius: 50% !important;
       border-top-right-radius: 50% !important;
-      box-shadow: inset 0px 0px 0px #7ac142;
+      box-shadow: inset 0 0 0 #7ac142;
       animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
     }
     .checkmark__check {
@@ -412,7 +417,7 @@ export default {
     }
     @keyframes fill {
       100% {
-        box-shadow: inset 0px 0px 0px 30px #7ac142;
+        box-shadow: inset 0 0 0 30px #7ac142;
       }
     }
 
