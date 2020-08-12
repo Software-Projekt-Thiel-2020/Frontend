@@ -651,7 +651,7 @@ export default {
       this.calcUntil();
     },
     editItem(item) {
-      this.editedIndex = this.project.milestones.indexOf(item);
+      this.editedIndex = this.milestonesDate.indexOf(item);
 
       const copy = JSON.parse(JSON.stringify(item));
       // in this case "5.9.2020" --> 2020-9-5
@@ -660,14 +660,12 @@ export default {
 
       this.editedItem = { ...copy };
       this.preEditedItem = { ...copy };
-      this.deleteItem(item);
       this.dialog2 = true;
     },
     deleteItem(item) {
-      const index = this.project.milestones.indexOf(item);
+      const index = this.milestonesDate.indexOf(item);
       this.project.milestones.splice(index, 1);
-      const displayIndex = this.milestonesDate.indexOf(item);
-      this.milestonesDate.splice(displayIndex, 1);
+      this.milestonesDate.splice(index, 1);
     },
     cancel() {
       this.editedItem = { ...this.preEditedItem };
@@ -691,20 +689,22 @@ export default {
       });
     },
     save() {
-      const dateArray = this.editedItem.until.split(('-'), 3);
-      dateArray[1] -= 1;
-      // durch 1000 weil von ms auf sekunden umgerechnet wird
-      const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10)) / 1000;
       if (this.editedIndex > -1) {
-        this.project.milestones[this.project.milestones.length - 1].until = date;
+        const dateArray = this.editedItem.until.split(('-'), 3);
+        dateArray[1] -= 1;
+        const date = Date.UTC(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10), parseInt(dateArray[2], 10));
         Object.assign(this.project.milestones[this.editedIndex], this.editedItem);
+        this.project.milestones[this.editedIndex].until = date;
+        // Für die User Anzeige des Datums
+        const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.editedIndex]));
+        cpy.until = new Date(cpy.until).toLocaleDateString();
+        Object.assign(this.milestonesDate[this.editedIndex], cpy);
       } else {
         this.project.milestones.push(this.editedItem);
+        const copy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
+        copy.until = new Date(copy.until).toLocaleDateString();
+        this.milestonesDate.push(copy);
       }
-      // Für die User Anzeige des Datums
-      const cpy = JSON.parse(JSON.stringify(this.project.milestones[this.project.milestones.length - 1]));
-      cpy.until = new Date(cpy.until).toLocaleDateString();
-      this.milestonesDate.push(cpy);
       this.close();
     },
     getMinDate() {
@@ -754,7 +754,7 @@ export default {
         headers.milestones = headers.milestones.map((mile) => {
           const cpy = mile;
           // until / 1000 -> Umrechnung von ms auf s
-          cpy.until = new Date(mile.until).getTime();
+          cpy.until = new Date(mile.until).getTime() / 1000;
           return cpy;
         });
         headers.milestones = JSON.stringify(headers.milestones);
