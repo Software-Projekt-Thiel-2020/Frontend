@@ -381,7 +381,6 @@ export default {
     weiToEuro() {
       axios.get('https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR')
         .then((res) => {
-          console.log(res);
           this.ethToEur = res.data.EUR / 1e18;
         })
         .catch((err) => {
