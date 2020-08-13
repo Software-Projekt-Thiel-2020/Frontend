@@ -8,12 +8,15 @@
     @input="update($event)"
   >
     <v-card>
-      <v-card-title class="headline grey lighten-2">
+      <v-card-title
+        class="headline grey lighten-2"
+        :class="$slots.subtitle ? 'pb-6' : ''"
+      >
         <slot name="title">
           Header
         </slot>
       </v-card-title>
-      <v-card-subtitle>
+      <v-card-subtitle :class="$slots.subtitle ? 'mt-n6' : ''">
         <slot name="subtitle" />
       </v-card-subtitle>
 
