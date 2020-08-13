@@ -125,11 +125,11 @@
                         </h1>
                       </v-col>
                     </v-row>
-                    <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
+                    <h3>{{ (milestone.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100) }}%</h3>
                     <v-progress-linear
                       color="secondary"
                       height="16"
-                      :value="(project.totalDonated/milestone.goal) * 100"
+                      :value="(milestone.totalDonated/milestone.goal) * 100"
                       striped
                       class="mb-1"
                     />
