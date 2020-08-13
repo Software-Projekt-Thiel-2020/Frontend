@@ -232,12 +232,6 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
     ],
-    dialog: {
-      successful: false,
-      error: false,
-      errorMessage: '',
-      body: '',
-    },
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -304,7 +298,6 @@ export default {
         })
         .catch((err) => {
           if (err.response) {
-            this.dialog.body = err.response.data.error;
             EventBus.$emit('new-snackbar', `Institution konnte nicht erstellt werden: ${err.toString()} (${err.response.data.error})`, 'error', 10000, true);
           } else {
             EventBus.$emit('new-snackbar', `Institution konnte nicht erstellt werden: ${err.toString()}`, 'error', 10000, true);
