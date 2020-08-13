@@ -505,7 +505,7 @@ export default {
       axios.patch(url, {}, { headers }).then(() => {
         EventBus.$emit('new-snackbar', 'Gutschein wurde aktualisiert', 'success', 10000, true);
       }).catch((err) => {
-        EventBus.$emit('new-snackbar', `Gutschein konnte nicht aktualisiert werden ${err.toString()}`, 'error', 10000, true);
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht aktualisiert werden ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
       }).finally(() => {
         this.changingVoucher = false;
         this.closeOverlay();
@@ -526,7 +526,7 @@ export default {
       axios.post(url, {}, { headers }).then(() => {
         EventBus.$emit('new-snackbar', 'Gutschein wurde erstellt', 'success', 10000, true);
       }).catch((err) => {
-        EventBus.$emit('new-snackbar', `Gutschein konnte nicht erstellt werden ${err.toString()}`, 'error', 10000, true);
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht erstellt werden ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
       }).finally(() => {
         this.creatingVoucher = false;
         this.closeDialog();

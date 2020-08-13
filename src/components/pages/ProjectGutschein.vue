@@ -315,7 +315,7 @@ export default {
             EventBus.$emit('reload-user');
           })
           .catch((err) => {
-            EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()}`, 'error', 10000, true);
+            EventBus.$emit('new-snackbar', `Gutschein konnte nicht gekauft werden ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
           }).finally(() => {
             this.loading = false;
           });
