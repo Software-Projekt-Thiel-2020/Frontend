@@ -146,13 +146,13 @@ export default {
       this.load();
     },
     loadProjects() {
-      if (this.searchModel.name || (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined')) {
+      if (this.searchModel.name || (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined)) {
         let url = '';
         url = 'projects?name=';
         if (this.searchModel.name) {
           url = url.concat(`${this.searchModel.name}`);
         }
-        if (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined') {
+        if (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined) {
           url = url.concat(`&longitude=${this.searchModel.longitude}&latitude=${this.searchModel.latitude}&radius=${this.searchModel.radius}`);
         }
         axios.get(url)
@@ -194,7 +194,7 @@ export default {
               this.searchModel.longitude = res.data[0].lon;
               this.searchModel.latitude = res.data[0].lat;
             }
-            if (typeof this.searchModel.latitude === 'undefined' || typeof this.searchModel.longitude === 'undefined') {
+            if (this.searchModel.latitude === undefined || this.searchModel.longitude === undefined) {
               this.errorMessage = 'Es konnten keine Projekte gefunden werden';
             } else {
               this.loadProjects();
@@ -206,7 +206,7 @@ export default {
             this.gotResponse = true;
             this.loading = false;
           });
-      } else if (this.searchModel.errorMessage === '' || (typeof this.searchModel.longitude !== 'undefined' && typeof this.searchModel.latitude !== 'undefined')) {
+      } else if (this.searchModel.errorMessage === '' || (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined)) {
         this.loadProjects();
       }
     },

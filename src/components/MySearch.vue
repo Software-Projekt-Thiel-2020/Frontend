@@ -127,13 +127,13 @@ export default {
 
   computed: {
     locationButton() {
-      if (typeof this.value.latitude !== 'undefined' && typeof this.value.longitude !== 'undefined') {
+      if (this.value.latitude !== undefined && this.value.longitude !== undefined) {
         return 'success';
       }
       return 'primary';
     },
     searchButton() {
-      return !(this.value.name !== '' || (typeof this.value.longitude !== 'undefined' && typeof this.value.latitude !== 'undefined') || (this.value.place !== '' && this.value.code !== ''));
+      return !(this.value.name !== '' || (this.value.longitude !== undefined && this.value.latitude !== undefined) || (this.value.place !== '' && this.value.code !== ''));
     },
   },
 
