@@ -183,6 +183,7 @@ import { latLng } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
+import validator from 'validator';
 import EventBus from '@/utils/eventBus';
 import Default from '../Default.vue';
 import MyCard from '../MyCard.vue';
@@ -224,7 +225,7 @@ export default {
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:

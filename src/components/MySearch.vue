@@ -109,9 +109,10 @@ export default {
         lCodes: ['DE', 'AT', 'CH'],
         code: 'DE',
         radius: 10,
-        latitude: -1,
-        longitude: -1,
+        latitude: undefined,
+        longitude: undefined,
         errorMessage: '',
+        navigator: false,
       }),
     },
     placeholder: {
@@ -126,18 +127,24 @@ export default {
 
   computed: {
     locationButton() {
-      if (this.value.latitude !== -1 && this.value.longitude !== -1) {
+      if (this.value.latitude !== undefined && this.value.longitude !== undefined) {
         return 'success';
       }
       return 'primary';
     },
     searchButton() {
-      return !(this.value.name !== '' || (this.value.longitude !== -1 && this.value.latitude !== -1) || (this.value.place !== '' && this.value.code !== ''));
+      return !(this.value.name !== '' || (this.value.longitude !== undefined && this.value.latitude !== undefined) || (this.value.place !== '' && this.value.code !== ''));
     },
   },
 
   methods: {
     getOwnLocation() {
+      if (this.value.navigator) {
+        this.value.longitude = undefined;
+        this.value.latitude = undefined;
+        this.value.navigator = false;
+        return;
+      }
       if (!('geolocation' in navigator)) {
         this.errorMessage = 'Geolocation ist nicht verfügbar';
         return;
@@ -148,6 +155,7 @@ export default {
         this.value.longitude = pos.coords.longitude;
         this.value.latitude = pos.coords.latitude;
         this.loadLocation = false;
+        this.value.navigator = true;
       }, (err) => {
         this.loadLocation = false;
         this.value.errorMessage = `${err.toString()} \nDarf die Seite den Standort verwenden?`;
@@ -157,8 +165,8 @@ export default {
       this.value.name = '';
       this.value.place = '';
       this.value.radius = 10;
-      this.value.longitude = -1;
-      this.value.latitude = -1;
+      this.value.longitude = undefined;
+      this.value.latitude = undefined;
       this.value.errorMessage = '';
       this.$emit('reset');
     },
