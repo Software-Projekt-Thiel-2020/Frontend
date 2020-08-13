@@ -1,5 +1,8 @@
 <template>
-  <Default title="Deine Projekte">
+  <Default
+    title="Deine Projekte"
+    :loading="loading"
+  >
     <v-layout
       class="mb-3"
       :justify-center="$vuetify.breakpoint.smAndDown"
@@ -12,7 +15,6 @@
         Projekt anlegen
       </v-btn>
     </v-layout>
-
     <v-alert
       v-if="alert"
       :type="alertType"
@@ -41,19 +43,7 @@
         </v-col>
       </v-row>
     </v-alert>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
-    <div v-else-if="(gotResponse && userProjects.length === 0)">
+    <div v-if="!loading && (gotResponse && userProjects.length === 0)">
       <v-card
         class="pa-10 ma-7"
         elevation="5"
@@ -64,7 +54,7 @@
         </h2>
       </v-card>
     </div>
-    <div v-else-if="gotResponse">
+    <div v-else-if="!loading && gotResponse">
       <v-row>
         <v-col
           v-for="item in userProjects"

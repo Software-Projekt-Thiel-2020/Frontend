@@ -1,5 +1,8 @@
 <template>
-  <Default title="Deine Institutionen">
+  <Default
+    title="Deine Institutionen"
+    :loading="loading"
+  >
     <v-alert
       v-if="alert"
       :type="alertType"
@@ -28,18 +31,6 @@
         </v-col>
       </v-row>
     </v-alert>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
     <div v-if="(items.length === 0 && gotResponse)">
       <v-card
         class="pa-10 ma-7"
