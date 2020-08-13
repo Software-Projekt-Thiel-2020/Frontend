@@ -137,7 +137,7 @@
                 :placeholder="editItem.price.toString()"
                 type="number"
                 label="Preis (in Wei)"
-                class="inputField"
+                class="inputField nospin"
                 :rules="priceRulesEdit()"
                 @change="valuesChanged()"
               />
@@ -226,7 +226,7 @@
             <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newVoucher.price"
-                class="ma-0 pa-0"
+                class="ma-0 pa-0 nospin"
                 type="number"
                 clearable
                 required
@@ -529,5 +529,11 @@ export default {
   .inputField ::placeholder{
     color: black!important;
     opacity: 1;
+  }
+
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>

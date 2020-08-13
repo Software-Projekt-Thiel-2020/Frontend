@@ -278,6 +278,7 @@
                               <v-text-field
                                 v-model="newMile.goal"
                                 label="Spendenziel in Wei"
+                                class="nospin"
                                 min="1"
                                 outlined
                                 clearable
@@ -781,5 +782,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>
