@@ -1,5 +1,8 @@
 <template>
-  <Default title="Deine Projekte">
+  <Default
+    title="Deine Projekte"
+    :loading="loading"
+  >
     <v-layout
       class="mb-3"
       :justify-center="$vuetify.breakpoint.smAndDown"
@@ -12,7 +15,6 @@
         Projekt anlegen
       </v-btn>
     </v-layout>
-
     <v-alert
       v-if="alert"
       :type="alertType"
@@ -41,19 +43,7 @@
         </v-col>
       </v-row>
     </v-alert>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
-    <div v-else-if="(gotResponse && userProjects.length === 0)">
+    <div v-if="!loading && (gotResponse && userProjects.length === 0)">
       <v-card
         class="pa-10 ma-7"
         elevation="5"
@@ -64,7 +54,7 @@
         </h2>
       </v-card>
     </div>
-    <div v-else-if="gotResponse">
+    <div v-else-if="!loading && gotResponse">
       <v-row>
         <v-col
           v-for="item in userProjects"
@@ -284,6 +274,7 @@
                                 <v-text-field
                                   v-model="newMile.goal"
                                   label="Spendenziel in Wei"
+                                  class="nospin"
                                   outlined
                                   clearable
                                   :rules="weiRule"
@@ -384,6 +375,7 @@ import { userSession } from '@/userSession';
 import { Editor } from '@toast-ui/vue-editor';
 
 import EventBus from '@/utils/eventBus';
+import validator from 'validator';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
@@ -445,7 +437,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
       (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
@@ -834,5 +826,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>

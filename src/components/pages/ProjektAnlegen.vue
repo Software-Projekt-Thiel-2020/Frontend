@@ -84,6 +84,7 @@
             v-model="project.goal"
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
+            class="nospin"
             outlined
             type="number"
             clearable
@@ -291,6 +292,7 @@
                               <v-text-field
                                 v-model="editedItem.goal"
                                 label="Spendenziel* (WEI)"
+                                class="nospin"
                                 min="1"
                                 type="number"
                                 outlined
@@ -415,6 +417,7 @@
 import axios from 'axios';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { latLng } from 'leaflet';
+import validator from 'validator';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
@@ -448,7 +451,7 @@ export default {
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
       (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
@@ -460,6 +463,7 @@ export default {
       successful: false,
       error: false,
       errorMessage: '',
+      body: '',
     },
     dialog2: false,
     dialog3: {
@@ -840,5 +844,10 @@ export default {
   }
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+  }
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>
