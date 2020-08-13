@@ -84,6 +84,7 @@
             v-model="project.goal"
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
+            class="nospin"
             outlined
             type="number"
             clearable
@@ -236,6 +237,7 @@
           <v-data-table
             :headers="headers"
             :items="milestonesDate"
+            :custom-sort="datatableSort"
           >
             <template v-slot:top>
               <v-toolbar
@@ -256,74 +258,79 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      <v-icon
-                        v-if="$vuetify.breakpoint.xsOnly"
-                      >
-                        mdi-plus-thick
-                      </v-icon>
-                      <span
-                        v-else
-                      >
-                        Neuer Meilenstein
+                      <span>
+                        <v-icon v-if="$vuetify.breakpoint.xsOnly">
+                          mdi-plus-thick
+                        </v-icon>
+                        <span
+                          v-else
+                        >
+                          Neuer Meilenstein
+                        </span>
+                        *
                       </span>
                     </v-btn>
                   </template>
                   <v-card>
-                    <v-card-title>
-                      <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="12">
-                            <v-text-field
-                              v-model="editedItem.name"
-                              label="Meilensteinname*"
-                              outlined
-                              clearable
-                              :rules="milestoneNameRule"
-                            />
-                          </v-col>
-                          <v-col cols="12">
-                            <v-text-field
-                              v-model="editedItem.goal"
-                              label="Spendenziel* (WEI)"
-                              min="1"
-                              type="number"
-                              outlined
-                              clearable
-                              :rules="milestoneWeiRule"
-                            />
-                          </v-col>
-                          <v-col>
-                            <v-date-picker
-                              v-model="editedItem.until"
-                              :min="minDate"
-                              :max="date"
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer />
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="cancel"
-                      >
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        :disabled="editedItem.name === null || editedItem.goal === null || editedItem.until === null"
-                        color="blue darken-1"
-                        text
-                        @click="save"
-                      >
-                        Save
-                      </v-btn>
-                    </v-card-actions>
+                    <v-form v-model="milestoneForm">
+                      <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-container>
+                          <v-row>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="editedItem.name"
+                                label="Meilensteinname*"
+                                outlined
+                                clearable
+                                counter
+                                maxlength="255"
+                                :rules="milestoneNameRule"
+                              />
+                            </v-col>
+                            <v-col cols="12">
+                              <v-text-field
+                                v-model="editedItem.goal"
+                                label="Spendenziel* (WEI)"
+                                class="nospin"
+                                min="1"
+                                type="number"
+                                outlined
+                                clearable
+                                :rules="milestoneWeiRule"
+                              />
+                            </v-col>
+                            <v-col class="text-center">
+                              <v-date-picker
+                                v-model="editedItem.until"
+                                :min="minDate"
+                                :max="date"
+                              />
+                            </v-col>
+                          </v-row>
+                        </v-container>
+                      </v-card-text>
+                      <v-card-actions>
+                        <v-spacer />
+                        <v-btn
+                          color="blue darken-1"
+                          text
+                          @click="cancel"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          :disabled="editedItem.name === null || editedItem.goal === null || editedItem.until === null || !milestoneForm"
+                          color="blue darken-1"
+                          text
+                          @click="save"
+                        >
+                          Save
+                        </v-btn>
+                      </v-card-actions>
+                    </v-form>
                   </v-card>
                 </v-dialog>
               </v-toolbar>
@@ -412,6 +419,7 @@
 import axios from 'axios';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { latLng, latLngBounds } from 'leaflet';
+import validator from 'validator';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
@@ -424,6 +432,7 @@ export default {
   },
   data: () => ({
     form: false,
+    milestoneForm: false,
     milestonesDate: [],
     shortRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -444,7 +453,7 @@ export default {
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     longRule: [
       (v) => ((parseFloat(v) >= -180 && parseFloat(v) <= 180) || v === null) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
@@ -470,12 +479,7 @@ export default {
       goalMissing: false,
     },
     headers: [
-      {
-        text: 'Meilensteinname',
-        align: 'start',
-        sortable: false,
-        value: 'name',
-      },
+      { text: 'Meilensteinname', align: 'start', value: 'name' },
       { text: 'Spendenziel', value: 'goal' },
       { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
@@ -609,18 +613,51 @@ export default {
     this.get_user();
   },
   methods: {
+    datatableSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        // goal
+        if (index[0] === 'goal') {
+          if (isDesc[0]) {
+            // eslint-disable-next-line no-undef
+            if (BigInt(a.goal) > BigInt(b.goal)) return -1;
+            // eslint-disable-next-line no-undef
+            return (BigInt(a.goal) < BigInt(b.goal) ? 1 : 0);
+          }
+          // eslint-disable-next-line no-undef
+          if (BigInt(a.goal) < BigInt(b.goal)) return -1;
+          // eslint-disable-next-line no-undef
+          return (BigInt(a.goal) > BigInt(b.goal) ? 1 : 0);
+        }
+
+        // Date
+        if (index[0] === 'until') {
+          if (isDesc[0]) {
+            return new Date(b.until.split('.').reverse().join('-'))
+              - new Date(a.until.split('.').reverse().join('-'));
+          }
+          return new Date(a.until.split('.').reverse().join('-'))
+            - new Date(b.until.split('.').reverse().join('-'));
+        }
+
+        // normal sorting
+        if (isDesc[0]) {
+          if (a[index] > b[index]) return -1;
+          return a[index] < b[index] ? 1 : 0;
+        }
+        if (a[index] < b[index]) return -1;
+        return a[index] > b[index] ? 1 : 0;
+      });
+      return items;
+    },
     checkMilestoneGoals(value) {
       if (this.project.milestones.length < 1) {
         return true;
       }
-      if (this.editedIndex > 0) {
-        const miles = JSON.parse(JSON.stringify(this.project.milestones));
-        miles.splice(this.project.milestones, 1);
-        const goalArray = miles.map((milestone) => milestone.goal);
-        const notAvailable = new Set(goalArray);
-        return !notAvailable.has(value);
+      const allArray = JSON.parse(JSON.stringify(this.project.milestones));
+      if (this.editedIndex !== -1) {
+        allArray.splice(this.editedIndex, 1);
       }
-      const goalArray = this.project.milestones.map((milestone) => milestone.goal);
+      const goalArray = allArray.map((milestone) => milestone.goal);
       // eslint-disable-next-line no-undef
       return !goalArray.some((mile) => BigInt(mile) === BigInt(value));
     },
@@ -719,7 +756,7 @@ export default {
     getMinDate() {
       this.minDate = new Date();
       // Smart Contracts: min: today + 1 day
-      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 2);
       this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
     getUserInstitutions() {
@@ -737,7 +774,6 @@ export default {
     calcMainUntil() {
       this.dialog3.timeMissing = this.project.until === 0;
       this.dialog3.titleMissing = this.project.title === null;
-      // BitInt probably not needed
       this.dialog3.goalMissing = this.project.goal <= 0;
       if (this.dialog3.titleMissing === false && this.dialog3.timeMissing === false && this.dialog3.goalMissing === false) {
         this.createSpendenProjekt();
@@ -761,7 +797,7 @@ export default {
       if (this.project.milestones.length !== 0) {
         headers.milestones = this.project.milestones.sort((a, b) => a.goal - b.goal);
         headers.milestones = headers.milestones.map((mile) => {
-          const cpy = mile;
+          const cpy = JSON.parse(JSON.stringify(mile));
           // until / 1000 -> Umrechnung von ms auf s
           cpy.until = new Date(mile.until).getTime() / 1000;
           return cpy;
@@ -817,5 +853,10 @@ export default {
   }
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+  }
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>

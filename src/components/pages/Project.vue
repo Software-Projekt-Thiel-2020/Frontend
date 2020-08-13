@@ -1,7 +1,11 @@
 <template>
-  <Default :title="project ? project.name : 'Projekt'">
+  <Default
+    :title="project ? project.name : 'Projekt'"
+    :loading="loading"
+  >
     <v-dialog
       v-model="dialog"
+      persistent
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
     >
       <v-card class="text-center py-10">
@@ -50,19 +54,7 @@
         </v-btn>
       </v-card>
     </v-dialog>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
-    <div v-else-if="project">
+    <div v-if="!loading && project">
       <v-container>
         <v-card-text class="text-center">
           <v-row justify="center">
@@ -86,6 +78,27 @@
                     Meilensteine
                   </v-card-text>
                 </v-system-bar>
+                <div v-if="project.milestones.length !== 0">
+                  <h1 class="my-3">
+                    Gesamtziel
+                  </h1>
+                  <v-progress-linear
+                    color="secondary"
+                    height="30"
+                    :value="getMaximumGoal * 100"
+                    striped
+                    class="mb-1"
+                    dark
+                  >
+                    <v-row>
+                      <v-col cols="12">
+                        <h2 class="percentage">
+                          {{ (getMaximumGoal * 100) }}%
+                        </h2>
+                      </v-col>
+                    </v-row>
+                  </v-progress-linear>
+                </div>
                 <v-card-text v-if="project.milestones.length === 0">
                   Keine Meilensteine vorhanden
                 </v-card-text>
@@ -99,6 +112,9 @@
                         <h1>
                           {{ milestone.milestoneName }}
                         </h1>
+                        <h5>
+                          Gültig bis zum {{ getDateString(milestone.until) }}
+                        </h5>
                       </v-col>
                       <v-col>
                         <h4 class="title">
@@ -125,11 +141,11 @@
                         </h1>
                       </v-col>
                     </v-row>
-                    <h3>{{ (project.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((project.totalDonated/milestone.goal) * 100) }}%</h3>
+                    <h3>{{ (milestone.totalDonated/milestone.goal) > 1.0 ? 100 : Math.round((milestone.totalDonated/milestone.goal) * 100) }}%</h3>
                     <v-progress-linear
                       color="secondary"
                       height="16"
-                      :value="(project.totalDonated/milestone.goal) * 100"
+                      :value="(milestone.totalDonated/milestone.goal) * 100"
                       striped
                       class="mb-1"
                     />
@@ -228,7 +244,8 @@
                 >
                   <v-card-text>
                     <h3 class="subtitle pt-1">
-                      Institution: {{ institution[0].name }}
+                      Institution: {{ institution[0].name }} <br>
+                      Aktiv bis zum: {{ getDateString(project.until) }}
                     </h3>
                     <br>
                     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -318,6 +335,18 @@ export default {
     },
     compiledMarkdown() {
       return this.project ? marked(DOMPurify.sanitize(this.project.description)) : '';
+    },
+    getMaximumGoal() {
+      let max = null;
+      for (let i = 0; i < this.project.milestones.length; i += 1) {
+        const { goal } = this.project.milestones[i];
+        const donated = this.project.milestones[i].totalDonated;
+        const percentage = donated / goal;
+        if (max < percentage) {
+          max = percentage;
+        }
+      }
+      return max;
     },
   },
   created() {
@@ -438,6 +467,16 @@ export default {
       if (this.converToBigInt(value) > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
     },
+    getDateString(ts) {
+      const dateObj = new Date(ts * 1000);
+      const date = (`0${dateObj.getDate()}`).slice(-2);
+      const month = (`0${dateObj.getMonth() + 1}`).slice(-2);
+      const year = dateObj.getFullYear();
+      const hours = (`0${dateObj.getHours() + 1}`).slice(-2);
+      const minutes = (`0${dateObj.getMinutes() + 1}`).slice(-2);
+      const seconds = (`0${dateObj.getSeconds() + 1}`).slice(-2);
+      return `${date}.${month}.${year} ${hours}:${minutes}:${seconds} Uhr`;
+    },
     compareInput() {
       const EthVal = this.donationValue * this.eurToEth;
       if (EthVal >= 0.01) {
@@ -508,6 +547,10 @@ export default {
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  .percentage {
+    text-shadow: 0px 0px 5px rgba(0,0,0,0.5);
   }
 
   @keyframes stroke {

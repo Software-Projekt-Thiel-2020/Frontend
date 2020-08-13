@@ -1,5 +1,8 @@
 <template>
-  <Default title="Deine Projekte">
+  <Default
+    title="Deine Projekte"
+    :loading="loading"
+  >
     <v-layout
       class="mb-3"
       :justify-center="$vuetify.breakpoint.smAndDown"
@@ -12,7 +15,6 @@
         Projekt anlegen
       </v-btn>
     </v-layout>
-
     <v-alert
       v-if="alert"
       :type="alertType"
@@ -41,19 +43,7 @@
         </v-col>
       </v-row>
     </v-alert>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
-    <div v-else-if="(gotResponse && userProjects.length === 0)">
+    <div v-if="!loading && (gotResponse && userProjects.length === 0)">
       <v-card
         class="pa-10 ma-7"
         elevation="5"
@@ -64,7 +54,7 @@
         </h2>
       </v-card>
     </div>
-    <div v-else-if="gotResponse">
+    <div v-else-if="!loading && gotResponse">
       <v-row>
         <v-col
           v-for="item in userProjects"
@@ -232,7 +222,7 @@
               <v-data-table
                 :headers="tableHeaders"
                 :items="allMilestones"
-                sort-by="until"
+                :custom-sort="datatableSort"
                 class="elevation-2"
               >
                 <template v-slot:top>
@@ -242,7 +232,7 @@
                     <v-btn
                       color="primary"
                       dark
-                      @click="milestoneDialog = true"
+                      @click="createMilestone"
                     >
                       <v-icon
                         v-if="$vuetify.breakpoint.xsOnly"
@@ -260,61 +250,68 @@
                       max-width="400"
                     >
                       <v-card>
-                        <v-card-title>
-                          <span class="headline"> Neuer Meilenstein</span>
-                        </v-card-title>
-                        <v-card-text>
-                          <v-row justify="center">
-                            <v-col>
-                              <v-text-field
-                                v-model="newMile.milestoneName"
-                                label="Meilensteinname"
-                                outlined
-                                clearable
-                                :rules="milestoneNameRule"
-                              />
-                            </v-col>
-                          </v-row>
-                          <v-row justify="center">
-                            <v-col>
-                              <v-text-field
-                                v-model="newMile.goal"
-                                label="Spendenziel in Wei"
-                                min="1"
-                                outlined
-                                clearable
-                                :rules="weiRule"
-                              />
-                            </v-col>
-                          </v-row>
-                          <v-row>
-                            <v-col class="text-center">
-                              <v-date-picker
-                                v-model="newMile.until"
-                                :min="minDate"
-                                :max="editElement.until"
-                              />
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer />
-                          <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="closeDialog"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null"
-                            color="blue darken-1"
-                            text
-                            @click="saveMilestone"
-                          >
-                            Save
-                          </v-btn>
-                        </v-card-actions>
+                        <v-form
+                          ref="milestoneFormRef"
+                          v-model="milestoneForm"
+                        >
+                          <v-card-title>
+                            <span class="headline"> Neuer Meilenstein</span>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-row justify="center">
+                              <v-col>
+                                <v-text-field
+                                  v-model="newMile.milestoneName"
+                                  label="Meilensteinname"
+                                  outlined
+                                  clearable
+                                  counter
+                                  maxlength="255"
+                                  :rules="milestoneNameRule"
+                                />
+                              </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                              <v-col>
+                                <v-text-field
+                                  v-model="newMile.goal"
+                                  label="Spendenziel in Wei"
+                                  class="nospin"
+                                  outlined
+                                  clearable
+                                  :rules="weiRule"
+                                />
+                              </v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col class="text-center">
+                                <v-date-picker
+                                  v-model="newMile.until"
+                                  :min="minDate"
+                                  :max="editElement.until"
+                                />
+                              </v-col>
+                            </v-row>
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer />
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeDialog"
+                            >
+                              Cancel
+                            </v-btn>
+                            <v-btn
+                              :disabled="newMile.milestoneName === '' || newMile.goal === '' || newMile.until === null || !milestoneForm"
+                              color="blue darken-1"
+                              text
+                              @click="saveMilestone"
+                            >
+                              Save
+                            </v-btn>
+                          </v-card-actions>
+                        </v-form>
                       </v-card>
                     </v-dialog>
                   </v-toolbar>
@@ -380,6 +377,7 @@ import { userSession } from '@/userSession';
 import { Editor } from '@toast-ui/vue-editor';
 
 import EventBus from '@/utils/eventBus';
+import validator from 'validator';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
@@ -413,12 +411,13 @@ export default {
     alertType: null,
     userFeedback: '',
     form: false,
+    milestoneForm: false,
     loading: true,
     changingProject: false,
     tableHeaders: [
       { text: 'Meilensteinname', align: 'start', value: 'milestoneName' },
       { text: 'Spendenziel', value: 'goal' },
-      { text: 'Meilensteinende', value: 'until', sortable: false },
+      { text: 'Meilensteinende', value: 'until' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     newMilestones: [],
@@ -440,7 +439,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     longRule: [
       (v) => ((parseFloat(v) >= -180 && parseFloat(v) <= 180) || v === null) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
@@ -451,7 +450,7 @@ export default {
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     milestoneNameRule: [
-      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      (v) => !!v || 'Feld muss ausgefüllt werden',
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
@@ -478,16 +477,18 @@ export default {
         const mCopy = JSON.parse(JSON.stringify(milestone));
         mCopy.newIndex = this.newMilestones.indexOf(milestone);
         // until * 1000, weil ms auf s umgerechnet wird
-        mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString();
+        mCopy.until = new Date(mCopy.until * 1000).toLocaleDateString('de-DE');
         return mCopy;
       });
     },
     weiRule() {
       return [
         (v) => {
+        /*
           if (v === null) {
             return true;
           }
+         */
           if (v) {
             if (/^[1-9][0-9]*$/s.test(v)) {
               // eslint-disable-next-line no-undef
@@ -515,6 +516,42 @@ export default {
     this.getMinDate();
   },
   methods: {
+    datatableSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        // goal
+        if (index[0] === 'goal') {
+          if (isDesc[0]) {
+            // eslint-disable-next-line no-undef
+            if (BigInt(a.goal) > BigInt(b.goal)) return -1;
+            // eslint-disable-next-line no-undef
+            return (BigInt(a.goal) < BigInt(b.goal) ? 1 : 0);
+          }
+          // eslint-disable-next-line no-undef
+          if (BigInt(a.goal) < BigInt(b.goal)) return -1;
+          // eslint-disable-next-line no-undef
+          return (BigInt(a.goal) > BigInt(b.goal) ? 1 : 0);
+        }
+
+        // Date
+        if (index[0] === 'until') {
+          if (isDesc[0]) {
+            return new Date(b.until.split('.').reverse().join('-'))
+              - new Date(a.until.split('.').reverse().join('-'));
+          }
+          return new Date(a.until.split('.').reverse().join('-'))
+            - new Date(b.until.split('.').reverse().join('-'));
+        }
+
+        // normal sorting
+        if (isDesc[0]) {
+          if (a[index] > b[index]) return -1;
+          return a[index] < b[index] ? 1 : 0;
+        }
+        if (a[index] < b[index]) return -1;
+        return a[index] > b[index] ? 1 : 0;
+      });
+      return items;
+    },
     checkMilestoneGoals(value) {
       if (this.newMilestones.length < 1) {
         return true;
@@ -555,8 +592,14 @@ export default {
     getMinDate() {
       this.minDate = new Date();
       // Smart Contracts: min: today + 1 day
-      this.minDate = this.minDate.setDate(this.minDate.getDate() + 1);
+      this.minDate = this.minDate.setDate(this.minDate.getDate() + 2);
       this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
+    },
+    createMilestone() {
+      this.milestoneDialog = true;
+      setTimeout(() => {
+        this.$refs.milestoneFormRef.resetValidation();
+      }, 50);
     },
     editMilestone(milestone) {
       this.newMile = JSON.parse(JSON.stringify(milestone));
@@ -585,12 +628,12 @@ export default {
       }
     },
     closeDialog() {
+      this.editFlag = false;
+      this.milestoneDialog = false;
+
       this.newMile.milestoneName = null;
       this.newMile.goal = null;
       this.newMile.until = null;
-
-      this.editFlag = false;
-      this.milestoneDialog = false;
     },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
@@ -769,6 +812,8 @@ export default {
         milestones: [],
       };
       this.newMilestones = [];
+      this.minDate = null;
+      this.minWei = 1;
       if (this.previewImage) {
         URL.revokeObjectURL(this.previewImage);
         this.previewImage = null;
@@ -790,5 +835,9 @@ export default {
 </script>
 
 <style scoped>
-
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>
