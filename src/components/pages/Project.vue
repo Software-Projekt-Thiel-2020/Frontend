@@ -87,7 +87,9 @@
                   </v-card-text>
                 </v-system-bar>
                 <div v-if="project.milestones.length !== 0">
-                  <h1 class="my-3">Gesamtziel</h1>
+                  <h1 class="my-3">
+                    Gesamtziel
+                  </h1>
                   <v-progress-linear
                     color="secondary"
                     height="30"
@@ -96,7 +98,6 @@
                     class="mb-1"
                     dark
                   >
-
                     <v-row>
                       <v-col cols="12">
                         <h2 class="percentage">
@@ -119,6 +120,9 @@
                         <h1>
                           {{ milestone.milestoneName }}
                         </h1>
+                        <h5>
+                          Gültig bis zum {{ getDateString(milestone.until)}}
+                        </h5>
                       </v-col>
                       <v-col>
                         <h4 class="title">
@@ -248,7 +252,8 @@
                 >
                   <v-card-text>
                     <h3 class="subtitle pt-1">
-                      Institution: {{ institution[0].name }}
+                      Institution: {{ institution[0].name }} <br>
+                      Aktiv bis zum: {{ getDateString(project.until) }}
                     </h3>
                     <br>
                     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -471,6 +476,16 @@ export default {
       if (this.converToBigInt(value) > 1e10) return `${(value / 1e18).toFixed(8)} ETH`;
       if (this.converToBigInt(value) > 1e6) return `${(value / 1e6)} MWEI`;
       return `${value} WEI`;
+    },
+    getDateString(ts) {
+      const dateObj = new Date(ts * 1000);
+      const date = (`0${dateObj.getDate()}`).slice(-2);
+      const month = (`0${dateObj.getMonth() + 1}`).slice(-2);
+      const year = dateObj.getFullYear();
+      const hours = (`0${dateObj.getHours() + 1}`).slice(-2);
+      const minutes = (`0${dateObj.getMinutes() + 1}`).slice(-2);
+      const seconds = (`0${dateObj.getSeconds() + 1}`).slice(-2);
+      return `${date}.${month}.${year} ${hours}:${minutes}:${seconds} Uhr`;
     },
     compareInput() {
       const EthVal = this.donationValue * this.eurToEth;
