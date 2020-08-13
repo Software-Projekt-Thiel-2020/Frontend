@@ -141,7 +141,7 @@
                     required
                     outlined
                     type="number"
-                    :rules="coordRules"
+                    :rules="longRule"
                     @change="updateMap(null, coords.longitude)"
                   />
                 </v-col>
@@ -153,7 +153,7 @@
                     required
                     outlined
                     type="number"
-                    :rules="coordRules"
+                    :rules="latRule"
                     @change="updateMap(coords.latitude, null)"
                   />
                 </v-col>
@@ -219,7 +219,12 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
-    coordRules: [
+    longRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -180 && parseFloat(v) <= 180) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    latRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
       (v) => (parseFloat(v) >= -90 && parseFloat(v) <= 90) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
@@ -306,10 +311,10 @@ export default {
     updateMap(lat, long) {
       try {
         let newCoords;
-        if (lat !== null) {
+        if (lat !== null && lat <= 90 && lat >= -90) {
           newCoords = latLng(lat, this.marker.lng);
         }
-        if (long !== null) {
+        if (long !== null && long <= 180 && long >= -180) {
           newCoords = latLng(this.marker.lat, long);
         }
         this.marker = newCoords;

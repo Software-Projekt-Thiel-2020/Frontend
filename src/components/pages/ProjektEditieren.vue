@@ -206,7 +206,7 @@
                   label="longitude"
                   :placeholder="String(editElement.longitude)"
                   type="number"
-                  :rules="coordRules"
+                  :rules="longRule"
                   @change="updateMap(null, editElement.longitude)"
                 />
               </v-col>
@@ -216,7 +216,7 @@
                   label="latitude"
                   :placeholder="String(editElement.latitude)"
                   type="number"
-                  :rules="coordRules"
+                  :rules="latRule"
                   @change="updateMap(editElement.latitude, null)"
                 />
               </v-col>
@@ -440,8 +440,12 @@ export default {
     websiteRule: [
       (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
-    coordRules: [
-      (v) => (parseFloat(v) >= -90 && parseFloat(v) <= 90) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
+    longRule: [
+      (v) => ((parseFloat(v) >= -180 && parseFloat(v) <= 180) || v === null) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    latRule: [
+      (v) => ((parseFloat(v) >= -90 && parseFloat(v) <= 90) || v === null) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     milestoneNameRule: [
@@ -606,10 +610,10 @@ export default {
     updateMap(lat, long) {
       try {
         let newCoords;
-        if (lat !== null) {
+        if (lat !== null && lat <= 90 && lat >= -90) {
           newCoords = latLng(lat, this.marker.lng);
         }
-        if (long !== null) {
+        if (long !== null && long <= 180 && long >= -180) {
           newCoords = latLng(this.marker.lat, long);
         }
         this.marker = newCoords;
