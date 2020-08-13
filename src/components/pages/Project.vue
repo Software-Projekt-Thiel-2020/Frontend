@@ -1,5 +1,8 @@
 <template>
-  <Default :title="project ? project.name : 'Projekt'">
+  <Default
+    :title="project ? project.name : 'Projekt'"
+    :loading="loading"
+  >
     <v-dialog
       v-model="dialog"
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
@@ -50,19 +53,7 @@
         </v-btn>
       </v-card>
     </v-dialog>
-    <v-layout
-      v-if="loading"
-      justify-center
-    >
-      <v-progress-circular
-        :size="50"
-        :width="7"
-        color="green"
-        indeterminate
-        class="mt-24"
-      />
-    </v-layout>
-    <div v-else-if="project">
+    <div v-if="!loading && project">
       <v-container>
         <v-card-text class="text-center">
           <v-row justify="center">

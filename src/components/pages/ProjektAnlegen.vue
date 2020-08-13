@@ -410,6 +410,7 @@
 import axios from 'axios';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { latLng } from 'leaflet';
+import validator from 'validator';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
@@ -442,7 +443,7 @@ export default {
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
       (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
