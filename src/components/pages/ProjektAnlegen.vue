@@ -84,6 +84,7 @@
             v-model="project.goal"
             oninput="validity.valid||(value='');"
             label="Spendenziel* (WEI)"
+            class="nospin"
             outlined
             type="number"
             clearable
@@ -286,6 +287,7 @@
                             <v-text-field
                               v-model="editedItem.goal"
                               label="Spendenziel* (WEI)"
+                              class="nospin"
                               min="1"
                               type="number"
                               outlined
@@ -809,5 +811,10 @@ export default {
   }
   .gradientBackground {
     background: rgb(255, 255, 255) linear-gradient(to right, rgb(199, 255, 212), rgb(176, 218, 255));
+  }
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>

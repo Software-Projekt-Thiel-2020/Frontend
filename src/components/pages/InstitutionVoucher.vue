@@ -121,7 +121,7 @@
             <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newPrice"
-                class="ma-0 pa-0"
+                class="ma-0 pa-0 nospin"
                 :placeholder="overlay ? editItem.price.toString() : ''"
                 type="number"
                 :rules="priceRulesEdit()"
@@ -198,7 +198,7 @@
             <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newVoucher.price"
-                class="ma-0 pa-0"
+                class="ma-0 pa-0 nospin"
                 type="number"
                 clearable
                 required
@@ -497,5 +497,11 @@ export default {
   .noVouchers {
       text-align: center;
       color: red;
+  }
+
+  .nospin ::v-deep input::-webkit-outer-spin-button,
+  .nospin ::v-deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 </style>
