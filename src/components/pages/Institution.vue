@@ -221,6 +221,7 @@ export default {
     ],
     coordRules: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -90 && parseFloat(v) <= 90) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     websiteRule: [
