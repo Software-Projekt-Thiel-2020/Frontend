@@ -240,7 +240,7 @@
                     <v-btn
                       color="primary"
                       dark
-                      @click="milestoneDialog = true"
+                      @click="createMilestone"
                     >
                       <v-icon
                         v-if="$vuetify.breakpoint.xsOnly"
@@ -258,7 +258,10 @@
                       max-width="400"
                     >
                       <v-card>
-                        <v-form v-model="milestoneForm">
+                        <v-form
+                          ref="milestoneFormRef"
+                          v-model="milestoneForm"
+                        >
                           <v-card-title>
                             <span class="headline"> Neuer Meilenstein</span>
                           </v-card-title>
@@ -448,7 +451,7 @@ export default {
       (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     milestoneNameRule: [
-      (v) => (!!v || v === null) || 'Feld muss ausgefüllt werden',
+      (v) => !!v || 'Feld muss ausgefüllt werden',
       // eslint-disable-next-line no-control-regex
       (v) => /^([\u0000-\u00ff]*[0-9]*)+$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
@@ -481,9 +484,11 @@ export default {
     weiRule() {
       return [
         (v) => {
+        /*
           if (v === null) {
             return true;
           }
+         */
           if (v) {
             if (/^[1-9][0-9]*$/s.test(v)) {
               // eslint-disable-next-line no-undef
@@ -590,6 +595,12 @@ export default {
       this.minDate = this.minDate.setDate(this.minDate.getDate() + 2);
       this.minDate = new Date(this.minDate).toISOString().substring(0, 10);
     },
+    createMilestone() {
+      this.milestoneDialog = true;
+      setTimeout(() => {
+        this.$refs.milestoneFormRef.resetValidation();
+      }, 50);
+    },
     editMilestone(milestone) {
       this.newMile = JSON.parse(JSON.stringify(milestone));
       // in this case "5.9.2020" --> 2020-9-5
@@ -617,12 +628,12 @@ export default {
       }
     },
     closeDialog() {
+      this.editFlag = false;
+      this.milestoneDialog = false;
+
       this.newMile.milestoneName = null;
       this.newMile.goal = null;
       this.newMile.until = null;
-
-      this.editFlag = false;
-      this.milestoneDialog = false;
     },
     saveMilestone() {
       const dateStone = JSON.parse(JSON.stringify(this.newMile));
