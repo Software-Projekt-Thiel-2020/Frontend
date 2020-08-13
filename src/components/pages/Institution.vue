@@ -3,19 +3,18 @@
     <v-row
       justify="center"
     >
-      <v-col
-        :cols="sizeCard"
-      >
-        <v-card
-          elevation="5"
-          shaped
-          class="pt-3 pb-3"
-          outlned
-        >
-          <v-form
-            v-model="form"
-          >
-            <v-card-text>
+      <v-col>
+        <MyCard>
+          <template #title />
+          <template #subtitle>
+            <p class="text-center">
+              Mit * markierte Felder müssen ausgefüllt werden
+            </p>
+          </template>
+          <template #text>
+            <v-form
+              v-model="form"
+            >
               <v-row justify="center">
                 <v-col :cols="sizeField">
                   <v-text-field
@@ -134,52 +133,45 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col :cols="Math.floor(sizeField/2)">
+                <v-col :cols="$vuetify.breakpoint.smAndUp ? Math.floor(sizeField/2) : 12">
                   <v-text-field
                     v-model="coords.longitude"
                     label="Longitude*"
                     background-color="grey lighten-4"
                     required
+                    outlined
                     type="number"
                     :rules="coordRules"
                     @change="updateMap(null, coords.longitude)"
                   />
                 </v-col>
-                <v-col :cols="Math.floor(sizeField/2)">
+                <v-col :cols="$vuetify.breakpoint.smAndUp ? Math.floor(sizeField/2) : 12">
                   <v-text-field
                     v-model="coords.latitude"
                     label="Latitude*"
                     background-color="grey lighten-4"
                     required
+                    outlined
                     type="number"
                     :rules="coordRules"
                     @change="updateMap(coords.latitude, null)"
                   />
                 </v-col>
               </v-row>
-              <p class="text-center font-weight-light">
-                Mit * markierte Felder müssen ausgefüllt werden
-              </p>
-            </v-card-text>
-            <v-card-actions>
-              <v-row
-                class="pb-3"
-                justify="center"
-              >
-                <v-btn
-                  x-large
-                  class="pl-12 pr-12"
-                  :disabled="!form"
-                  color="success"
-                  :loading="loading"
-                  @click="createInstitution"
-                >
-                  Institution erstellen
-                </v-btn>
-              </v-row>
-            </v-card-actions>
-          </v-form>
-        </v-card>
+            </v-form>
+          </template>
+          <template #actions>
+            <v-btn
+              :disabled="!form"
+              color="success"
+              width="100%"
+              :loading="loading"
+              @click="createInstitution"
+            >
+              Institution erstellen
+            </v-btn>
+          </template>
+        </MyCard>
       </v-col>
     </v-row>
   </Default>
@@ -193,11 +185,13 @@ import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 import EventBus from '@/utils/eventBus';
 import Default from '../Default.vue';
+import MyCard from '../MyCard.vue';
 
 export default {
   name: 'Institution',
   components: {
     Default,
+    MyCard,
     LMap,
     LTileLayer,
     LMarker,
@@ -245,9 +239,6 @@ export default {
     },
   }),
   computed: {
-    sizeCard() {
-      return this.$vuetify.breakpoint.xlOnly ? 9 : 12;
-    },
     sizeField() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return 12;

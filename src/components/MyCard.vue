@@ -21,12 +21,12 @@
       </template>
     </v-img>
 
-    <v-card-title>
+    <v-card-title v-if="this.$slots.title">
       <slot name="title">
         Header
       </slot>
     </v-card-title>
-    <v-card-subtitle>
+    <v-card-subtitle v-if="this.$slots.subtitle">
       <slot name="subtitle" />
     </v-card-subtitle>
 
