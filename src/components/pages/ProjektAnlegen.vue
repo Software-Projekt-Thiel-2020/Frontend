@@ -576,7 +576,7 @@ export default {
                 }
                 return 'Meilenstein-Ziele dürfen nicht gleich sein';
               }
-              return `Ziel muss unter ${this.project.goal} liegen`;
+              return `Ziel muss unter dem Projektziel (${this.project.goal}) liegen`;
             }
             return 'Bitte nur ganze Zahlen eingeben';
           }

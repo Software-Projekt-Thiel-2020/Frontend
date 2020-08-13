@@ -491,9 +491,9 @@ export default {
                   }
                   return 'Meilenstein-Ziele dürfen nicht gleich sein';
                 }
-                return `Ziel muss unter ${this.editElement.goal} liegen`;
+                return `Ziel muss unter dem Projektziel (${this.editElement.goal}) liegen`;
               }
-              return `Ziel muss über ${this.minWei} liegen`;
+              return `Ziel muss über dem Ziel des größten Meilensteins (${this.minWei}) liegen`;
             }
             return 'Bitte nur ganze Zahlen eingeben';
           }
