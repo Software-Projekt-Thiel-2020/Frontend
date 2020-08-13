@@ -5,6 +5,7 @@
   >
     <v-dialog
       v-model="dialog"
+      persistent
       :max-width="$vuetify.breakpoint.smAndDown ? '95vw':'50vw'"
     >
       <v-card class="text-center py-10">
