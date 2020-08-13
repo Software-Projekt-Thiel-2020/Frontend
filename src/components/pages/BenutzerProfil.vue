@@ -220,7 +220,7 @@ export default {
             this.reset();
           })
           .catch((err) => {
-            EventBus.$emit('new-snackbar', `Das Ändern ihrer Daten war NICHT erfolgreich!\n${err.toString()}`, 'error', 10000, true);
+            EventBus.$emit('new-snackbar', `Das Ändern ihrer Daten war NICHT erfolgreich!\n${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
             this.errorMessage = err.toString();
           }).finally(() => {
             this.processingChanges = false;

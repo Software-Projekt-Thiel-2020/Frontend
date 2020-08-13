@@ -107,211 +107,159 @@
       <v-container />
     </v-container>
 
-    <v-dialog
-      v-if="overlay"
-      v-model="overlay"
-      absolute
-      persistent
-    >
-      <v-card>
-        <v-layout
-          justify-center
-        >
-          <v-card-title>
-            Gutschein bearbeiten
-          </v-card-title>
-        </v-layout>
-        <v-layout
-          justify-center
-        >
-          <v-card-subtitle>
-            Titel: {{ editItem.title }}
-          </v-card-subtitle>
-        </v-layout>
-        <v-form>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+    <MyDialog v-model="overlay">
+      <template #title>
+        Gutschein bearbeiten
+      </template>
+      <template #subtitle>
+        Titel: {{ editItem.title }}
+      </template>
+
+      <template #text>
+        <v-container>
+          <v-form ref="voucher_edit_form">
+            <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newPrice"
-                :placeholder="editItem.price.toString()"
+                class="ma-0 pa-0"
+                :placeholder="overlay ? editItem.price.toString() : ''"
                 type="number"
-                label="Preis (in Wei)"
-                class="inputField"
                 :rules="priceRulesEdit()"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Verfügbarkeit">
               <v-checkbox
                 v-model="newAvailable"
-                style="display:inline-flex"
-                class="text-center align-center"
+                class="ma-0 pa-0"
                 label="Verfügbar"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Gültigkeit (Jahre)">
               <v-text-field
                 v-model="newValidTime"
-                :placeholder="oldTime.toString()"
+                :placeholder="overlay ? oldTime.toString() : ''"
                 type="number"
-                label="Gültigkeit (in Jahren)"
-                class="inputField"
+                class="ma-0 pa-0"
                 :rules="timeRulesEdit()"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-card-actions
-            class="ma-0 pa-0"
-          >
-            <v-btn-toggle
-              borderless
-              style="width: 50%"
+            </MyFormRow>
+          </v-form>
+        </v-container>
+      </template>
+      <template #actions>
+        <v-row class="mx-0">
+          <v-col>
+            <v-btn
+              color="error"
+              block
+              @click="closeOverlay()"
             >
-              <v-btn
-                color="error"
-                block
-                tile
-                @click="closeOverlay()"
-              >
-                Schließen
-              </v-btn>
-              <v-btn
-                :disabled="disabled"
-                color="success"
-                block
-                tile
-                :loading="changingVoucher"
-                @click="changeVoucher"
-              >
-                Bestätigen
-              </v-btn>
-            </v-btn-toggle>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
+              Schließen
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              :disabled="disabled"
+              color="success"
+              block
+              :loading="changingVoucher"
+              @click="changeVoucher"
+            >
+              Bestätigen
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </MyDialog>
 
-    <v-dialog
-      v-if="addVoucherOverlay"
-      v-model="addVoucherOverlay"
-      absolute
-      persistent
-    >
-      <v-card>
-        <v-layout
-          justify-center
-        >
-          <v-card-title>
-            Gutschein erstellen
-          </v-card-title>
-        </v-layout>
-        <v-form
-          v-model="newVoucher.form"
-        >
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+    <MyDialog v-model="addVoucherOverlay">
+      <template #title>
+        Gutschein erstellen
+      </template>
+
+      <template #text>
+        <v-container>
+          <v-form
+            v-model="newVoucher.form"
+          >
+            <MyFormRow title="Titel">
               <v-text-field
                 v-model="newVoucher.title"
-                label="Titel"
-                counter
-                class="inputField"
-                required
+                class="ma-0 pa-0"
                 :rules="titleRulesNew()"
+                counter
+                clearable
+                required
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newVoucher.price"
+                class="ma-0 pa-0"
                 type="number"
-                label="Preis (in Wei)"
-                class="inputField"
+                clearable
                 required
                 :rules="priceRules()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Beschreibung">
               <v-text-field
                 v-model="newVoucher.subject"
-                label="Beschreibung"
-                class="inputField"
-                :rules="subjectRules()"
+                class="ma-0 pa-0"
+                clearable
                 required
+                :rules="subjectRules()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Gültigkeit (Jahre)">
               <v-text-field
                 v-model="newVoucher.validTime"
+                class="ma-0 pa-0"
                 type="number"
-                label="Gültigkeit (in Jahren)"
-                class="inputField"
+                clearable
                 required
                 :rules="timeRulesNew()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
+            </MyFormRow>
+          </v-form>
+        </v-container>
+      </template>
 
-          <v-card-actions
-            class="ma-0 pa-0"
-          >
-            <v-btn-toggle
-              borderless
-              style="width: 50%"
+      <template #actions>
+        <v-row class="mx-0">
+          <v-col>
+            <v-btn
+              color="error"
+              block
+              @click="closeDialog()"
             >
-              <v-btn
-                color="error"
-                block
-                tile
-                @click="closeDialog()"
-              >
-                Schließen
-              </v-btn>
-              <v-btn
-                :disabled="!newVoucher.price
-                  || !newVoucher.title
-                  || (newVoucher.title.length > 32)
-                  || !newVoucher.subject
-                  || !newVoucher.validTime
-                  || !newVoucher.form"
-                color="success"
-                block
-                tile
-                :rules="priceRules"
-                :loading="creatingVoucher"
-                @click="createVoucher"
-              >
-                Bestätigen
-              </v-btn>
-            </v-btn-toggle>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
+              Schließen
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              :disabled="!newVoucher.price
+                || !newVoucher.title
+                || (newVoucher.title.length > 32)
+                || !newVoucher.subject
+                || !newVoucher.validTime
+                || !newVoucher.form"
+              color="success"
+              block
+              tile
+              :rules="priceRules"
+              :loading="creatingVoucher"
+              @click="createVoucher"
+            >
+              Bestätigen
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </MyDialog>
   </Default>
 </template>
 
@@ -322,10 +270,14 @@ import EventBus from '@/utils/eventBus';
 
 import Default from '../Default.vue';
 import MyCard from '../MyCard.vue';
+import MyDialog from '../MyDialog.vue';
+import MyFormRow from '../MyFormRow.vue';
 
 export default {
   name: 'InstitutionVoucher',
   components: {
+    MyFormRow,
+    MyDialog,
     Default,
     MyCard,
   },
@@ -401,10 +353,10 @@ export default {
         });
     },
     editVoucher(voucher) {
-      this.overlay = true;
       this.editItem = voucher;
       this.newAvailable = voucher.available;
       this.oldTime = (voucher.validTime / 60 / 60 / 24 / 365);
+      this.overlay = true;
     },
     closeOverlay() {
       this.overlay = false;
@@ -413,6 +365,7 @@ export default {
       this.newAvailable = null;
       this.newPrice = null;
       this.disabled = true;
+      this.$refs.voucher_edit_form.resetValidation();
     },
     valuesChanged() {
       if (this.newValidTime === this.oldTime
@@ -479,7 +432,8 @@ export default {
     },
     titleRulesNew() {
       return [
-        () => (this.newVoucher.title.length <= 32) || 'Der Titel darf maximal 32 Zeichen lang sein',
+        () => (this.newVoucher.title && this.newVoucher.title.length > 0) || 'Der Titel darf nicht leer sein',
+        () => (this.newVoucher.title && this.newVoucher.title.length <= 32) || 'Der Titel darf maximal 32 Zeichen lang sein',
       ];
     },
     changeVoucher() {
@@ -505,7 +459,7 @@ export default {
       axios.patch(url, {}, { headers }).then(() => {
         EventBus.$emit('new-snackbar', 'Gutschein wurde aktualisiert', 'success', 10000, true);
       }).catch((err) => {
-        EventBus.$emit('new-snackbar', `Gutschein konnte nicht aktualisiert werden ${err.toString()}`, 'error', 10000, true);
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht aktualisiert werden ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
       }).finally(() => {
         this.changingVoucher = false;
         this.closeOverlay();
@@ -526,7 +480,7 @@ export default {
       axios.post(url, {}, { headers }).then(() => {
         EventBus.$emit('new-snackbar', 'Gutschein wurde erstellt', 'success', 10000, true);
       }).catch((err) => {
-        EventBus.$emit('new-snackbar', `Gutschein konnte nicht erstellt werden ${err.toString()}`, 'error', 10000, true);
+        EventBus.$emit('new-snackbar', `Gutschein konnte nicht erstellt werden ${err.toString()} - ${err.response.data.error}`, 'error', 10000, true);
       }).finally(() => {
         this.creatingVoucher = false;
         this.closeDialog();
@@ -543,10 +497,5 @@ export default {
   .noVouchers {
       text-align: center;
       color: red;
-  }
-
-  .inputField ::placeholder{
-    color: black!important;
-    opacity: 1;
   }
 </style>
