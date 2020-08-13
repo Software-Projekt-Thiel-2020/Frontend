@@ -350,12 +350,10 @@ export default {
         const { goal } = this.project.milestones[i];
         const donated = this.project.milestones[i].totalDonated;
         const percentage = donated / goal;
-        console.log(percentage, donated, goal);
         if (max < percentage) {
           max = percentage;
         }
       }
-      console.log('FINAL', max);
       return max;
     },
   },
