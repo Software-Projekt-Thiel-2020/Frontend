@@ -125,6 +125,8 @@
                     <l-tile-layer
                       :url="url"
                       :attribution="attribution"
+                      :continuous-world="false"
+                      :no-wrap="true"
                     />
                     <l-marker
                       :lat-lng.sync="marker"
@@ -141,7 +143,7 @@
                     required
                     outlined
                     type="number"
-                    :rules="coordRules"
+                    :rules="longRule"
                     @change="updateMap(null, coords.longitude)"
                   />
                 </v-col>
@@ -153,7 +155,7 @@
                     required
                     outlined
                     type="number"
-                    :rules="coordRules"
+                    :rules="latRule"
                     @change="updateMap(coords.latitude, null)"
                   />
                 </v-col>
@@ -179,7 +181,7 @@
 
 <script>
 import axios from 'axios';
-import { latLng } from 'leaflet';
+import { latLng, latLngBounds } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
@@ -220,8 +222,14 @@ export default {
     notEmpty: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
-    coordRules: [
+    longRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -180 && parseFloat(v) <= 180) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    latRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -90 && parseFloat(v) <= 90) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     websiteRule: [
@@ -234,6 +242,7 @@ export default {
     center: latLng(51.1642292, 10.4541194),
     marker: latLng(51.1642292, 10.4541194),
     zoom: 5,
+    bounds: latLngBounds(latLng(-90, -180), latLng(90, 180)),
     mapOptions: {
       zoomSnap: 0.5,
       minZoom: 1,
@@ -259,6 +268,7 @@ export default {
       this.userData = userSession.loadUserData();
     }
     setTimeout(() => {
+      this.$refs.map.mapObject.setMaxBounds(this.bounds);
       this.$refs.map.mapObject.invalidateSize();
     }, 100);
   },
@@ -306,10 +316,10 @@ export default {
     updateMap(lat, long) {
       try {
         let newCoords;
-        if (lat !== null) {
+        if (lat !== null && lat <= 90 && lat >= -90) {
           newCoords = latLng(lat, this.marker.lng);
         }
-        if (long !== null) {
+        if (long !== null && long <= 180 && long >= -180) {
           newCoords = latLng(this.marker.lat, long);
         }
         this.marker = newCoords;

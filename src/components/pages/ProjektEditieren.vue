@@ -179,6 +179,8 @@
                 <l-tile-layer
                   :url="url"
                   :attribution="attribution"
+                  :continuous-world="false"
+                  :no-wrap="true"
                 />
                 <l-marker :lat-lng="marker" />
               </l-map>
@@ -196,7 +198,7 @@
                   label="longitude"
                   :placeholder="String(editElement.longitude)"
                   type="number"
-                  :rules="coordRules"
+                  :rules="longRule"
                   @change="updateMap(null, editElement.longitude)"
                 />
               </v-col>
@@ -206,7 +208,7 @@
                   label="latitude"
                   :placeholder="String(editElement.latitude)"
                   type="number"
-                  :rules="coordRules"
+                  :rules="latRule"
                   @change="updateMap(editElement.latitude, null)"
                 />
               </v-col>
@@ -368,7 +370,7 @@
 
 <script>
 import axios from 'axios';
-import { latLng } from 'leaflet';
+import { latLng, latLngBounds } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
@@ -439,8 +441,13 @@ export default {
     websiteRule: [
       (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
-    coordRules: [
-      (v) => /^-?[0-9]+\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    longRule: [
+      (v) => ((parseFloat(v) >= -180 && parseFloat(v) <= 180) || v === null) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    latRule: [
+      (v) => ((parseFloat(v) >= -90 && parseFloat(v) <= 90) || v === null) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     milestoneNameRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
@@ -453,6 +460,7 @@ export default {
     center: null,
     marker: null,
     zoom: 13,
+    bounds: latLngBounds(latLng(-90, -180), latLng(90, 180)),
     mapOptions: {
       zoomSnap: 0.5,
       minZoom: 1,
@@ -648,10 +656,10 @@ export default {
     updateMap(lat, long) {
       try {
         let newCoords;
-        if (lat !== null) {
+        if (lat !== null && lat <= 90 && lat >= -90) {
           newCoords = latLng(lat, this.marker.lng);
         }
-        if (long !== null) {
+        if (long !== null && long <= 180 && long >= -180) {
           newCoords = latLng(this.marker.lat, long);
         }
         this.marker = newCoords;
@@ -697,6 +705,7 @@ export default {
             this.overlay = true;
             setTimeout(() => {
               this.$refs.map.mapObject.invalidateSize();
+              this.$refs.map.mapObject.setMaxBounds(this.bounds);
               this.$refs.map.mapObject.setView(this.center, this.zoom, { animation: true });
             }, 100);
 

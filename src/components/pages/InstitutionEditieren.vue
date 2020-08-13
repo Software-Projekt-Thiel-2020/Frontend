@@ -198,6 +198,8 @@
                 <l-tile-layer
                   :url="url"
                   :attribution="attribution"
+                  :continuous-world="false"
+                  :no-wrap="true"
                 />
                 <l-marker :lat-lng="marker" />
               </l-map>
@@ -212,7 +214,7 @@
                     label="longitude"
                     :placeholder="String(editElement.longitude)"
                     type="number"
-                    :rules="coordRules"
+                    :rules="longRule"
                     @change="updateMap(null, editElement.longitude)"
                   />
                 </v-col>
@@ -223,7 +225,7 @@
                     label="latitude"
                     :placeholder="String(editElement.latitude)"
                     type="number"
-                    :rules="coordRules"
+                    :rules="latRule"
                     @change="updateMap(editElement.latitude, null)"
                   />
                 </v-col>
@@ -263,7 +265,7 @@
 
 <script>
 import axios from 'axios';
-import { latLng } from 'leaflet';
+import { latLng, latLngBounds } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
@@ -327,7 +329,14 @@ export default {
     websiteRule: [
       (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
-    coordRules: [
+    longRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -180 && parseFloat(v) <= 180) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
+      (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
+    ],
+    latRule: [
+      (v) => !!v || 'Feld muss ausgefüllt werden',
+      (v) => (parseFloat(v) >= -90 && parseFloat(v) <= 90) || 'Bitte nur Werte im Bereich -90° bis 90° angeben',
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -335,6 +344,7 @@ export default {
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     center: null,
     marker: null,
+    bounds: latLngBounds(latLng(-90, -180), latLng(90, 180)),
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
@@ -382,10 +392,10 @@ export default {
     updateMap(lat, long) {
       try {
         let newCoords = this.marker;
-        if (lat !== null) {
+        if (lat !== null && lat <= 90 && lat >= -90) {
           newCoords = latLng(lat, this.marker.lng);
         }
-        if (long !== null) {
+        if (long !== null && long <= 180 && long >= -180) {
           newCoords = latLng(this.marker.lat, long);
         }
         this.marker = newCoords;
@@ -426,6 +436,7 @@ export default {
           this.overlay = true;
           setTimeout(() => {
             this.$refs.map.mapObject.invalidateSize();
+            this.$refs.map.mapObject.setMaxBounds(this.bounds);
             this.$refs.map.mapObject.setView(this.center, this.zoom, { animation: true });
           }, 100);
           this.$nextTick(() => {
