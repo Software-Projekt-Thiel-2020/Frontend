@@ -201,14 +201,14 @@
                 :zoom="zoom"
                 :center="center"
                 :options="mapOptions"
-                :continuous-world="false"
-                :no-wrap="true"
                 style="height: 300px; width: 100%; position:relative; z-index: 0"
                 @click="setMarkerPos"
               >
                 <l-tile-layer
                   :url="url"
                   :attribution="attribution"
+                  :continuous-world="false"
+                  :no-wrap="true"
                 />
                 <l-marker :lat-lng="marker" />
               </l-map>

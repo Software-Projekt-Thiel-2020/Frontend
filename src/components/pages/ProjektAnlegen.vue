@@ -192,13 +192,13 @@
             :zoom="zoom"
             :center="center"
             :options="mapOptions"
-            :continuous-world="false"
-            :no-wrap="true"
             @click="setMarkerPos"
           >
             <l-tile-layer
               :url="url"
               :attribution="attribution"
+              :continuous-world="false"
+              :no-wrap="true"
             />
             <l-marker :lat-lng="marker" />
           </l-map>
