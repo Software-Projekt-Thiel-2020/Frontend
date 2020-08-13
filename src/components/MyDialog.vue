@@ -4,6 +4,7 @@
     :value="value"
     :persistent="persistent"
     :fullscreen="$vuetify.breakpoint.smAndDown"
+    max-width="1736px"
     @input="update($event)"
   >
     <v-card>

@@ -107,101 +107,73 @@
       <v-container />
     </v-container>
 
-    <v-dialog
-      v-if="overlay"
-      v-model="overlay"
-      absolute
-      persistent
-    >
-      <v-card>
-        <v-layout
-          justify-center
-        >
-          <v-card-title>
-            Gutschein bearbeiten
-          </v-card-title>
-        </v-layout>
-        <v-layout
-          justify-center
-        >
-          <v-card-subtitle>
-            Titel: {{ editItem.title }}
-          </v-card-subtitle>
-        </v-layout>
-        <v-form>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+    <MyDialog v-model="overlay">
+      <template #title>
+        Gutschein bearbeiten
+      </template>
+      <template #subtitle>
+        Titel: {{ editItem.title }}
+      </template>
+
+      <template #text>
+        <v-container>
+          <v-form ref="voucher_edit_form">
+            <MyFormRow title="Preis (in Wei)">
               <v-text-field
                 v-model="newPrice"
-                :placeholder="editItem.price.toString()"
+                class="ma-0 pa-0"
+                :placeholder="overlay ? editItem.price.toString() : ''"
                 type="number"
-                label="Preis (in Wei)"
-                class="inputField"
                 :rules="priceRulesEdit()"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Verfügbarkeit">
               <v-checkbox
                 v-model="newAvailable"
-                style="display:inline-flex"
-                class="text-center align-center"
+                class="ma-0 pa-0"
                 label="Verfügbar"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-row>
-            <v-col cols="3" />
-            <v-col cols="6">
+            </MyFormRow>
+            <MyFormRow title="Gültigkeit (Jahre)">
               <v-text-field
                 v-model="newValidTime"
-                :placeholder="oldTime.toString()"
+                :placeholder="overlay ? oldTime.toString() : ''"
                 type="number"
-                label="Gültigkeit (in Jahren)"
-                class="inputField"
+                class="ma-0 pa-0"
                 :rules="timeRulesEdit()"
                 @change="valuesChanged()"
               />
-            </v-col>
-            <v-col cols="3" />
-          </v-row>
-          <v-card-actions
-            class="ma-0 pa-0"
-          >
-            <v-btn-toggle
-              borderless
-              style="width: 50%"
+            </MyFormRow>
+          </v-form>
+        </v-container>
+      </template>
+      <template #actions>
+        <v-row class="mx-0">
+          <v-col>
+            <v-btn
+              color="error"
+              block
+              @click="closeOverlay()"
             >
-              <v-btn
-                color="error"
-                block
-                tile
-                @click="closeOverlay()"
-              >
-                Schließen
-              </v-btn>
-              <v-btn
-                :disabled="disabled"
-                color="success"
-                block
-                tile
-                :loading="changingVoucher"
-                @click="changeVoucher"
-              >
-                Bestätigen
-              </v-btn>
-            </v-btn-toggle>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
+              Schließen
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-btn
+              :disabled="disabled"
+              color="success"
+              block
+              :loading="changingVoucher"
+              @click="changeVoucher"
+            >
+              Bestätigen
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </MyDialog>
 
     <MyDialog v-model="addVoucherOverlay">
       <template #title>
@@ -381,10 +353,10 @@ export default {
         });
     },
     editVoucher(voucher) {
-      this.overlay = true;
       this.editItem = voucher;
       this.newAvailable = voucher.available;
       this.oldTime = (voucher.validTime / 60 / 60 / 24 / 365);
+      this.overlay = true;
     },
     closeOverlay() {
       this.overlay = false;
@@ -393,6 +365,7 @@ export default {
       this.newAvailable = null;
       this.newPrice = null;
       this.disabled = true;
+      this.$refs.voucher_edit_form.resetValidation();
     },
     valuesChanged() {
       if (this.newValidTime === this.oldTime
@@ -524,10 +497,5 @@ export default {
   .noVouchers {
       text-align: center;
       color: red;
-  }
-
-  .inputField ::placeholder{
-    color: black!important;
-    opacity: 1;
   }
 </style>
