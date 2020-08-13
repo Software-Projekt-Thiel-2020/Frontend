@@ -378,6 +378,7 @@ import { userSession } from '@/userSession';
 import { Editor } from '@toast-ui/vue-editor';
 
 import EventBus from '@/utils/eventBus';
+import validator from 'validator';
 import MyDialog from '../MyDialog.vue';
 import MyFormRow from '../MyFormRow.vue';
 import Default from '../Default.vue';
@@ -438,7 +439,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
