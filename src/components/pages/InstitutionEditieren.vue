@@ -279,6 +279,7 @@ import { userSession } from '@/userSession';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/vue-editor';
+import validator from 'validator';
 import EventBus from '@/utils/eventBus';
 
 import MyDialog from '../MyDialog.vue';
@@ -333,7 +334,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=]+$/is.test(v) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
     ],
     coordRules: [
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
