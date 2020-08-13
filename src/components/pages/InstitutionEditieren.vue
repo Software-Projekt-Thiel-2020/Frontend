@@ -476,6 +476,15 @@ export default {
 
         headers.description = window.btoa(this.editElement.description);
         headers.short = window.btoa(this.editElement.short);
+
+        // Clean headers
+        Object.keys(headers).forEach(
+          (key) => {
+            // if (!headers[key]) delete headers[key];
+            if (typeof headers[key] === 'object') alert('OBJECT');
+          },
+        );
+
         this.loadingChanges = true;
         if (this.previewImage) {
           URL.revokeObjectURL(this.previewImage);

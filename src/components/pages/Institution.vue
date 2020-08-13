@@ -233,7 +233,7 @@ export default {
       (v) => /^-?[0-9]*\.?[0-9]*$/s.test(v) || 'Bitte nur Zahlen eingeben',
     ],
     websiteRule: [
-      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (!v || validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true })) || 'Bitte eine gültige URL angeben',
     ],
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution:
@@ -283,13 +283,13 @@ export default {
         longitude: this.coords.longitude,
         latitude: this.coords.latitude,
       };
-      if (this.description !== '') {
+      if (this.description) {
         headers.description = window.btoa(this.description);
       }
-      if (this.short !== '') {
+      if (this.short) {
         headers.short = window.btoa(this.short);
       }
-      if (this.webpage !== '') {
+      if (this.webpage) {
         headers.webpage = this.webpage;
       }
       this.loading = true;
