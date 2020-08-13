@@ -115,9 +115,10 @@ export default {
       lCodes: ['DE', 'AT', 'CH'],
       code: 'DE',
       radius: 10,
-      latitude: -1,
-      longitude: -1,
+      latitude: undefined,
+      longitude: undefined,
       errorMessage: '',
+      navigator: false,
     },
   }),
   mounted() {
@@ -145,13 +146,13 @@ export default {
       this.load();
     },
     loadProjects() {
-      if (this.searchModel.name || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
+      if (this.searchModel.name || (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined)) {
         let url = '';
         url = 'projects?name=';
         if (this.searchModel.name) {
           url = url.concat(`${this.searchModel.name}`);
         }
-        if (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1) {
+        if (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined) {
           url = url.concat(`&longitude=${this.searchModel.longitude}&latitude=${this.searchModel.latitude}&radius=${this.searchModel.radius}`);
         }
         axios.get(url)
@@ -173,6 +174,10 @@ export default {
       }
     },
     suchen() {
+      if (!this.searchModel.navigator && !this.searchModel.place.length) {
+        this.searchModel.longitude = undefined;
+        this.searchModel.latitude = undefined;
+      }
       this.errorMessage = '';
       this.gotResponse = false;
       this.loading = true;
@@ -189,7 +194,7 @@ export default {
               this.searchModel.longitude = res.data[0].lon;
               this.searchModel.latitude = res.data[0].lat;
             }
-            if (this.searchModel.latitude === -1 || this.searchModel.longitude === -1) {
+            if (this.searchModel.latitude === undefined || this.searchModel.longitude === undefined) {
               this.errorMessage = 'Es konnten keine Projekte gefunden werden';
             } else {
               this.loadProjects();
@@ -201,7 +206,7 @@ export default {
             this.gotResponse = true;
             this.loading = false;
           });
-      } else if (this.searchModel.errorMessage === '' || (this.searchModel.longitude !== -1 && this.searchModel.latitude !== -1)) {
+      } else if (this.searchModel.errorMessage === '' || (this.searchModel.longitude !== undefined && this.searchModel.latitude !== undefined)) {
         this.loadProjects();
       }
     },
