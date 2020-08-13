@@ -111,6 +111,7 @@
             <MyFormRow title="Name">
               <v-text-field
                 v-model="editElement.name"
+                class="ma-0 pa-0"
                 :value="editElement.name"
                 :rules="notEmpty"
                 clearable
@@ -156,6 +157,7 @@
             <MyFormRow title="Website">
               <v-text-field
                 v-model="editElement.webpage"
+                class="ma-0 pa-0"
                 :placeholder="editElement.webpage"
                 :rules="websiteRule"
                 required
@@ -165,6 +167,7 @@
             <MyFormRow title="Kurz-Beschreibung">
               <v-text-field
                 v-model="editElement.short"
+                class="ma-0 pa-0"
                 counter
                 maxlength="140"
                 clearable
@@ -185,6 +188,7 @@
             <MyFormRow title="Addresse">
               <v-text-field
                 v-model="editElement.address"
+                class="ma-0 pa-0"
                 :placeholder="editElement.address"
                 :rules="notEmpty"
                 required
@@ -208,33 +212,32 @@
               </l-map>
             </MyFormRow>
 
-            <v-row>
-              <v-col
-                class="mt-5"
-                cols="12"
-                sm="3"
-              />
-              <v-col>
-                <v-text-field
-                  v-model="editElement.longitude"
-                  label="longitude"
-                  :placeholder="String(editElement.longitude)"
-                  type="number"
-                  :rules="coordRules"
-                  @change="updateMap(null, editElement.longitude)"
-                />
-              </v-col>
-              <v-col>
-                <v-text-field
-                  v-model="editElement.latitude"
-                  label="latitude"
-                  :placeholder="String(editElement.latitude)"
-                  type="number"
-                  :rules="coordRules"
-                  @change="updateMap(editElement.latitude, null)"
-                />
-              </v-col>
-            </v-row>
+            <MyFormRow title="">
+              <v-row>
+                <v-col :cols="$vuetify.breakpoint.xsOnly ? 12 : 6">
+                  <v-text-field
+                    v-model="editElement.longitude"
+                    class="ma-0 pa-0"
+                    label="longitude"
+                    :placeholder="String(editElement.longitude)"
+                    type="number"
+                    :rules="coordRules"
+                    @change="updateMap(null, editElement.longitude)"
+                  />
+                </v-col>
+                <v-col :cols="$vuetify.breakpoint.xsOnly ? 12 : 6">
+                  <v-text-field
+                    v-model="editElement.latitude"
+                    class="ma-0 pa-0"
+                    label="latitude"
+                    :placeholder="String(editElement.latitude)"
+                    type="number"
+                    :rules="coordRules"
+                    @change="updateMap(editElement.latitude, null)"
+                  />
+                </v-col>
+              </v-row>
+            </MyFormRow>
           </v-form>
         </v-container>
       </template>
