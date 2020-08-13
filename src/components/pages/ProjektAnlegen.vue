@@ -234,6 +234,7 @@
           <v-data-table
             :headers="headers"
             :items="milestonesDate"
+            :custom-sort="datatableSort"
           >
             <template v-slot:top>
               <v-toolbar
@@ -599,6 +600,42 @@ export default {
     this.get_user();
   },
   methods: {
+    datatableSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        // goal
+        if (index[0] === 'goal') {
+          if (isDesc[0]) {
+            // eslint-disable-next-line no-undef
+            if (BigInt(a.goal) > BigInt(b.goal)) return -1;
+            // eslint-disable-next-line no-undef
+            return (BigInt(a.goal) < BigInt(b.goal) ? 1 : 0);
+          }
+          // eslint-disable-next-line no-undef
+          if (BigInt(a.goal) < BigInt(b.goal)) return -1;
+          // eslint-disable-next-line no-undef
+          return (BigInt(a.goal) > BigInt(b.goal) ? 1 : 0);
+        }
+
+        // Date
+        if (index[0] === 'until') {
+          if (isDesc[0]) {
+            return new Date(b.until.split('.').reverse().join('-'))
+              - new Date(a.until.split('.').reverse().join('-'));
+          }
+          return new Date(a.until.split('.').reverse().join('-'))
+            - new Date(b.until.split('.').reverse().join('-'));
+        }
+
+        // normal sorting
+        if (isDesc[0]) {
+          if (a[index] > b[index]) return -1;
+          return a[index] < b[index] ? 1 : 0;
+        }
+        if (a[index] < b[index]) return -1;
+        return a[index] > b[index] ? 1 : 0;
+      });
+      return items;
+    },
     checkMilestoneGoals(value) {
       if (this.project.milestones.length < 1) {
         return true;
