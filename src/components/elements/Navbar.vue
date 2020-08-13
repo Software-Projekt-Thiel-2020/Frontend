@@ -163,17 +163,17 @@
           >
             <v-avatar color="white">
               <v-icon
-                v-if="user && !user.avatarUrl()"
+                v-if="!imgUrl || imgError"
                 color="indigo"
               >
                 mdi-account-circle
               </v-icon>
-
-              <img
-                v-if="user && user.avatarUrl()"
-                :src="user.avatarUrl()"
+              <v-img
+                v-else
+                :src="imgUrl"
                 alt="ProfilePicture"
-              >
+                @error="onImgError"
+              />
             </v-avatar>
           </v-btn>
         </template>
@@ -524,6 +524,8 @@ import EventBus from '@/utils/eventBus';
 export default {
   name: 'Navbar',
   data: () => ({
+    imgUrl: null,
+    imgError: true,
     drawer: false,
     userSession: null,
     user: null,
@@ -557,6 +559,8 @@ export default {
       window.user = this.user;
 
       this.get_user();
+      this.imgUrl = this.user.avatarUrl();
+      this.imgError = false;
     } else if (userSession.isSignInPending()) {
       userSession.handlePendingSignIn()
         .then(() => {
@@ -574,6 +578,9 @@ export default {
     });
   },
   methods: {
+    onImgError() {
+      this.imgError = true;
+    },
     signIn() {
       blockstack.redirectToSignIn();
     },
