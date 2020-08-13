@@ -201,6 +201,8 @@
                 :zoom="zoom"
                 :center="center"
                 :options="mapOptions"
+                :continuous-world="false"
+                :no-wrap="true"
                 style="height: 300px; width: 100%; position:relative; z-index: 0"
                 @click="setMarkerPos"
               >
@@ -272,7 +274,7 @@
 
 <script>
 import axios from 'axios';
-import { latLng } from 'leaflet';
+import { latLng, latLngBounds } from 'leaflet';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { userSession } from '@/userSession';
@@ -350,6 +352,7 @@ export default {
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     center: null,
     marker: null,
+    bounds: latLngBounds(latLng(-90, -180), latLng(90, 180)),
     zoom: 13,
     mapOptions: {
       zoomSnap: 0.5,
@@ -441,6 +444,7 @@ export default {
           this.overlay = true;
           setTimeout(() => {
             this.$refs.map.mapObject.invalidateSize();
+            this.$refs.map.mapObject.setMaxBounds(this.bounds);
             this.$refs.map.mapObject.setView(this.center, this.zoom, { animation: true });
           }, 100);
           this.$nextTick(() => {

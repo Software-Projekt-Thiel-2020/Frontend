@@ -192,6 +192,8 @@
             :zoom="zoom"
             :center="center"
             :options="mapOptions"
+            :continuous-world="false"
+            :no-wrap="true"
             @click="setMarkerPos"
           >
             <l-tile-layer
@@ -409,7 +411,7 @@
 <script>
 import axios from 'axios';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
-import { latLng } from 'leaflet';
+import { latLng, latLngBounds } from 'leaflet';
 import { userSession } from '@/userSession';
 import 'leaflet/dist/leaflet.css';
 
@@ -527,6 +529,7 @@ export default {
     center: latLng(51.1642292, 10.4541194),
     marker: latLng(51.1642292, 10.4541194),
     zoom: 5,
+    bounds: latLngBounds(latLng(-90, -180), latLng(90, 180)),
     mapOptions: {
       zoomSnap: 0.5,
       minZoom: 1,
@@ -600,6 +603,7 @@ export default {
       this.dialog.notloggedIn = true;
     }
     this.$refs.map.mapObject.invalidateSize();
+    this.$refs.map.mapObject.setMaxBounds(this.bounds);
     this.getMinDate();
     this.getUserInstitutions();
     this.get_user();
