@@ -121,7 +121,7 @@
                           {{ milestone.milestoneName }}
                         </h1>
                         <h5>
-                          Gültig bis zum {{ getDateString(milestone.until)}}
+                          Gültig bis zum {{ getDateString(milestone.until) }}
                         </h5>
                       </v-col>
                       <v-col>
