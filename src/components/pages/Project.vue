@@ -86,6 +86,26 @@
                     Meilensteine
                   </v-card-text>
                 </v-system-bar>
+                <div v-if="project.milestones.length !== 0">
+                  <h1 class="my-3">Gesamtziel</h1>
+                  <v-progress-linear
+                    color="secondary"
+                    height="30"
+                    :value="getMaximumGoal * 100"
+                    striped
+                    class="mb-1"
+                    dark
+                  >
+
+                    <v-row>
+                      <v-col cols="12">
+                        <h2 class="percentage">
+                          {{ (getMaximumGoal * 100) }}%
+                        </h2>
+                      </v-col>
+                    </v-row>
+                  </v-progress-linear>
+                </div>
                 <v-card-text v-if="project.milestones.length === 0">
                   Keine Meilensteine vorhanden
                 </v-card-text>
@@ -319,6 +339,20 @@ export default {
     compiledMarkdown() {
       return this.project ? marked(DOMPurify.sanitize(this.project.description)) : '';
     },
+    getMaximumGoal() {
+      let max = null;
+      for (let i = 0; i < this.project.milestones.length; i += 1) {
+        const { goal } = this.project.milestones[i];
+        const donated = this.project.milestones[i].totalDonated;
+        const percentage = donated / goal;
+        console.log(percentage, donated, goal);
+        if (max < percentage) {
+          max = percentage;
+        }
+      }
+      console.log('FINAL', max);
+      return max;
+    },
   },
   created() {
     this.projectid = this.$route.params.id;
@@ -508,6 +542,10 @@ export default {
     stroke-dasharray: 48;
     stroke-dashoffset: 48;
     animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  }
+
+  .percentage {
+    text-shadow: 0px 0px 5px rgba(0,0,0,0.5);
   }
 
   @keyframes stroke {
