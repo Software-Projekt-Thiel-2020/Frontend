@@ -453,7 +453,7 @@ export default {
       (v) => !!v || 'Feld muss ausgefüllt werden',
     ],
     websiteRule: [
-      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || v === '') || 'Bitte eine gültige URL angeben',
+      (v) => (!v || validator.isURL(v || '', { protocols: ['http', 'https'], require_protocol: true })) || 'Bitte eine gültige URL angeben',
     ],
     longRule: [
       (v) => ((parseFloat(v) >= -180 && parseFloat(v) <= 180) || v === null) || 'Bitte nur Werte im Bereich -180° bis 180° angeben',
