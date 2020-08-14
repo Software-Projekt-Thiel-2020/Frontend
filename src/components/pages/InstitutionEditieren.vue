@@ -475,8 +475,29 @@ export default {
         }
         delete this.editElement.picture;
 
-        headers.description = window.btoa(this.editElement.description);
-        headers.short = window.btoa(this.editElement.short);
+        if (this.editElement.description) {
+          headers.description = window.btoa(this.editElement.description);
+        } else {
+          delete headers.description;
+        }
+        if (this.editElement.short) {
+          headers.short = window.btoa(this.editElement.short);
+        } else {
+          delete headers.short;
+        }
+        if (this.editElement.webpage) {
+          headers.webpage = this.webpage;
+        } else {
+          delete headers.webpage;
+        }
+
+        // Clean headers
+        Object.keys(headers).forEach(
+          (key) => {
+            if (!headers[key]) delete headers[key];
+          },
+        );
+
         this.loadingChanges = true;
         if (this.previewImage) {
           URL.revokeObjectURL(this.previewImage);
