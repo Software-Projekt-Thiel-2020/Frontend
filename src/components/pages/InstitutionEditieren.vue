@@ -78,6 +78,7 @@
               </v-btn>
               <v-spacer />
               <v-btn
+                v-if="item.webpage"
                 icon
                 :href="item.webpage"
               >
@@ -327,7 +328,7 @@ export default {
       (v) => /^([\u0000-\u00ff]*[0-9]*)*$/i.test(v) || 'Bitte nur gültige Zeichen eingeben(Latin1)',
     ],
     websiteRule: [
-      (v) => (validator.isURL(v, { protocols: ['http', 'https'], require_protocol: true }) || (v === '' || v === null)) || 'Bitte eine gültige URL angeben',
+      (v) => (!v || validator.isURL(v || '', { protocols: ['http', 'https'], require_protocol: true })) || 'Bitte eine gültige URL angeben',
     ],
     longRule: [
       (v) => !!v || 'Feld muss ausgefüllt werden',
